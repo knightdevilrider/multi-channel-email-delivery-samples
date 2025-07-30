@@ -1,92 +1,170 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Camera, Cpu, Layers, TrendingUp } from 'lucide-react';
 
-// Enhanced Animated Icon Components for Journey Steps
-const CaptureIcon: React.FC = () => {
+// Modern 2030+ Animated Icon Components that show actual functionality
+const SmartCaptureIcon: React.FC = () => {
   return (
     <div className="relative w-full h-full flex items-center justify-center">
-      {/* Holographic Phone with Camera */}
+      {/* Holographic Phone with AI Vision */}
       <motion.div
-        className="relative w-16 h-24 bg-gradient-to-b from-slate-800/90 via-slate-900/80 to-black/90 rounded-2xl border-2 border-cyan-400/60 backdrop-blur-xl shadow-2xl"
+        className="relative w-24 h-36 bg-gradient-to-b from-slate-800/90 via-blue-900/60 to-slate-900/90 rounded-3xl border-2 border-cyan-400/60 backdrop-blur-xl shadow-2xl"
         animate={{ 
-          rotateY: [0, 10, -10, 0],
+          rotateY: [0, 5, -5, 0],
           boxShadow: [
-            '0 0 20px rgba(34, 211, 238, 0.4)',
-            '0 0 40px rgba(34, 211, 238, 0.7)',
-            '0 0 20px rgba(34, 211, 238, 0.4)'
+            '0 0 30px rgba(34, 211, 238, 0.4)',
+            '0 0 60px rgba(34, 211, 238, 0.8)',
+            '0 0 30px rgba(34, 211, 238, 0.4)'
           ]
         }}
         transition={{ duration: 4, repeat: Infinity }}
       >
-        {/* Screen with camera interface */}
-        <div className="absolute inset-2 bg-gradient-to-b from-slate-900 via-blue-900/30 to-purple-900/20 rounded-xl overflow-hidden border border-cyan-400/30">
-          {/* Camera viewfinder */}
+        {/* AI Vision Screen */}
+        <div className="absolute inset-3 bg-gradient-to-b from-cyan-900/50 via-blue-900/30 to-purple-900/20 rounded-2xl overflow-hidden border border-cyan-400/30">
+          {/* Receipt Detection Frame */}
           <motion.div
-            className="absolute inset-4 border-2 border-cyan-400/60 rounded-lg"
-            animate={{ opacity: [0.4, 1, 0.4] }}
+            className="absolute inset-4 border-2 border-cyan-400/80 rounded-xl"
+            animate={{ 
+              opacity: [0.5, 1, 0.5],
+              borderColor: ['rgba(34, 211, 238, 0.8)', 'rgba(0, 255, 136, 0.8)', 'rgba(34, 211, 238, 0.8)']
+            }}
             transition={{ duration: 2, repeat: Infinity }}
           />
           
-          {/* Receipt being captured */}
+          {/* Receipt being scanned */}
           <motion.div
-            className="absolute bottom-6 left-3 right-3 h-12 bg-gradient-to-b from-white via-gray-100 to-white rounded-lg shadow-lg border border-gray-300"
-            initial={{ y: 30, opacity: 0, scale: 0.7 }}
+            className="absolute bottom-8 left-4 right-4 h-20 bg-gradient-to-b from-white via-gray-100 to-white rounded-lg shadow-xl border border-gray-300"
+            initial={{ y: 50, opacity: 0, scale: 0.8 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
-            transition={{ delay: 1, duration: 1.5, repeat: Infinity, repeatDelay: 4 }}
+            transition={{ delay: 1, duration: 1.5, repeat: Infinity, repeatDelay: 5 }}
           >
-            {/* Receipt lines */}
+            {/* Receipt content with AI recognition */}
             <div className="p-2 space-y-1">
-              {[...Array(4)].map((_, i) => (
-                <motion.div 
-                  key={i}
-                  className="h-0.5 bg-gray-700 rounded"
-                  style={{ width: `${60 + i * 10}%` }}
-                  initial={{ width: 0 }}
-                  animate={{ width: `${60 + i * 10}%` }}
-                  transition={{ delay: 1.5 + i * 0.2, duration: 0.8, repeat: Infinity, repeatDelay: 4 }}
-                />
-              ))}
+              <motion.div 
+                className="h-1.5 bg-gray-800 rounded w-3/4"
+                initial={{ width: 0, backgroundColor: '#1f2937' }}
+                animate={{ 
+                  width: '75%',
+                  backgroundColor: ['#1f2937', '#059669', '#1f2937']
+                }}
+                transition={{ delay: 2, duration: 1, repeat: Infinity, repeatDelay: 5 }}
+              />
+              <motion.div 
+                className="h-1 bg-gray-600 rounded w-1/2"
+                initial={{ width: 0 }}
+                animate={{ width: '50%' }}
+                transition={{ delay: 2.3, duration: 0.8, repeat: Infinity, repeatDelay: 5 }}
+              />
+              <motion.div 
+                className="h-1 bg-gray-600 rounded w-2/3"
+                initial={{ width: 0 }}
+                animate={{ width: '66%' }}
+                transition={{ delay: 2.6, duration: 0.7, repeat: Infinity, repeatDelay: 5 }}
+              />
+              <motion.div 
+                className="h-1.5 bg-green-600 rounded w-1/3 ml-auto"
+                initial={{ width: 0 }}
+                animate={{ width: '33%' }}
+                transition={{ delay: 2.9, duration: 0.6, repeat: Infinity, repeatDelay: 5 }}
+              />
             </div>
           </motion.div>
           
-          {/* Scanning effect */}
+          {/* AI Processing Indicators */}
           <motion.div
-            className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"
-            animate={{ y: [0, 70, 0] }}
+            className="absolute top-4 right-4 flex space-x-1"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 0] }}
+            transition={{ delay: 3.5, duration: 1, repeat: Infinity, repeatDelay: 5 }}
+          >
+            {[...Array(3)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="w-1.5 h-1.5 bg-cyan-400 rounded-full"
+                animate={{ scale: [1, 1.5, 1] }}
+                transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.2 }}
+              />
+            ))}
+          </motion.div>
+          
+          {/* Scanning beam */}
+          <motion.div
+            className="absolute w-full h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"
+            animate={{ y: [0, 100, 0] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           />
         </div>
         
-        {/* Camera flash */}
+        {/* Camera flash effect */}
         <motion.div
-          className="absolute inset-0 bg-white rounded-2xl"
+          className="absolute inset-0 bg-white rounded-3xl"
           initial={{ opacity: 0 }}
-          animate={{ opacity: [0, 0.8, 0] }}
-          transition={{ delay: 2.5, duration: 0.3, repeat: Infinity, repeatDelay: 4 }}
+          animate={{ opacity: [0, 0.9, 0] }}
+          transition={{ delay: 3.2, duration: 0.3, repeat: Infinity, repeatDelay: 5 }}
         />
+        
+        {/* Holographic corners */}
+        {[...Array(4)].map((_, i) => (
+          <div
+            key={i}
+            className={`absolute w-4 h-4 border-cyan-400 animate-pulse ${
+              i === 0 ? 'top-2 left-2 border-l-2 border-t-2 rounded-tl-3xl' :
+              i === 1 ? 'top-2 right-2 border-r-2 border-t-2 rounded-tr-3xl' :
+              i === 2 ? 'bottom-2 left-2 border-l-2 border-b-2 rounded-bl-3xl' :
+              'bottom-2 right-2 border-r-2 border-b-2 rounded-br-3xl'
+            }`}
+          />
+        ))}
       </motion.div>
       
-      {/* Data extraction particles */}
-      {[...Array(6)].map((_, i) => (
+      {/* AI Data Extraction Streams */}
+      {[...Array(5)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 bg-cyan-400 rounded-full"
+          className="absolute w-20 h-0.5 bg-gradient-to-r from-cyan-400 via-blue-400 to-transparent rounded-full"
           style={{
-            right: -10 + Math.random() * 20,
-            top: 20 + Math.random() * 40
+            right: -25,
+            top: 40 + i * 8,
+            transformOrigin: 'left'
+          }}
+          initial={{ scaleX: 0, opacity: 0 }}
+          animate={{ 
+            scaleX: [0, 1, 0], 
+            opacity: [0, 1, 0],
+            boxShadow: [
+              '0 0 5px rgba(34, 211, 238, 0.3)',
+              '0 0 20px rgba(34, 211, 238, 0.8)',
+              '0 0 5px rgba(34, 211, 238, 0.3)'
+            ]
+          }}
+          transition={{
+            delay: 4 + i * 0.2,
+            duration: 2,
+            repeat: Infinity,
+            repeatDelay: 5
+          }}
+        />
+      ))}
+      
+      {/* Floating data particles */}
+      {[...Array(8)].map((_, i) => (
+        <motion.div
+          key={`particle-${i}`}
+          className="absolute w-1.5 h-1.5 bg-cyan-400 rounded-full shadow-lg"
+          style={{
+            right: -15 + Math.random() * 30,
+            top: 30 + Math.random() * 60
           }}
           animate={{
-            x: [0, 25, 0],
-            y: [0, -15, 0],
+            x: [0, 40, 0],
+            y: [0, -25, 0],
             opacity: [0, 1, 0],
             scale: [0, 1.5, 0]
           }}
           transition={{
-            duration: 2.5,
+            duration: 3,
             repeat: Infinity,
-            delay: 3 + i * 0.3
+            delay: 4.5 + i * 0.4
           }}
         />
       ))}
@@ -94,64 +172,84 @@ const CaptureIcon: React.FC = () => {
   );
 };
 
-const AIOptimizeIcon: React.FC = () => {
+const AIProcessingIcon: React.FC = () => {
   return (
     <div className="relative w-full h-full flex items-center justify-center">
-      {/* AI Brain Core */}
+      {/* Central AI Brain Core */}
       <motion.div
-        className="w-20 h-20 bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 rounded-full relative shadow-2xl"
+        className="w-24 h-24 bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 rounded-full relative shadow-2xl"
         animate={{ 
           rotate: 360,
-          scale: [1, 1.1, 1],
+          scale: [1, 1.15, 1],
           boxShadow: [
-            '0 0 20px rgba(236, 72, 153, 0.5)',
-            '0 0 40px rgba(236, 72, 153, 0.8)',
-            '0 0 20px rgba(236, 72, 153, 0.5)'
+            '0 0 30px rgba(236, 72, 153, 0.5)',
+            '0 0 60px rgba(236, 72, 153, 0.9)',
+            '0 0 30px rgba(236, 72, 153, 0.5)'
           ]
         }}
         transition={{ 
-          rotate: { duration: 8, repeat: Infinity, ease: "linear" },
-          scale: { duration: 2, repeat: Infinity },
-          boxShadow: { duration: 2, repeat: Infinity }
+          rotate: { duration: 10, repeat: Infinity, ease: "linear" },
+          scale: { duration: 3, repeat: Infinity },
+          boxShadow: { duration: 3, repeat: Infinity }
         }}
       >
-        {/* Inner neural network */}
-        <div className="absolute inset-3 border-2 border-white/40 rounded-full">
+        {/* Neural network layers */}
+        <div className="absolute inset-3 border-2 border-white/50 rounded-full">
           <motion.div
-            className="absolute inset-2 border border-white/20 rounded-full"
+            className="absolute inset-2 border border-white/30 rounded-full"
             animate={{ rotate: -360 }}
-            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          />
+          <motion.div
+            className="absolute inset-4 border border-white/20 rounded-full"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
           />
         </div>
         
         {/* Neural synapses */}
-        {[...Array(8)].map((_, i) => (
+        {[...Array(12)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-6 bg-white/60 rounded-full"
+            className="absolute w-1 h-8 bg-white/70 rounded-full"
             style={{
               left: '50%',
               top: '50%',
               transformOrigin: 'bottom',
-              transform: `rotate(${i * 45}deg) translateX(-50%)`
+              transform: `rotate(${i * 30}deg) translateX(-50%)`
             }}
             animate={{ 
-              scaleY: [1, 1.5, 1],
-              opacity: [0.6, 1, 0.6]
+              scaleY: [1, 1.8, 1],
+              opacity: [0.7, 1, 0.7],
+              boxShadow: [
+                '0 0 5px rgba(255, 255, 255, 0.5)',
+                '0 0 15px rgba(255, 255, 255, 0.8)',
+                '0 0 5px rgba(255, 255, 255, 0.5)'
+              ]
             }}
-            transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
+            transition={{ duration: 2, repeat: Infinity, delay: i * 0.15 }}
           />
         ))}
+        
+        {/* Core pulse */}
+        <motion.div
+          className="absolute inset-6 bg-white/40 rounded-full"
+          animate={{ 
+            scale: [1, 1.3, 1],
+            opacity: [0.4, 0.8, 0.4]
+          }}
+          transition={{ duration: 2, repeat: Infinity }}
+        />
       </motion.div>
       
       {/* Data processing streams */}
-      {[...Array(4)].map((_, i) => (
+      {[...Array(6)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-12 h-0.5 bg-gradient-to-r from-pink-400 to-transparent rounded-full"
+          className="absolute w-16 h-0.5 bg-gradient-to-r from-pink-400 to-transparent rounded-full"
           style={{
-            left: -8,
-            top: 30 + i * 8,
+            left: -12,
+            top: 40 + i * 10,
             transformOrigin: 'left'
           }}
           initial={{ scaleX: 0, opacity: 0 }}
@@ -160,102 +258,163 @@ const AIOptimizeIcon: React.FC = () => {
             opacity: [0, 1, 0] 
           }}
           transition={{
-            duration: 2,
+            duration: 2.5,
             repeat: Infinity,
-            delay: i * 0.5
+            delay: i * 0.4
           }}
         />
       ))}
       
       {/* AI insights floating out */}
-      {[...Array(5)].map((_, i) => (
+      {[...Array(8)].map((_, i) => (
         <motion.div
           key={`insight-${i}`}
-          className="absolute w-2 h-2 bg-purple-400 rounded-full"
+          className="absolute w-2 h-2 bg-purple-400 rounded-full shadow-lg"
           style={{
-            right: -5 + Math.random() * 15,
-            top: 15 + Math.random() * 30
+            right: -10 + Math.random() * 20,
+            top: 20 + Math.random() * 40
           }}
           animate={{
-            x: [0, 20, 0],
-            y: [0, -10, 0],
+            x: [0, 30, 0],
+            y: [0, -15, 0],
             opacity: [0, 1, 0],
-            scale: [0, 1, 0]
+            scale: [0, 1.5, 0]
           }}
           transition={{
-            duration: 3,
+            duration: 3.5,
             repeat: Infinity,
-            delay: 1 + i * 0.4
+            delay: 1 + i * 0.5
           }}
         />
       ))}
+      
+      {/* Processing indicators */}
+      <motion.div
+        className="absolute -top-4 left-1/2 transform -translate-x-1/2 flex space-x-2"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: [0, 1, 0] }}
+        transition={{ duration: 2, repeat: Infinity, delay: 1 }}
+      >
+        {['Categorizing', 'Analyzing', 'Optimizing'].map((text, i) => (
+          <motion.div
+            key={text}
+            className="bg-pink-500/90 backdrop-blur-xl rounded-full px-3 py-1 text-xs text-white border border-pink-400/40"
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.3 }}
+          >
+            {text}
+          </motion.div>
+        ))}
+      </motion.div>
     </div>
   );
 };
 
-const UnifyIcon: React.FC = () => {
+const UnifiedDashboardIcon: React.FC = () => {
   return (
     <div className="relative w-full h-full flex items-center justify-center">
-      {/* Central Dashboard Hub */}
+      {/* Holographic Dashboard Screen */}
       <motion.div
-        className="w-16 h-12 bg-gradient-to-br from-slate-800 via-blue-900/50 to-slate-900 rounded-xl border-2 border-cyan-400/60 backdrop-blur-xl shadow-2xl relative"
+        className="relative w-28 h-20 bg-gradient-to-br from-slate-800/90 via-blue-900/60 to-slate-900/90 rounded-2xl border-2 border-cyan-400/60 backdrop-blur-xl shadow-2xl"
         animate={{
           boxShadow: [
-            '0 0 20px rgba(34, 211, 238, 0.4)',
-            '0 0 40px rgba(34, 211, 238, 0.7)',
-            '0 0 20px rgba(34, 211, 238, 0.4)'
+            '0 0 30px rgba(34, 211, 238, 0.4)',
+            '0 0 60px rgba(34, 211, 238, 0.8)',
+            '0 0 30px rgba(34, 211, 238, 0.4)'
           ]
         }}
-        transition={{ duration: 3, repeat: Infinity }}
+        transition={{ duration: 4, repeat: Infinity }}
       >
-        {/* Dashboard grid */}
-        <div className="absolute inset-2 grid grid-cols-3 gap-0.5">
-          {[...Array(9)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="bg-cyan-400/30 rounded-sm"
-              animate={{ 
-                opacity: [0.3, 0.8, 0.3],
-                backgroundColor: [
-                  'rgba(34, 211, 238, 0.3)',
-                  'rgba(139, 92, 246, 0.5)',
-                  'rgba(34, 211, 238, 0.3)'
-                ]
-              }}
-              transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}
-            />
-          ))}
+        {/* Dashboard content */}
+        <div className="absolute inset-2 bg-gradient-to-br from-cyan-900/30 via-blue-900/20 to-purple-900/10 rounded-xl overflow-hidden border border-cyan-400/20">
+          {/* Dashboard widgets grid */}
+          <div className="absolute inset-2 grid grid-cols-4 gap-1">
+            {[...Array(12)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="bg-cyan-400/30 rounded-sm"
+                animate={{ 
+                  opacity: [0.3, 0.9, 0.3],
+                  backgroundColor: [
+                    'rgba(34, 211, 238, 0.3)',
+                    'rgba(139, 92, 246, 0.6)',
+                    'rgba(0, 255, 136, 0.4)',
+                    'rgba(34, 211, 238, 0.3)'
+                  ]
+                }}
+                transition={{ duration: 3, repeat: Infinity, delay: i * 0.2 }}
+              />
+            ))}
+          </div>
+          
+          {/* Real-time data streams */}
+          <motion.div
+            className="absolute top-1 right-1 w-4 h-4 bg-green-400 rounded-full"
+            animate={{ 
+              scale: [1, 1.3, 1],
+              opacity: [0.8, 1, 0.8]
+            }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          />
+          
+          {/* Analytics chart simulation */}
+          <div className="absolute bottom-2 left-2 right-2 h-6">
+            {[...Array(8)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute bottom-0 bg-gradient-to-t from-cyan-400 to-blue-400 rounded-t-sm"
+                style={{
+                  left: i * 2.5 + 2,
+                  width: 2,
+                }}
+                initial={{ height: 0 }}
+                animate={{ 
+                  height: [0, (i + 1) * 3, (i + 2) * 4, (i + 1) * 5],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  delay: i * 0.3,
+                  ease: "easeInOut"
+                }}
+              />
+            ))}
+          </div>
         </div>
       </motion.div>
       
-      {/* Connected data sources */}
-      {[...Array(6)].map((_, i) => {
-        const angle = (i * 60) * (Math.PI / 180);
-        const radius = 30;
+      {/* Connected data sources orbiting */}
+      {[...Array(8)].map((_, i) => {
+        const angle = (i * 45) * (Math.PI / 180);
+        const radius = 45;
         const x = Math.cos(angle) * radius;
         const y = Math.sin(angle) * radius;
-        const colors = ['#4169E1', '#FF007A', '#00ff88', '#ffd700', '#ff6b6b', '#8a2be2'];
+        const colors = ['#4169E1', '#FF007A', '#00ff88', '#ffd700', '#ff6b6b', '#8a2be2', '#00ffff', '#ff4500'];
         
         return (
           <motion.div
             key={i}
-            className="absolute w-6 h-6 rounded-lg shadow-lg border border-white/20 backdrop-blur-xl"
+            className="absolute w-8 h-8 rounded-xl shadow-lg border border-white/30 backdrop-blur-xl"
             style={{
-              left: `calc(50% + ${x}px - 12px)`,
-              top: `calc(50% + ${y}px - 12px)`,
+              left: `calc(50% + ${x}px - 16px)`,
+              top: `calc(50% + ${y}px - 16px)`,
               background: `linear-gradient(135deg, ${colors[i]}, ${colors[i]}dd)`
             }}
             animate={{ 
               scale: [1, 1.2, 1],
-              opacity: [0.7, 1, 0.7]
+              opacity: [0.8, 1, 0.8],
+              rotate: [0, 360]
             }}
             transition={{
-              duration: 2,
+              duration: 4,
               repeat: Infinity,
-              delay: i * 0.3
+              delay: i * 0.5
             }}
           >
-            {/* Connection line to center */}
+            {/* Platform icon simulation */}
+            <div className="absolute inset-1 bg-white/40 rounded-lg" />
+            
+            {/* Connection beam to center */}
             <motion.div
               className="absolute w-0.5 bg-current opacity-50 rounded-full"
               style={{
@@ -263,37 +422,43 @@ const UnifyIcon: React.FC = () => {
                 left: '50%',
                 top: '50%',
                 transformOrigin: 'top',
-                transform: `rotate(${180 + i * 60}deg) translateX(-50%)`,
+                transform: `rotate(${180 + i * 45}deg) translateX(-50%)`,
                 background: `linear-gradient(to bottom, ${colors[i]}, transparent)`
               }}
               animate={{ 
-                opacity: [0.3, 0.7, 0.3]
+                opacity: [0.3, 0.8, 0.3],
+                boxShadow: [
+                  `0 0 5px ${colors[i]}40`,
+                  `0 0 20px ${colors[i]}80`,
+                  `0 0 5px ${colors[i]}40`
+                ]
               }}
               transition={{
-                duration: 2,
+                duration: 3,
                 repeat: Infinity,
-                delay: i * 0.3
+                delay: i * 0.5
               }}
             />
           </motion.div>
         );
       })}
       
-      {/* Data flow animation */}
-      {[...Array(4)].map((_, i) => (
+      {/* Data synchronization particles */}
+      {[...Array(6)].map((_, i) => (
         <motion.div
-          key={`flow-${i}`}
-          className="absolute w-1 h-1 bg-cyan-400 rounded-full"
+          key={`sync-${i}`}
+          className="absolute w-1.5 h-1.5 bg-cyan-400 rounded-full shadow-lg"
           animate={{
-            x: [0, 15, 0, -15, 0],
-            y: [0, -15, 0, 15, 0],
+            x: [0, 30, 0, -30, 0],
+            y: [0, -30, 0, 30, 0],
             opacity: [0, 1, 1, 1, 0],
-            scale: [0.5, 1, 1, 1, 0.5]
+            scale: [0.5, 1.5, 1.5, 1.5, 0.5]
           }}
           transition={{
-            duration: 4,
+            duration: 5,
             repeat: Infinity,
-            delay: i * 1
+            delay: i * 0.8,
+            ease: "easeInOut"
           }}
         />
       ))}
@@ -301,42 +466,42 @@ const UnifyIcon: React.FC = () => {
   );
 };
 
-const ThriveIcon: React.FC = () => {
+const GrowthAccelerationIcon: React.FC = () => {
   return (
     <div className="relative w-full h-full flex items-center justify-center">
-      {/* Growth Chart Hologram */}
-      <div className="relative w-20 h-16 bg-gradient-to-t from-slate-900/80 via-yellow-900/20 to-transparent rounded-xl border-2 border-yellow-400/60 backdrop-blur-xl shadow-2xl">
+      {/* Holographic Growth Chart */}
+      <div className="relative w-28 h-20 bg-gradient-to-t from-slate-900/80 via-yellow-900/20 to-transparent rounded-2xl border-2 border-yellow-400/60 backdrop-blur-xl shadow-2xl">
         {/* Chart grid */}
         <div className="absolute inset-2 opacity-40">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="absolute w-full h-0.5 bg-yellow-400/20" style={{ top: `${i * 25}%` }} />
           ))}
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="absolute h-full w-0.5 bg-yellow-400/20" style={{ left: `${i * 25}%` }} />
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="absolute h-full w-0.5 bg-yellow-400/20" style={{ left: `${i * 20}%` }} />
           ))}
         </div>
         
         {/* Animated growth bars */}
-        {[...Array(6)].map((_, i) => (
+        {[...Array(8)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute bottom-2 bg-gradient-to-t from-yellow-400 via-orange-400 to-red-400 rounded-t-sm shadow-lg"
             style={{
-              left: 4 + i * 2.5,
-              width: 2,
+              left: 4 + i * 3,
+              width: 2.5,
             }}
             initial={{ height: 0, opacity: 0 }}
             animate={{ 
-              height: [0, (i + 1) * 6, (i + 2) * 8, (i + 3) * 10],
-              opacity: [0, 1, 1, 1],
+              height: [0, (i + 1) * 4, (i + 2) * 6, (i + 3) * 8, (i + 4) * 10],
+              opacity: [0, 1, 1, 1, 1],
               boxShadow: [
                 '0 0 5px rgba(251, 191, 36, 0.3)',
-                '0 0 15px rgba(251, 191, 36, 0.6)',
-                '0 0 10px rgba(251, 191, 36, 0.4)'
+                '0 0 20px rgba(251, 191, 36, 0.8)',
+                '0 0 15px rgba(251, 191, 36, 0.6)'
               ]
             }}
             transition={{
-              duration: 4,
+              duration: 5,
               repeat: Infinity,
               delay: i * 0.3,
               ease: "easeInOut"
@@ -344,121 +509,160 @@ const ThriveIcon: React.FC = () => {
           />
         ))}
         
-        {/* Growth trend line */}
+        {/* Exponential growth trend line */}
         <motion.svg
           className="absolute inset-0 w-full h-full"
-          viewBox="0 0 80 64"
+          viewBox="0 0 112 80"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: [0, 1, 1, 0] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         >
           <motion.path
-            d="M 8 48 Q 20 35 32 25 T 72 8"
+            d="M 8 60 Q 20 50 35 35 Q 50 20 70 15 Q 85 10 100 5"
             stroke="#FFD700"
-            strokeWidth="2"
+            strokeWidth="2.5"
             fill="none"
             strokeLinecap="round"
-            filter="drop-shadow(0 0 8px rgba(255, 215, 0, 0.6))"
+            filter="drop-shadow(0 0 10px rgba(255, 215, 0, 0.8))"
           />
         </motion.svg>
+        
+        {/* Profit projection area */}
+        <motion.div
+          className="absolute right-2 top-2 bottom-2 w-8 bg-gradient-to-r from-transparent via-green-400/10 to-green-400/30 rounded-r-lg"
+          animate={{ opacity: [0.3, 0.8, 0.3] }}
+          transition={{ duration: 4, repeat: Infinity }}
+        />
       </div>
       
-      {/* Success indicators */}
+      {/* Success multiplier indicators */}
       <motion.div
-        className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full shadow-lg"
+        className="absolute -top-4 -right-4 w-10 h-10 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full shadow-2xl flex items-center justify-center"
         animate={{ 
           scale: [1, 1.3, 1],
+          rotate: [0, 360],
           boxShadow: [
-            '0 0 10px rgba(34, 197, 94, 0.5)',
-            '0 0 20px rgba(34, 197, 94, 0.8)',
-            '0 0 10px rgba(34, 197, 94, 0.5)'
+            '0 0 15px rgba(34, 197, 94, 0.5)',
+            '0 0 30px rgba(34, 197, 94, 0.9)',
+            '0 0 15px rgba(34, 197, 94, 0.5)'
           ]
         }}
-        transition={{ duration: 2, repeat: Infinity }}
+        transition={{ duration: 3, repeat: Infinity }}
       >
-        <div className="absolute inset-1 bg-white/40 rounded-full animate-pulse" />
+        <motion.span
+          className="text-white font-bold text-sm"
+          animate={{ scale: [1, 1.2, 1] }}
+          transition={{ duration: 1, repeat: Infinity }}
+        >
+          10x
+        </motion.span>
       </motion.div>
       
-      {/* Profit arrows */}
-      {[...Array(3)].map((_, i) => (
+      {/* Growth acceleration arrows */}
+      {[...Array(4)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-8 h-0.5 bg-gradient-to-r from-green-400 to-transparent rounded-full"
+          className="absolute w-12 h-0.5 bg-gradient-to-r from-green-400 to-transparent rounded-full"
           style={{
-            right: -10,
-            top: 20 + i * 6,
+            right: -15,
+            top: 25 + i * 8,
             transformOrigin: 'left'
           }}
           initial={{ scaleX: 0, opacity: 0 }}
           animate={{ 
             scaleX: [0, 1, 0], 
-            opacity: [0, 1, 0] 
+            opacity: [0, 1, 0],
+            boxShadow: [
+              '0 0 5px rgba(34, 197, 94, 0.3)',
+              '0 0 20px rgba(34, 197, 94, 0.8)',
+              '0 0 5px rgba(34, 197, 94, 0.3)'
+            ]
           }}
           transition={{
-            duration: 2,
+            duration: 2.5,
             repeat: Infinity,
             delay: 1 + i * 0.4
           }}
         />
       ))}
       
-      {/* Growth sparkles */}
-      {[...Array(4)].map((_, i) => (
+      {/* Profit sparkles */}
+      {[...Array(6)].map((_, i) => (
         <motion.div
-          key={`sparkle-${i}`}
-          className="absolute w-1 h-1 bg-yellow-400 rounded-full"
+          key={`profit-${i}`}
+          className="absolute w-2 h-2 bg-yellow-400 rounded-full shadow-lg"
           style={{
-            right: -5 + Math.random() * 15,
-            top: 10 + Math.random() * 25
+            right: -10 + Math.random() * 20,
+            top: 15 + Math.random() * 30
           }}
           animate={{
-            scale: [0, 1.5, 0],
+            scale: [0, 2, 0],
             opacity: [0, 1, 0],
             rotate: [0, 180, 360]
           }}
           transition={{
-            duration: 2,
+            duration: 2.5,
             repeat: Infinity,
             delay: 2 + i * 0.5
           }}
         />
       ))}
+      
+      {/* Revenue growth indicators */}
+      <motion.div
+        className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-yellow-500/90 via-orange-500/90 to-red-500/90 backdrop-blur-xl rounded-2xl px-4 py-2 text-sm text-white border border-yellow-400/40 shadow-2xl"
+        initial={{ opacity: 0, scale: 0.8, y: 10 }}
+        animate={{ 
+          opacity: [0, 1, 1, 1, 0], 
+          scale: [0.8, 1, 1, 1, 0.8],
+          y: [10, 0, 0, 0, 10]
+        }}
+        transition={{ duration: 5, repeat: Infinity, delay: 2 }}
+      >
+        <motion.span
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2.5, duration: 0.5, repeat: Infinity, repeatDelay: 4.5 }}
+        >
+          +347% Revenue Growth
+        </motion.span>
+      </motion.div>
     </div>
   );
 };
 
 const journeySteps = [
   {
-    AnimatedIcon: CaptureIcon,
-    title: 'Capture',
-    subtitle: 'Snap, Speak, Sync',
-    description: 'Effortlessly capture expenses through photos, voice commands, or automatic sync with your financial accounts.',
+    AnimatedIcon: SmartCaptureIcon,
+    title: 'Smart Capture',
+    subtitle: 'AI-Powered Recognition',
+    description: 'Instantly capture and digitize receipts, invoices, and expenses with advanced AI that understands context and extracts key financial data automatically.',
     color: '#00D4FF',
-    position: { x: 15, y: 120 }
+    position: { x: 15, y: 15 }
   },
   {
-    AnimatedIcon: AIOptimizeIcon,
-    title: 'AI Optimizes',
-    subtitle: 'Intelligent Processing',
-    description: 'Advanced AI categorizes, analyzes, and optimizes your financial data with predictive insights.',
+    AnimatedIcon: AIProcessingIcon,
+    title: 'AI Processing',
+    subtitle: 'Intelligent Analysis',
+    description: 'Advanced machine learning categorizes, analyzes patterns, and optimizes your financial data while providing predictive insights for better decision-making.',
     color: '#FF0080',
-    position: { x: 75, y: 200 }
+    position: { x: 75, y: 35 }
   },
   {
-    AnimatedIcon: UnifyIcon,
-    title: 'Unify',
-    subtitle: 'Dashboard Merge',
-    description: 'All financial data converges into a unified, intuitive dashboard with real-time analytics.',
+    AnimatedIcon: UnifiedDashboardIcon,
+    title: 'Unified Dashboard',
+    subtitle: 'Complete Integration',
+    description: 'All financial data from multiple sources converges into one intelligent command center with real-time analytics and comprehensive reporting.',
     color: '#00D4FF',
-    position: { x: 20, y: 400 }
+    position: { x: 20, y: 65 }
   },
   {
-    AnimatedIcon: ThriveIcon,
-    title: 'Thrive',
-    subtitle: 'Growth Acceleration',
-    description: 'Make data-driven decisions that accelerate growth and maximize profitability.',
+    AnimatedIcon: GrowthAccelerationIcon,
+    title: 'Growth Acceleration',
+    subtitle: 'Strategic Optimization',
+    description: 'Make data-driven decisions that accelerate business growth, maximize profitability, and unlock hidden revenue opportunities through AI-powered insights.',
     color: '#FFD700',
-    position: { x: 70, y: 520 }
+    position: { x: 70, y: 85 }
   }
 ];
 
@@ -470,40 +674,48 @@ const JourneyTimeline: React.FC = () => {
 
   return (
     <section className="py-32 relative overflow-hidden bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
-      {/* Animated Grid Network Background */}
+      {/* Advanced Grid Network Background */}
       <div className="absolute inset-0">
-        {/* Grid lines */}
+        {/* Dynamic grid pattern */}
         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
           <defs>
-            <pattern id="journeyGrid" width="8" height="8" patternUnits="userSpaceOnUse">
+            <pattern id="advancedGrid" width="8" height="8" patternUnits="userSpaceOnUse">
               <path d="M 8 0 L 0 0 0 8" fill="none" stroke="rgba(0, 212, 255, 0.15)" strokeWidth="0.1"/>
             </pattern>
-            <linearGradient id="connectionGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="rgba(0, 212, 255, 0.4)" />
-              <stop offset="25%" stopColor="rgba(255, 0, 128, 0.4)" />
-              <stop offset="75%" stopColor="rgba(0, 212, 255, 0.4)" />
-              <stop offset="100%" stopColor="rgba(255, 215, 0, 0.4)" />
+            <linearGradient id="connectionFlow" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="rgba(0, 212, 255, 0.6)" />
+              <stop offset="25%" stopColor="rgba(255, 0, 128, 0.6)" />
+              <stop offset="75%" stopColor="rgba(0, 212, 255, 0.6)" />
+              <stop offset="100%" stopColor="rgba(255, 215, 0, 0.6)" />
             </linearGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+              <feMerge> 
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
           </defs>
-          <rect width="100%" height="100%" fill="url(#journeyGrid)" />
+          <rect width="100%" height="100%" fill="url(#advancedGrid)" />
           
-          {/* Animated connection lines between journey steps */}
+          {/* Animated connection network */}
           {journeySteps.map((step, i) => (
             <g key={i}>
-              {/* Glowing connection nodes */}
+              {/* Pulsing connection nodes */}
               <motion.circle
                 cx={step.position.x}
-                cy={step.position.y / 8}
+                cy={step.position.y}
                 r="1.2"
                 fill={step.color}
+                filter="url(#glow)"
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ 
-                  opacity: [0.6, 1, 0.6], 
-                  scale: [1, 1.8, 1],
+                  opacity: [0.7, 1, 0.7], 
+                  scale: [1, 2, 1],
                   filter: [
-                    `drop-shadow(0 0 8px ${step.color})`,
-                    `drop-shadow(0 0 20px ${step.color})`,
-                    `drop-shadow(0 0 8px ${step.color})`
+                    `drop-shadow(0 0 10px ${step.color})`,
+                    `drop-shadow(0 0 25px ${step.color})`,
+                    `drop-shadow(0 0 10px ${step.color})`
                   ]
                 }}
                 transition={{ 
@@ -513,19 +725,20 @@ const JourneyTimeline: React.FC = () => {
                 }}
               />
               
-              {/* Connection lines between steps */}
+              {/* Data flow connections */}
               {i < journeySteps.length - 1 && (
                 <motion.line
                   x1={step.position.x}
-                  y1={step.position.y / 8}
+                  y1={step.position.y}
                   x2={journeySteps[i + 1].position.x}
-                  y2={journeySteps[i + 1].position.y / 8}
-                  stroke="url(#connectionGlow)"
+                  y2={journeySteps[i + 1].position.y}
+                  stroke="url(#connectionFlow)"
                   strokeWidth="0.3"
+                  filter="url(#glow)"
                   initial={{ pathLength: 0, opacity: 0 }}
                   animate={{ 
                     pathLength: [0, 1, 0], 
-                    opacity: [0, 0.9, 0] 
+                    opacity: [0, 1, 0] 
                   }}
                   transition={{ 
                     duration: 4, 
@@ -535,46 +748,73 @@ const JourneyTimeline: React.FC = () => {
                 />
               )}
               
-              {/* Pulsing energy rings */}
+              {/* Energy pulse rings */}
               <motion.circle
                 cx={step.position.x}
-                cy={step.position.y / 8}
-                r="3"
+                cy={step.position.y}
+                r="4"
                 fill="none"
                 stroke={step.color}
                 strokeWidth="0.1"
+                opacity="0.6"
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ 
-                  scale: [0, 2, 0],
-                  opacity: [0, 0.6, 0]
+                  scale: [0, 3, 0],
+                  opacity: [0, 0.8, 0]
                 }}
                 transition={{ 
-                  duration: 3, 
+                  duration: 4, 
                   repeat: Infinity, 
-                  delay: i * 0.7 + 0.5 
+                  delay: i * 0.7 + 1 
                 }}
               />
             </g>
           ))}
+          
+          {/* Background data streams */}
+          {[...Array(6)].map((_, i) => (
+            <motion.line
+              key={`stream-${i}`}
+              x1={10 + i * 15}
+              y1="0"
+              x2={15 + i * 15}
+              y2="100"
+              stroke="rgba(0, 212, 255, 0.1)"
+              strokeWidth="0.1"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: [0, 1, 0] }}
+              transition={{
+                duration: 8,
+                repeat: Infinity,
+                delay: i * 1.2
+              }}
+            />
+          ))}
         </svg>
         
-        {/* Floating geometric shapes */}
-        {[...Array(12)].map((_, i) => (
+        {/* Floating holographic elements */}
+        {[...Array(15)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-3 h-3 border border-cyan-400/30 backdrop-blur-sm"
+            className="absolute w-4 h-4 border border-cyan-400/20 backdrop-blur-sm"
             style={{
-              left: `${10 + (i % 4) * 25}%`,
-              top: `${15 + Math.floor(i / 4) * 30}%`,
-              transform: `rotate(${i * 30}deg)`
+              left: `${15 + (i % 5) * 20}%`,
+              top: `${10 + Math.floor(i / 5) * 30}%`,
+              transform: `rotate(${i * 24}deg)`
             }}
             animate={{
-              rotate: [i * 30, i * 30 + 360],
-              opacity: [0.3, 0.8, 0.3],
-              scale: [1, 1.2, 1]
+              rotate: [i * 24, i * 24 + 360],
+              opacity: [0.2, 0.6, 0.2],
+              scale: [1, 1.3, 1],
+              borderColor: [
+                'rgba(34, 211, 238, 0.2)',
+                'rgba(255, 0, 128, 0.4)',
+                'rgba(255, 215, 0, 0.3)',
+                'rgba(34, 211, 238, 0.2)'
+              ]
             }}
             transition={{
-              duration: 8 + i,
+              duration: 12 + i,
               repeat: Infinity,
               ease: "linear"
             }}
@@ -587,18 +827,18 @@ const JourneyTimeline: React.FC = () => {
           className="text-center mb-20"
           initial={{ opacity: 0, y: 50 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 1.5, ease: "easeOut" }}
+          transition={{ duration: 2, ease: "easeOut" }}
         >
           <motion.h2 
-            className="text-5xl md:text-7xl lg:text-8xl font-black mb-8 bg-gradient-to-r from-cyan-400 via-purple-500 to-yellow-400 bg-clip-text text-transparent"
+            className="text-6xl md:text-8xl lg:text-9xl font-black mb-8 bg-gradient-to-r from-cyan-400 via-purple-500 to-yellow-400 bg-clip-text text-transparent"
             style={{
-              filter: 'drop-shadow(0 0 30px rgba(34, 211, 238, 0.3))'
+              filter: 'drop-shadow(0 0 40px rgba(34, 211, 238, 0.4))'
             }}
             animate={{
               backgroundPosition: ['0% 50%', '100% 50%', '0% 50%']
             }}
             transition={{
-              duration: 6,
+              duration: 8,
               repeat: Infinity,
               ease: "easeInOut"
             }}
@@ -609,113 +849,136 @@ const JourneyTimeline: React.FC = () => {
             className="text-2xl text-cyan-100 max-w-4xl mx-auto leading-relaxed"
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 2, delay: 0.8 }}
+            transition={{ duration: 2.5, delay: 1 }}
           >
-            Four transformative steps that revolutionize how you manage business finances
+            Four revolutionary steps that transform financial chaos into entrepreneurial mastery through AI-powered intelligence
           </motion.p>
         </motion.div>
 
         <div ref={ref} className="relative">
-          {/* Journey Steps as Floating Cards - Fixed Container */}
-          <div className="relative min-h-[800px] w-full">
-          {journeySteps.map((step, index) => (
-            <motion.div
-              key={index}
-              className="absolute z-10"
-              style={{
-                left: `${step.position.x}%`,
-                top: `${step.position.y}px`,
-                transform: 'translate(-50%, -50%)'
-              }}
-              initial={{ opacity: 0, scale: 0.8, y: 50 }}
-              animate={inView ? { opacity: 1, scale: 1, y: 0 } : {}}
-              transition={{ 
-                duration: 1.5, 
-                delay: index * 0.4,
-                type: "spring",
-                stiffness: 80
-              }}
-            >
-              {/* Floating Card */}
+          {/* Journey Steps as Advanced Floating Cards */}
+          <div className="relative min-h-[900px] w-full">
+            {journeySteps.map((step, index) => (
               <motion.div
-                className="relative bg-gradient-to-br from-slate-900/90 via-slate-800/80 to-slate-900/90 backdrop-blur-2xl rounded-3xl p-6 border-2 border-cyan-400/30 shadow-2xl w-[300px] max-w-[90vw]"
-                whileHover={{ 
-                  scale: 1.05,
-                  borderColor: step.color + '80',
-                  boxShadow: `0 0 40px ${step.color}40`
+                key={index}
+                className="absolute z-10"
+                style={{
+                  left: `${step.position.x}%`,
+                  top: `${step.position.y * 10}px`,
+                  transform: 'translate(-50%, -50%)'
                 }}
-                transition={{ duration: 0.3 }}
+                initial={{ opacity: 0, scale: 0.7, y: 100 }}
+                animate={inView ? { opacity: 1, scale: 1, y: 0 } : {}}
+                transition={{ 
+                  duration: 2, 
+                  delay: index * 0.6,
+                  type: "spring",
+                  stiffness: 60
+                }}
               >
-                {/* Holographic corners */}
-                <div className="absolute top-2 left-2 w-6 h-6 border-l-2 border-t-2 border-cyan-400/60 rounded-tl-3xl animate-pulse" />
-                <div className="absolute top-2 right-2 w-6 h-6 border-r-2 border-t-2 border-cyan-400/60 rounded-tr-3xl animate-pulse" />
-                <div className="absolute bottom-2 left-2 w-6 h-6 border-l-2 border-b-2 border-cyan-400/60 rounded-bl-3xl animate-pulse" />
-                <div className="absolute bottom-2 right-2 w-6 h-6 border-r-2 border-b-2 border-cyan-400/60 rounded-br-3xl animate-pulse" />
-                
-                {/* Large animated icon */}
-                <motion.div 
-                  className="w-20 h-20 mx-auto mb-4 cursor-pointer relative"
+                {/* Advanced Holographic Card */}
+                <motion.div
+                  className="relative bg-gradient-to-br from-slate-900/95 via-slate-800/85 to-slate-900/95 backdrop-blur-2xl rounded-3xl p-8 border-2 border-cyan-400/30 shadow-2xl w-[350px] max-w-[90vw] overflow-hidden"
                   whileHover={{ 
-                    scale: 1.1,
-                    rotateY: 10
+                    scale: 1.05,
+                    borderColor: step.color + '80',
+                    boxShadow: `0 0 60px ${step.color}40`
                   }}
                   transition={{ duration: 0.4 }}
                 >
-                  <step.AnimatedIcon />
-                </motion.div>
-                
-                {/* Title with slow animation */}
-                <motion.h3 
-                  className="text-xl font-black mb-2 text-center text-white"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 2, delay: index * 0.4 + 0.8 }}
-                >
-                  {step.title}
-                </motion.h3>
-                
-                {/* Subtitle */}
-                <motion.p 
-                  className="text-sm font-semibold mb-3 text-center"
-                  style={{ color: step.color }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 2.5, delay: index * 0.4 + 1 }}
-                >
-                  {step.subtitle}
-                </motion.p>
-                
-                {/* Description with slower reveal */}
-                <motion.p 
-                  className="text-cyan-100 leading-relaxed text-center text-sm"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 3, delay: index * 0.4 + 1.2 }}
-                >
-                  {step.description}
-                </motion.p>
+                  {/* Holographic scanning effect */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/10 to-transparent"
+                    animate={{
+                      x: ['-100%', '100%']
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      repeatDelay: 5
+                    }}
+                  />
+                  
+                  {/* Advanced holographic corners */}
+                  {[...Array(4)].map((_, i) => (
+                    <div
+                      key={i}
+                      className={`absolute w-8 h-8 border-cyan-400/80 animate-pulse ${
+                        i === 0 ? 'top-3 left-3 border-l-2 border-t-2 rounded-tl-3xl' :
+                        i === 1 ? 'top-3 right-3 border-r-2 border-t-2 rounded-tr-3xl' :
+                        i === 2 ? 'bottom-3 left-3 border-l-2 border-b-2 rounded-bl-3xl' :
+                        'bottom-3 right-3 border-r-2 border-b-2 rounded-br-3xl'
+                      }`}
+                    />
+                  ))}
+                  
+                  {/* Large animated icon */}
+                  <motion.div 
+                    className="w-32 h-32 mx-auto mb-6 cursor-pointer relative"
+                    whileHover={{ 
+                      scale: 1.1,
+                      rotateY: 15,
+                      rotateX: 5
+                    }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <step.AnimatedIcon />
+                  </motion.div>
+                  
+                  {/* Title with ultra-slow animation */}
+                  <motion.h3 
+                    className="text-2xl font-black mb-3 text-center text-white"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={inView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 2, delay: index * 0.6 + 1 }}
+                  >
+                    {step.title}
+                  </motion.h3>
+                  
+                  {/* Subtitle with color */}
+                  <motion.p 
+                    className="text-lg font-semibold mb-4 text-center"
+                    style={{ color: step.color }}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={inView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 2.5, delay: index * 0.6 + 1.3 }}
+                  >
+                    {step.subtitle}
+                  </motion.p>
+                  
+                  {/* Description with ultra-slow reveal */}
+                  <motion.p 
+                    className="text-cyan-100 leading-relaxed text-center"
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={inView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 3, delay: index * 0.6 + 1.6 }}
+                  >
+                    {step.description}
+                  </motion.p>
 
-                {/* Scanning line effect */}
-                <motion.div
-                  className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-0 group-hover:opacity-100"
-                  animate={{
-                    x: ['-100%', '100%']
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    repeatDelay: 4
-                  }}
-                />
-                
-                {/* Status indicator */}
-                <div 
-                  className="absolute top-6 right-6 w-3 h-3 rounded-full opacity-80 animate-pulse"
-                  style={{ backgroundColor: step.color }}
-                />
+                  {/* Status indicator */}
+                  <div 
+                    className="absolute top-6 right-6 w-4 h-4 rounded-full opacity-90 animate-pulse"
+                    style={{ backgroundColor: step.color }}
+                  />
+                  
+                  {/* Step number */}
+                  <motion.div
+                    className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-slate-800 to-slate-900 rounded-full border-2 border-cyan-400/60 flex items-center justify-center text-cyan-400 font-bold text-lg shadow-2xl"
+                    animate={{
+                      boxShadow: [
+                        '0 0 20px rgba(34, 211, 238, 0.4)',
+                        '0 0 40px rgba(34, 211, 238, 0.8)',
+                        '0 0 20px rgba(34, 211, 238, 0.4)'
+                      ]
+                    }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                  >
+                    {index + 1}
+                  </motion.div>
+                </motion.div>
               </motion.div>
-            </motion.div>
-          ))}
+            ))}
           </div>
         </div>
       </div>
