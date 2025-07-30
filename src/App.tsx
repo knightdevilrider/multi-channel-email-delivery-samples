@@ -2,7 +2,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { AccessibilityProvider } from './components/AccessibilityProvider';
 import AccessibilityControls from './components/AccessibilityControls';
-import Interactive3DBackground from './components/Interactive3DBackground';
 import HeroSection from './components/HeroSection';
 import BenefitsGrid from './components/BenefitsGrid';
 import JourneyTimeline from './components/JourneyTimeline';
@@ -16,7 +15,6 @@ function App() {
   return (
     <AccessibilityProvider>
       <div className="min-h-screen bg-dark-bg text-white font-montserrat relative overflow-x-hidden">
-        <Interactive3DBackground />
         <Navigation />
         
         <motion.div
