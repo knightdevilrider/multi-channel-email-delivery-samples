@@ -5,20 +5,13 @@ import { OrbitControls, Sphere, MeshDistortMaterial } from '@react-three/drei';
 import { Mic, Play, QrCode, Star, TrendingUp } from 'lucide-react';
 
 const HeroSection: React.FC = () => {
+  const [currentPhrase, setCurrentPhrase] = useState(0);
+  
   const phrases = [
     "Command Your Finances",
     "Conquer Chaos", 
     "Amplify Growth"
   ];
-
-  const [currentPhrase, setCurrentPhrase] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentPhrase((prev) => (prev + 1) % phrases.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -56,42 +49,13 @@ const HeroSection: React.FC = () => {
   };
 
   const VoiceDemo = () => {
-    const [isListening, setIsListening] = useState(false);
-    const [transcript, setTranscript] = useState('');
-    
-    const toggleListening = () => {
-      setIsListening(!isListening);
-      if (!isListening) {
-        setTranscript('Add $500 coffee expense to marketing budget');
-        setTimeout(() => setTranscript(''), 3000);
-      }
-    };
-
     return (
       <div className="text-center">
-        <motion.button
-          className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
-          style={{ background: isListening ? 'linear-gradient(135deg, var(--accent-green), var(--primary-blue))' : 'linear-gradient(135deg, var(--primary-magenta), var(--primary-blue))' }}
-          onClick={toggleListening}
-          animate={isListening ? { scale: [1, 1.1, 1] } : {}}
-          transition={{ duration: 0.5, repeat: isListening ? Infinity : 0 }}
-        >
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center unified-pulse" style={{ background: 'linear-gradient(135deg, var(--primary-magenta), var(--primary-blue))' }}>
           <Mic className="w-8 h-8" />
-        </motion.button>
+        </div>
         <h3 className="text-lg font-semibold mb-2">Voice Commands</h3>
-        <p className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>
-          {isListening ? 'Listening...' : 'Tap to try voice input'}
-        </p>
-        {transcript && (
-          <motion.p
-            className="text-xs p-2 rounded unified-card"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            style={{ color: 'var(--accent-green)' }}
-          >
-            "{transcript}"
-          </motion.p>
-        )}
+        <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Control your finances with natural voice commands</p>
       </div>
     );
   };
@@ -225,7 +189,7 @@ const HeroSection: React.FC = () => {
               <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Scan to experience your dashboard in augmented reality</p>
             </div>
           </motion.div>
-        </div>
+        </motion.div>
       </motion.div>
     </section>
   );
