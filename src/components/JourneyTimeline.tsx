@@ -434,7 +434,7 @@ const journeySteps = [
     subtitle: 'Snap, Speak, Sync',
     description: 'Effortlessly capture expenses through photos, voice commands, or automatic sync with your financial accounts.',
     color: '#00D4FF',
-    position: { x: 15, y: 25 }
+    position: { x: 15, y: 120 }
   },
   {
     AnimatedIcon: AIOptimizeIcon,
@@ -442,7 +442,7 @@ const journeySteps = [
     subtitle: 'Intelligent Processing',
     description: 'Advanced AI categorizes, analyzes, and optimizes your financial data with predictive insights.',
     color: '#FF0080',
-    position: { x: 70, y: 35 }
+    position: { x: 75, y: 200 }
   },
   {
     AnimatedIcon: UnifyIcon,
@@ -450,7 +450,7 @@ const journeySteps = [
     subtitle: 'Dashboard Merge',
     description: 'All financial data converges into a unified, intuitive dashboard with real-time analytics.',
     color: '#00D4FF',
-    position: { x: 25, y: 70 }
+    position: { x: 20, y: 400 }
   },
   {
     AnimatedIcon: ThriveIcon,
@@ -458,7 +458,7 @@ const journeySteps = [
     subtitle: 'Growth Acceleration',
     description: 'Make data-driven decisions that accelerate growth and maximize profitability.',
     color: '#FFD700',
-    position: { x: 75, y: 80 }
+    position: { x: 70, y: 520 }
   }
 ];
 
@@ -492,8 +492,8 @@ const JourneyTimeline: React.FC = () => {
             <g key={i}>
               {/* Glowing connection nodes */}
               <motion.circle
-                cx={step.position.x}
-                cy={step.position.y}
+                cx={benefit.position.x}
+                cy={benefit.position.y / 8}
                 r="1.2"
                 fill={step.color}
                 initial={{ opacity: 0, scale: 0 }}
@@ -516,10 +516,10 @@ const JourneyTimeline: React.FC = () => {
               {/* Connection lines between steps */}
               {i < journeySteps.length - 1 && (
                 <motion.line
-                  x1={step.position.x}
-                  y1={step.position.y}
+                  x1={benefit.position.x}
+                  y1={benefit.position.y / 8}
                   x2={journeySteps[i + 1].position.x}
-                  y2={journeySteps[i + 1].position.y}
+                  y2={journeySteps[i + 1].position.y / 8}
                   stroke="url(#connectionGlow)"
                   strokeWidth="0.3"
                   initial={{ pathLength: 0, opacity: 0 }}
@@ -537,8 +537,8 @@ const JourneyTimeline: React.FC = () => {
               
               {/* Pulsing energy rings */}
               <motion.circle
-                cx={step.position.x}
-                cy={step.position.y}
+                cx={benefit.position.x}
+                cy={benefit.position.y / 8}
                 r="3"
                 fill="none"
                 stroke={step.color}
@@ -616,14 +616,15 @@ const JourneyTimeline: React.FC = () => {
         </motion.div>
 
         <div ref={ref} className="relative">
-          {/* Journey Steps as Floating Cards */}
+          {/* Journey Steps as Floating Cards - Fixed Container */}
+          <div className="relative min-h-[800px] w-full">
           {journeySteps.map((step, index) => (
             <motion.div
               key={index}
-              className="absolute"
+              className="absolute z-10"
               style={{
                 left: `${step.position.x}%`,
-                top: `${step.position.y - 15}%`,
+                top: `${step.position.y}px`,
                 transform: 'translate(-50%, -50%)'
               }}
               initial={{ opacity: 0, scale: 0.8, y: 50 }}
@@ -637,7 +638,7 @@ const JourneyTimeline: React.FC = () => {
             >
               {/* Floating Card */}
               <motion.div
-                className="relative bg-gradient-to-br from-slate-900/90 via-slate-800/80 to-slate-900/90 backdrop-blur-2xl rounded-3xl p-8 border-2 border-cyan-400/30 shadow-2xl min-w-[320px]"
+                className="relative bg-gradient-to-br from-slate-900/90 via-slate-800/80 to-slate-900/90 backdrop-blur-2xl rounded-3xl p-6 border-2 border-cyan-400/30 shadow-2xl w-[300px] max-w-[90vw]"
                 whileHover={{ 
                   scale: 1.05,
                   borderColor: step.color + '80',
@@ -653,7 +654,7 @@ const JourneyTimeline: React.FC = () => {
                 
                 {/* Large animated icon */}
                 <motion.div 
-                  className="w-24 h-24 mx-auto mb-6 cursor-pointer relative"
+                  className="w-20 h-20 mx-auto mb-4 cursor-pointer relative"
                   whileHover={{ 
                     scale: 1.1,
                     rotateY: 10
@@ -665,7 +666,7 @@ const JourneyTimeline: React.FC = () => {
                 
                 {/* Title with slow animation */}
                 <motion.h3 
-                  className="text-2xl font-black mb-2 text-center text-white"
+                  className="text-xl font-black mb-2 text-center text-white"
                   initial={{ opacity: 0, y: 20 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 2, delay: index * 0.4 + 0.8 }}
@@ -675,7 +676,7 @@ const JourneyTimeline: React.FC = () => {
                 
                 {/* Subtitle */}
                 <motion.p 
-                  className="text-lg font-semibold mb-4 text-center"
+                  className="text-sm font-semibold mb-3 text-center"
                   style={{ color: step.color }}
                   initial={{ opacity: 0, y: 20 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -686,7 +687,7 @@ const JourneyTimeline: React.FC = () => {
                 
                 {/* Description with slower reveal */}
                 <motion.p 
-                  className="text-cyan-100 leading-relaxed text-center"
+                  className="text-cyan-100 leading-relaxed text-center text-sm"
                   initial={{ opacity: 0, y: 30 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 3, delay: index * 0.4 + 1.2 }}
@@ -715,6 +716,7 @@ const JourneyTimeline: React.FC = () => {
               </motion.div>
             </motion.div>
           ))}
+          </div>
         </div>
       </div>
     </section>
