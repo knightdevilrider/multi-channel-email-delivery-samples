@@ -2,12 +2,43 @@ import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mic, Play, QrCode, Star, TrendingUp } from 'lucide-react';
 
+const HeroSection = () => {
+  const [currentPhrase, setCurrentPhrase] = useState(0);
+
   const phrases = [
     "Command Your Finances",
     "Conquer Chaos", 
     "Amplify Growth"
   ];
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentPhrase((prev) => (prev + 1) % phrases.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 12
+      }
     }
   };
 
@@ -23,6 +54,31 @@ import { Mic, Play, QrCode, Star, TrendingUp } from 'lucide-react';
       }
     }
   };
+
+  const VoiceDemo = () => {
+    const [isListening, setIsListening] = useState(false);
+    
+    return (
+      <div className="text-center">
+        <motion.div
+          className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center cursor-pointer"
+          style={{ background: 'linear-gradient(135deg, var(--primary-magenta), var(--primary-blue))' }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          animate={isListening ? { scale: [1, 1.2, 1] } : {}}
+          transition={{ duration: 0.5, repeat: isListening ? Infinity : 0 }}
+          onClick={() => setIsListening(!isListening)}
+        >
+          <Mic className="w-8 h-8" />
+        </motion.div>
+        <h3 className="text-lg font-semibold mb-2">Voice Command</h3>
+        <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+          {isListening ? "Listening..." : "Try: 'Show me last month's expenses'"}
+        </p>
+      </div>
+    );
+  };
+
   return (
     <section 
       id="main-content"
@@ -38,7 +94,7 @@ import { Mic, Play, QrCode, Star, TrendingUp } from 'lucide-react';
         <div className="h-32 md:h-40 lg:h-48 flex items-center justify-center mb-8">
           <motion.h1
             key={currentPhrase}
-            className="text-5xl md:text-7xl lg:text-8xl font-black leading-tight text-center"
+            className="text-5xl md:text-7xl lg:text-8xl font-black leading-tight text-center unified-gradient-text unified-glow"
             initial={{ opacity: 0, y: 50, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -50, scale: 0.8 }}
@@ -48,7 +104,6 @@ import { Mic, Play, QrCode, Star, TrendingUp } from 'lucide-react';
               stiffness: 100,
               damping: 15
             }}
-            className="unified-gradient-text unified-glow"
           >
             {phrases[currentPhrase]}
           </motion.h1>
