@@ -857,7 +857,7 @@ const JourneyTimeline: React.FC = () => {
 
         <div ref={ref} className="relative">
           {/* Journey Steps as Advanced Floating Cards */}
-          <div className="relative min-h-[600px] md:min-h-[500px] w-full max-w-6xl mx-auto">
+          <div className="relative min-h-[700px] md:min-h-[650px] w-full max-w-6xl mx-auto">
             {journeySteps.map((step, index) => (
               <motion.div
                 key={index}
@@ -865,7 +865,7 @@ const JourneyTimeline: React.FC = () => {
                 style={{
                   // 2x2 Grid Layout: 1(left-top), 2(right-top), 3(left-bottom), 4(right-bottom)
                   left: index % 2 === 0 ? '10%' : '60%', // Left column (10%) or Right column (60%)
-                  top: index < 2 ? '50px' : '300px', // Top row (50px) or Bottom row (300px)
+                  top: index < 2 ? '10px' : '380px', // Top row (10px) or Bottom row (380px)
                   transform: 'translate(-50%, -50%)',
                 }}
                 initial={{ opacity: 0, scale: 0.7, y: 100 }}
@@ -1007,10 +1007,10 @@ const JourneyTimeline: React.FC = () => {
               
               {/* Grid Flow Connections: 1→2, 2→4, 4→3, 3→1 */}
               {[
-                { from: [10, 50], to: [60, 50], delay: 0 }, // 1→2 (horizontal top)
-                { from: [60, 50], to: [60, 300], delay: 1 }, // 2→4 (vertical right)
-                { from: [60, 300], to: [10, 300], delay: 2 }, // 4→3 (horizontal bottom)
-                { from: [10, 300], to: [10, 50], delay: 3 }, // 3→1 (vertical left)
+                { from: [18, 70], to: [68, 70], delay: 0 }, // 1→2 (horizontal top)
+                { from: [68, 70], to: [68, 440], delay: 1 }, // 2→4 (vertical right)
+                { from: [68, 440], to: [18, 440], delay: 2 }, // 4→3 (horizontal bottom)
+                { from: [18, 440], to: [18, 70], delay: 3 }, // 3→1 (vertical left)
               ].map((connection, i) => (
                 <motion.line
                   key={`grid-connection-${i}`}
@@ -1039,10 +1039,10 @@ const JourneyTimeline: React.FC = () => {
               
               {/* Grid Connection Nodes */}
               {[
-                { pos: [10, 50], color: '#00D4FF' }, // Step 1
-                { pos: [60, 50], color: '#FF0080' }, // Step 2  
-                { pos: [10, 300], color: '#00D4FF' }, // Step 3
-                { pos: [60, 300], color: '#FFD700' }, // Step 4
+                { pos: [18, 70], color: '#00D4FF' }, // Step 1
+                { pos: [68, 70], color: '#FF0080' }, // Step 2  
+                { pos: [18, 440], color: '#00D4FF' }, // Step 3
+                { pos: [68, 440], color: '#FFD700' }, // Step 4
               ].map((node, i) => (
                 <motion.circle
                   key={`node-${i}`}
