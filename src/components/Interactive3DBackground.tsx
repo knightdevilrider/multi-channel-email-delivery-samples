@@ -3,278 +3,348 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Float } from '@react-three/drei';
 import * as THREE from 'three';
 
-// Financial Pillar Component
-const FinancialPillar: React.FC<{
+// AI Data Particle Component
+const DataParticle: React.FC<{
   position: THREE.Vector3;
-  height: number;
-  category: string;
+  targetPosition: THREE.Vector3;
   color: string;
-  mousePosition: THREE.Vector2;
-  onConnect: (position: THREE.Vector3) => void;
-}> = ({ position, height, category, color, mousePosition, onConnect }) => {
+  size: number;
+  speed: number;
+  onReachTarget: () => void;
+}> = ({ position, targetPosition, color, size, speed, onReachTarget }) => {
   const meshRef = useRef<THREE.Mesh>(null);
-  const materialRef = useRef<THREE.MeshStandardMaterial>(null);
-  const [isActive, setIsActive] = useState(false);
+  const [hasReachedTarget, setHasReachedTarget] = useState(false);
 
   useFrame((state) => {
-    if (meshRef.current && materialRef.current) {
-      // Calculate distance from mouse
-      const screenPosition = position.clone().project(state.camera);
-      const mouseDistance = mousePosition.distanceTo(new THREE.Vector2(screenPosition.x, screenPosition.y));
+    if (meshRef.current && !hasReachedTarget) {
+      // Move particle towards the central nexus
+      const direction = targetPosition.clone().sub(meshRef.current.position).normalize();
+      meshRef.current.position.add(direction.multiplyScalar(speed));
       
-      // Activate if mouse is close
-      const shouldActivate = mouseDistance < 0.3;
-      if (shouldActivate !== isActive) {
-        setIsActive(shouldActivate);
-        if (shouldActivate) {
-          onConnect(position);
-        }
+      // Check if reached target
+      const distance = meshRef.current.position.distanceTo(targetPosition);
+      if (distance < 1) {
+        setHasReachedTarget(true);
+        onReachTarget();
       }
-
-      // Animate based on activation
-      const targetIntensity = shouldActivate ? 2.0 : 0.5;
-      const targetScale = shouldActivate ? 1.1 : 1.0;
       
-      materialRef.current.emissiveIntensity = THREE.MathUtils.lerp(
-        materialRef.current.emissiveIntensity,
-        targetIntensity,
-        0.1
-      );
-
-      meshRef.current.scale.setScalar(
-        THREE.MathUtils.lerp(meshRef.current.scale.x, targetScale, 0.1)
-      );
-
-      // Gentle floating animation
-      meshRef.current.position.y = position.y + Math.sin(state.clock.elapsedTime + position.x) * 0.1;
+      // Add subtle floating motion
+      meshRef.current.position.y += Math.sin(state.clock.elapsedTime * 2 + position.x) * 0.01;
     }
   });
 
+  if (hasReachedTarget) return null;
+
   return (
-    <group position={position}>
-      <mesh ref={meshRef}>
-        <boxGeometry args={[1, height, 1]} />
+    <mesh ref={meshRef} position={position}>
+      <sphereGeometry args={[size, 8, 8]} />
+      <meshStandardMaterial
+        color={color}
+        emissive={color}
+        emissiveIntensity={0.3}
+        transparent
+        opacity={0.8}
+      />
+    </mesh>
+  );
+};
+
+// Organized Data Cluster Component
+const DataCluster: React.FC<{
+  position: THREE.Vector3;
+  color: string;
+  shape: 'cube' | 'sphere' | 'octahedron';
+  category: string;
+}> = ({ position, color, shape, category }) => {
+  const meshRef = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.5) * 0.2;
+      meshRef.current.rotation.y += 0.01;
+      meshRef.current.position.y = position.y + Math.sin(state.clock.elapsedTime + position.x) * 0.2;
+    }
+  });
+
+  const geometry = useMemo(() => {
+    switch (shape) {
+      case 'cube':
+        return <boxGeometry args={[1, 1, 1]} />;
+      case 'sphere':
+        return <sphereGeometry args={[0.6, 16, 16]} />;
+      case 'octahedron':
+        return <octahedronGeometry args={[0.8]} />;
+      default:
+        return <boxGeometry args={[1, 1, 1]} />;
+    }
+  }, [shape]);
+
+  return (
+    <Float speed={1} rotationIntensity={0.5} floatIntensity={0.5}>
+      <mesh ref={meshRef} position={position}>
+        {geometry}
         <meshStandardMaterial
-          ref={materialRef}
           color={color}
           emissive={color}
-          emissiveIntensity={0.5}
+          emissiveIntensity={0.2}
           metalness={0.8}
           roughness={0.2}
           transparent
           opacity={0.9}
         />
       </mesh>
-      
-      {/* Glow effect */}
-      <mesh position={[0, height / 2, 0]} scale={[1.2, height * 1.1, 1.2]}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshBasicMaterial
-          color={color}
+    </Float>
+  );
+};
+
+// Central AI Nexus Brain Component
+const AIBrain: React.FC<{ onParticleAbsorbed: (category: string) => void }> = ({ onParticleAbsorbed }) => {
+  const brainRef = useRef<THREE.Group>(null);
+  const coreRef = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    if (brainRef.current) {
+      brainRef.current.rotation.y += 0.005;
+    }
+    if (coreRef.current) {
+      coreRef.current.scale.setScalar(1 + Math.sin(state.clock.elapsedTime * 2) * 0.1);
+    }
+  });
+
+  return (
+    <group ref={brainRef} position={[0, 2, 0]}>
+      {/* Central Core */}
+      <mesh ref={coreRef}>
+        <sphereGeometry args={[2, 32, 32]} />
+        <meshStandardMaterial
+          color="#4169E1"
+          emissive="#4169E1"
+          emissiveIntensity={0.5}
+          metalness={0.3}
+          roughness={0.1}
           transparent
-          opacity={isActive ? 0.2 : 0.1}
-          side={THREE.BackSide}
+          opacity={0.8}
         />
       </mesh>
+
+      {/* Neural Network Nodes */}
+      {Array.from({ length: 12 }).map((_, i) => {
+        const angle = (i / 12) * Math.PI * 2;
+        const radius = 3;
+        const x = Math.cos(angle) * radius;
+        const z = Math.sin(angle) * radius;
+        const y = Math.sin(i * 0.5) * 1;
+
+        return (
+          <Float key={i} speed={1 + i * 0.1} rotationIntensity={0.3} floatIntensity={0.3}>
+            <mesh position={[x, y, z]}>
+              <sphereGeometry args={[0.3, 16, 16]} />
+              <meshStandardMaterial
+                color="#00ffff"
+                emissive="#00ffff"
+                emissiveIntensity={0.4}
+                transparent
+                opacity={0.7}
+              />
+            </mesh>
+          </Float>
+        );
+      })}
+
+      {/* Neural Connections */}
+      {Array.from({ length: 8 }).map((_, i) => {
+        const angle = (i / 8) * Math.PI * 2;
+        const radius = 3;
+        const x = Math.cos(angle) * radius;
+        const z = Math.sin(angle) * radius;
+
+        return (
+          <mesh key={`connection-${i}`} position={[x * 0.5, 0, z * 0.5]} rotation={[0, angle, 0]}>
+            <cylinderGeometry args={[0.02, 0.02, radius, 8]} />
+            <meshStandardMaterial
+              color="#00ffff"
+              emissive="#00ffff"
+              emissiveIntensity={0.3}
+              transparent
+              opacity={0.4}
+            />
+          </mesh>
+        );
+      })}
     </group>
   );
 };
 
-// Energy Connection Line Component
-const EnergyLine: React.FC<{
-  start: THREE.Vector3;
-  end: THREE.Vector3;
-  active: boolean;
-}> = ({ start, end, active }) => {
-  const lineRef = useRef<THREE.Line>(null);
-  const materialRef = useRef<THREE.LineBasicMaterial>(null);
-
-  const points = useMemo(() => {
-    const curve = new THREE.CatmullRomCurve3([
-      start,
-      new THREE.Vector3(
-        (start.x + end.x) / 2,
-        Math.max(start.y, end.y) + 2,
-        (start.z + end.z) / 2
-      ),
-      end
-    ]);
-    return curve.getPoints(50);
-  }, [start, end]);
-
-  const geometry = useMemo(() => {
-    const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    return geometry;
-  }, [points]);
+// Storage Zone Component
+const StorageZone: React.FC<{
+  position: THREE.Vector3;
+  color: string;
+  category: string;
+}> = ({ position, color, category }) => {
+  const zoneRef = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
-    if (materialRef.current) {
-      const targetOpacity = active ? 0.8 : 0.0;
-      materialRef.current.opacity = THREE.MathUtils.lerp(
-        materialRef.current.opacity,
-        targetOpacity,
-        0.1
-      );
-
-      // Animated glow effect
-      if (active) {
-        const pulse = Math.sin(state.clock.elapsedTime * 3) * 0.3 + 0.7;
-        materialRef.current.opacity = targetOpacity * pulse;
-      }
+    if (zoneRef.current) {
+      zoneRef.current.material.emissiveIntensity = 0.1 + Math.sin(state.clock.elapsedTime + position.x) * 0.05;
     }
   });
 
   return (
-    <line ref={lineRef} geometry={geometry}>
-      <lineBasicMaterial
-        ref={materialRef}
-        color="#00ffff"
+    <mesh ref={zoneRef} position={position}>
+      <boxGeometry args={[4, 0.1, 4]} />
+      <meshStandardMaterial
+        color={color}
+        emissive={color}
+        emissiveIntensity={0.1}
         transparent
-        opacity={0}
-        linewidth={2}
-      />
-    </line>
-  );
-};
-
-// Floating Data Particles
-const DataParticles: React.FC = () => {
-  const particlesRef = useRef<THREE.Points>(null);
-  const materialRef = useRef<THREE.PointsMaterial>(null);
-
-  const particlePositions = useMemo(() => {
-    const positions = new Float32Array(200 * 3);
-    for (let i = 0; i < 200; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 50;
-      positions[i * 3 + 1] = Math.random() * 20;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 50;
-    }
-    return positions;
-  }, []);
-
-  useFrame((state) => {
-    if (particlesRef.current && materialRef.current) {
-      particlesRef.current.rotation.y = state.clock.elapsedTime * 0.05;
-      
-      // Pulsing effect
-      const pulse = Math.sin(state.clock.elapsedTime * 2) * 0.3 + 0.7;
-      materialRef.current.opacity = pulse * 0.6;
-    }
-  });
-
-  return (
-    <points ref={particlesRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={200}
-          array={particlePositions}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <pointsMaterial
-        ref={materialRef}
-        color="#4169E1"
-        size={0.1}
-        transparent
-        opacity={0.6}
-      />
-    </points>
-  );
-};
-
-// Ground Grid Component
-const GroundGrid: React.FC<{ mousePosition: THREE.Vector2 }> = ({ mousePosition }) => {
-  const gridRef = useRef<THREE.Mesh>(null);
-  const materialRef = useRef<THREE.ShaderMaterial>(null);
-
-  const gridShader = useMemo(() => ({
-    uniforms: {
-      time: { value: 0 },
-      mousePos: { value: new THREE.Vector2(0, 0) },
-      color1: { value: new THREE.Color('#4169E1') },
-      color2: { value: new THREE.Color('#00ff88') }
-    },
-    vertexShader: `
-      varying vec2 vUv;
-      varying vec3 vPosition;
-      
-      void main() {
-        vUv = uv;
-        vPosition = position;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }
-    `,
-    fragmentShader: `
-      uniform float time;
-      uniform vec2 mousePos;
-      uniform vec3 color1;
-      uniform vec3 color2;
-      
-      varying vec2 vUv;
-      varying vec3 vPosition;
-      
-      void main() {
-        // Grid pattern
-        vec2 grid = abs(fract(vUv * 20.0) - 0.5);
-        float line = smoothstep(0.0, 0.02, min(grid.x, grid.y));
-        
-        // Mouse interaction
-        float mouseDist = distance(vUv, mousePos * 0.5 + 0.5);
-        float mouseEffect = exp(-mouseDist * 3.0) * 0.8;
-        
-        // AI pulse
-        float pulse = sin(time * 1.5) * 0.2 + 0.8;
-        
-        // Color mixing
-        vec3 color = mix(color1, color2, sin(time + vUv.x * 3.0) * 0.5 + 0.5);
-        
-        float intensity = (1.0 - line) * pulse + mouseEffect;
-        gl_FragColor = vec4(color * intensity, intensity * 0.4);
-      }
-    `
-  }), []);
-
-  useFrame((state) => {
-    if (materialRef.current) {
-      materialRef.current.uniforms.time.value = state.clock.elapsedTime;
-      materialRef.current.uniforms.mousePos.value = mousePosition;
-    }
-  });
-
-  return (
-    <mesh ref={gridRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, -5, 0]}>
-      <planeGeometry args={[100, 100]} />
-      <shaderMaterial
-        ref={materialRef}
-        {...gridShader}
-        transparent
-        side={THREE.DoubleSide}
+        opacity={0.3}
       />
     </mesh>
   );
 };
 
-// Mouse Interaction Handler
-const MouseHandler: React.FC<{
-  onMouseMove: (position: THREE.Vector2) => void;
-}> = ({ onMouseMove }) => {
-  const { gl, camera } = useThree();
+// Data Stream Manager Component
+const DataStreamManager: React.FC = () => {
+  const [particles, setParticles] = useState<Array<{
+    id: number;
+    position: THREE.Vector3;
+    color: string;
+    size: number;
+    speed: number;
+    category: string;
+  }>>([]);
+  
+  const [clusters, setClusters] = useState<Array<{
+    id: number;
+    position: THREE.Vector3;
+    color: string;
+    shape: 'cube' | 'sphere' | 'octahedron';
+    category: string;
+  }>>([]);
 
+  const nextParticleId = useRef(0);
+  const nextClusterId = useRef(0);
+
+  const dataTypes = [
+    { color: '#4169E1', category: 'receipts', shape: 'cube' as const },
+    { color: '#FF007A', category: 'voice', shape: 'sphere' as const },
+    { color: '#00ff88', category: 'transactions', shape: 'octahedron' as const },
+    { color: '#ffd700', category: 'reports', shape: 'cube' as const },
+  ];
+
+  const storagePositions = [
+    new THREE.Vector3(-8, -2, -8),
+    new THREE.Vector3(8, -2, -8),
+    new THREE.Vector3(-8, -2, 8),
+    new THREE.Vector3(8, -2, 8),
+  ];
+
+  // Generate new particles
   useEffect(() => {
-    const handleMouseMove = (event: MouseEvent) => {
-      const rect = gl.domElement.getBoundingClientRect();
-      const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      onMouseMove(new THREE.Vector2(x, y));
+    const interval = setInterval(() => {
+      const dataType = dataTypes[Math.floor(Math.random() * dataTypes.length)];
+      const angle = Math.random() * Math.PI * 2;
+      const radius = 15 + Math.random() * 5;
+      const startPosition = new THREE.Vector3(
+        Math.cos(angle) * radius,
+        Math.random() * 4 - 2,
+        Math.sin(angle) * radius
+      );
+
+      const newParticle = {
+        id: nextParticleId.current++,
+        position: startPosition,
+        color: dataType.color,
+        size: 0.1 + Math.random() * 0.1,
+        speed: 0.05 + Math.random() * 0.03,
+        category: dataType.category,
+      };
+
+      setParticles(prev => [...prev, newParticle]);
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleParticleAbsorbed = (particleId: number, category: string) => {
+    // Remove the particle
+    setParticles(prev => prev.filter(p => p.id !== particleId));
+
+    // Create a new organized cluster
+    const dataType = dataTypes.find(dt => dt.category === category) || dataTypes[0];
+    const storageIndex = dataTypes.findIndex(dt => dt.category === category);
+    const targetPosition = storagePositions[storageIndex] || storagePositions[0];
+    
+    // Add some randomness to the final position
+    const finalPosition = targetPosition.clone().add(
+      new THREE.Vector3(
+        (Math.random() - 0.5) * 3,
+        Math.random() * 2,
+        (Math.random() - 0.5) * 3
+      )
+    );
+
+    const newCluster = {
+      id: nextClusterId.current++,
+      position: finalPosition,
+      color: dataType.color,
+      shape: dataType.shape,
+      category: category,
     };
 
-    gl.domElement.addEventListener('mousemove', handleMouseMove);
-    return () => gl.domElement.removeEventListener('mousemove', handleMouseMove);
-  }, [gl, onMouseMove]);
+    setClusters(prev => [...prev, newCluster]);
 
-  // Gentle camera movement
+    // Remove old clusters to prevent memory issues
+    setTimeout(() => {
+      setClusters(prev => prev.filter(c => c.id !== newCluster.id));
+    }, 10000);
+  };
+
+  return (
+    <>
+      {/* Render particles */}
+      {particles.map((particle) => (
+        <DataParticle
+          key={particle.id}
+          position={particle.position}
+          targetPosition={new THREE.Vector3(0, 2, 0)}
+          color={particle.color}
+          size={particle.size}
+          speed={particle.speed}
+          onReachTarget={() => handleParticleAbsorbed(particle.id, particle.category)}
+        />
+      ))}
+
+      {/* Render organized clusters */}
+      {clusters.map((cluster) => (
+        <DataCluster
+          key={cluster.id}
+          position={cluster.position}
+          color={cluster.color}
+          shape={cluster.shape}
+          category={cluster.category}
+        />
+      ))}
+
+      {/* Storage zones */}
+      {storagePositions.map((position, index) => (
+        <StorageZone
+          key={index}
+          position={position}
+          color={dataTypes[index].color}
+          category={dataTypes[index].category}
+        />
+      ))}
+    </>
+  );
+};
+
+// Mouse Interaction Handler
+const MouseHandler: React.FC = () => {
+  const { camera } = useThree();
+
   useFrame((state) => {
+    // Gentle camera movement
     const time = state.clock.elapsedTime;
     camera.position.x += (Math.sin(time * 0.1) * 2 - camera.position.x) * 0.02;
     camera.position.z += (Math.cos(time * 0.08) * 3 - camera.position.z) * 0.02;
@@ -285,90 +355,27 @@ const MouseHandler: React.FC<{
 };
 
 // Main Scene Component
-const FinancialLandscapeScene: React.FC = () => {
-  const [mousePosition, setMousePosition] = useState(new THREE.Vector2(0, 0));
-  const [activeConnections, setActiveConnections] = useState<Array<{
-    start: THREE.Vector3;
-    end: THREE.Vector3;
-    id: number;
-  }>>([]);
-  const [nextConnectionId, setNextConnectionId] = useState(0);
-
-  // Financial categories with positions and colors
-  const financialPillars = useMemo(() => [
-    { position: new THREE.Vector3(-8, 2, -6), height: 4, category: 'Revenue', color: '#00ff88' },
-    { position: new THREE.Vector3(-4, 1.5, -8), height: 3, category: 'Marketing', color: '#4169E1' },
-    { position: new THREE.Vector3(0, 3, -4), height: 6, category: 'Operations', color: '#8a2be2' },
-    { position: new THREE.Vector3(4, 2.5, -6), height: 5, category: 'Technology', color: '#00ffff' },
-    { position: new THREE.Vector3(8, 1.8, -8), height: 3.6, category: 'HR', color: '#ff6b6b' },
-    { position: new THREE.Vector3(-6, 2.2, 2), height: 4.4, category: 'Finance', color: '#ffd700' },
-    { position: new THREE.Vector3(-2, 1.2, 4), height: 2.4, category: 'Legal', color: '#ff69b4' },
-    { position: new THREE.Vector3(2, 2.8, 6), height: 5.6, category: 'Sales', color: '#32cd32' },
-    { position: new THREE.Vector3(6, 1.6, 4), height: 3.2, category: 'Support', color: '#ff4500' },
-  ], []);
-
-  const handleConnection = (position: THREE.Vector3) => {
-    // Create connections to nearby pillars
-    const nearbyPillars = financialPillars.filter(pillar => 
-      pillar.position.distanceTo(position) < 8 && pillar.position !== position
-    );
-
-    const newConnections = nearbyPillars.slice(0, 2).map(pillar => ({
-      start: position,
-      end: pillar.position,
-      id: nextConnectionId + Math.random()
-    }));
-
-    setActiveConnections(prev => [...prev, ...newConnections]);
-    setNextConnectionId(prev => prev + newConnections.length);
-
-    // Remove old connections after 3 seconds
-    setTimeout(() => {
-      setActiveConnections(prev => 
-        prev.filter(conn => !newConnections.some(newConn => newConn.id === conn.id))
-      );
-    }, 3000);
-  };
-
+const AIDataNexusScene: React.FC = () => {
   return (
     <>
-      {/* Lighting */}
-      <ambientLight intensity={0.3} />
+      {/* Ambient Lighting */}
+      <ambientLight intensity={0.2} />
       <pointLight position={[10, 10, 10]} intensity={0.8} color="#4169E1" />
-      <pointLight position={[-10, 10, -10]} intensity={0.6} color="#00ff88" />
-      <pointLight position={[0, 15, 0]} intensity={0.4} color="#8a2be2" />
+      <pointLight position={[-10, 10, -10]} intensity={0.6} color="#00ffff" />
+      <pointLight position={[0, 15, 0]} intensity={0.4} color="#FF007A" />
+      <pointLight position={[0, -5, 0]} intensity={0.3} color="#00ff88" />
 
-      {/* Ground Grid */}
-      <GroundGrid mousePosition={mousePosition} />
+      {/* Central AI Brain */}
+      <AIBrain onParticleAbsorbed={() => {}} />
 
-      {/* Financial Pillars */}
-      {financialPillars.map((pillar, index) => (
-        <FinancialPillar
-          key={index}
-          position={pillar.position}
-          height={pillar.height}
-          category={pillar.category}
-          color={pillar.color}
-          mousePosition={mousePosition}
-          onConnect={handleConnection}
-        />
-      ))}
-
-      {/* Energy Connections */}
-      {activeConnections.map((connection) => (
-        <EnergyLine
-          key={connection.id}
-          start={connection.start}
-          end={connection.end}
-          active={true}
-        />
-      ))}
-
-      {/* Floating Data Particles */}
-      <DataParticles />
+      {/* Data Stream Management */}
+      <DataStreamManager />
 
       {/* Mouse Interaction */}
-      <MouseHandler onMouseMove={setMousePosition} />
+      <MouseHandler />
+
+      {/* Ambient Fog */}
+      <fog attach="fog" args={['#0a0a0a', 10, 50]} />
     </>
   );
 };
@@ -380,7 +387,7 @@ const Interactive3DBackground: React.FC = () => {
         camera={{ position: [0, 8, 15], fov: 60 }}
         style={{ background: 'transparent' }}
       >
-        <FinancialLandscapeScene />
+        <AIDataNexusScene />
       </Canvas>
     </div>
   );
