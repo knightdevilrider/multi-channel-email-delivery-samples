@@ -590,9 +590,6 @@ const JourneyTimeline: React.FC = () => {
                     {step.description}
                   </motion.p>
 
-                  {/* Quantum Status Indicator */}
-                  
-                  {/* Neural Connection Lines */}
                   <motion.div
                     className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-0 group-hover:opacity-100"
                     animate={{
@@ -609,83 +606,6 @@ const JourneyTimeline: React.FC = () => {
             ))}
           </div>
           
-          {/* Quantum Connection Network */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none" style={{ zIndex: 5 }}>
-            <defs>
-              <linearGradient id="quantumFlow" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#00D4FF" stopOpacity="0.8" />
-                <stop offset="25%" stopColor="#FF0080" stopOpacity="0.8" />
-                <stop offset="75%" stopColor="#00D4FF" stopOpacity="0.8" />
-                <stop offset="100%" stopColor="#FFD700" stopOpacity="0.8" />
-              </linearGradient>
-              <filter id="quantumGlow">
-                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                <feMerge> 
-                  <feMergeNode in="coloredBlur"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-            </defs>
-            
-            {/* Neural Network Connections */}
-            {[
-              { from: [25, 25], to: [75, 25], delay: 0 },
-              { from: [75, 25], to: [75, 75], delay: 1 },
-              { from: [75, 75], to: [25, 75], delay: 2 },
-              { from: [25, 75], to: [25, 25], delay: 3 },
-            ].map((connection, i) => (
-              <motion.line
-                key={`quantum-${i}`}
-                x1={connection.from[0]}
-                y1={connection.from[1]}
-                x2={connection.to[0]}
-                y2={connection.to[1]}
-                stroke="url(#quantumFlow)"
-                strokeWidth="0.5"
-                filter="url(#quantumGlow)"
-                strokeDasharray="15,10"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ 
-                  pathLength: [0, 1, 0], 
-                  opacity: [0, 0.8, 0],
-                  strokeDashoffset: [0, -30, -60]
-                }}
-                transition={{ 
-                  duration: 4, 
-                  repeat: Infinity, 
-                  delay: connection.delay,
-                  ease: "easeInOut"
-                }}
-              />
-            ))}
-            
-            {/* Quantum Nodes */}
-            {[
-              { pos: [25, 25], color: '#00D4FF' },
-              { pos: [75, 25], color: '#FF0080' },
-              { pos: [25, 75], color: '#00D4FF' },
-              { pos: [75, 75], color: '#FFD700' },
-            ].map((node, i) => (
-              <motion.circle
-                key={`node-${i}`}
-                cx={node.pos[0]}
-                cy={node.pos[1]}
-                r="1.5"
-                fill={node.color}
-                filter="url(#quantumGlow)"
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ 
-                  opacity: [0.6, 1, 0.6], 
-                  scale: [1, 2, 1]
-                }}
-                transition={{ 
-                  duration: 3, 
-                  repeat: Infinity, 
-                  delay: i * 0.7 
-                }}
-              />
-            ))}
-          </svg>
         </div>
       </div>
     </section>
