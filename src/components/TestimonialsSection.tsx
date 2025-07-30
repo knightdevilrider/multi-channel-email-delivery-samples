@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, ChevronLeft, ChevronRight, Zap, TrendingUp, Brain, Shield } from 'lucide-react';
+import { Star, ChevronLeft, ChevronRight, Zap, TrendingUp, Brain, Shield, Sparkles, Award } from 'lucide-react';
 
 const testimonials = [
   {
@@ -12,7 +12,8 @@ const testimonials = [
     savings: '$50,000',
     metric: '300% ROI',
     icon: TrendingUp,
-    color: '#00D4FF'
+    color: '#00D4FF',
+    gradient: 'from-cyan-400 via-blue-500 to-purple-600'
   },
   {
     name: 'Marcus Rodriguez',
@@ -23,7 +24,8 @@ const testimonials = [
     savings: '$28,500',
     metric: '98% Accuracy',
     icon: Brain,
-    color: '#FF0080'
+    color: '#FF0080',
+    gradient: 'from-pink-500 via-purple-500 to-indigo-600'
   },
   {
     name: 'Emily Watson',
@@ -34,19 +36,21 @@ const testimonials = [
     savings: '$125,000',
     metric: '99.9% Uptime',
     icon: Shield,
-    color: '#00FF88'
+    color: '#00FF88',
+    gradient: 'from-emerald-400 via-green-500 to-teal-600'
   }
 ];
 
 const TestimonialsSection: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     if (isAutoPlaying) {
       const interval = setInterval(() => {
         setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-      }, 4000);
+      }, 5000);
       return () => clearInterval(interval);
     }
   }, [isAutoPlaying]);
@@ -61,228 +65,381 @@ const TestimonialsSection: React.FC = () => {
     setIsAutoPlaying(false);
   };
 
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMousePosition({
+      x: ((e.clientX - rect.left) / rect.width - 0.5) * 2,
+      y: ((e.clientY - rect.top) / rect.height - 0.5) * 2
+    });
+  };
+
   const currentTestimonial = testimonials[currentIndex];
 
   return (
-    <section className="py-16 relative overflow-hidden" id="testimonials">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Compact Header */}
+    <section 
+      className="py-20 relative overflow-hidden bg-gradient-to-b from-slate-900/20 via-black/40 to-slate-900/20" 
+      id="testimonials"
+      onMouseMove={handleMouseMove}
+    >
+      {/* Neural Network Background */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `
+            radial-gradient(circle at 20% 30%, rgba(34, 211, 238, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(255, 0, 122, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%)
+          `
+        }} />
+      </div>
+
+      {/* Floating Particles */}
+      <div className="absolute inset-0 overflow-hidden">
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-cyan-400 rounded-full opacity-60"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -100, 0],
+              x: [0, Math.random() * 50 - 25, 0],
+              opacity: [0, 1, 0],
+              scale: [0, 1.5, 0]
+            }}
+            transition={{
+              duration: 4 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 4,
+              ease: "easeInOut"
+            }}
+          />
+        ))}
+      </div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Ultra-Modern Header */}
         <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 1 }}
         >
+          <motion.div
+            className="inline-flex items-center space-x-3 mb-6 px-6 py-3 bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-pink-500/10 rounded-full border border-cyan-400/30 backdrop-blur-xl"
+            whileHover={{ scale: 1.05 }}
+          >
+            <Award className="w-6 h-6 text-cyan-400" />
+            <span className="text-cyan-300 font-semibold">SUCCESS STORIES</span>
+            <Sparkles className="w-6 h-6 text-pink-400" />
+          </motion.div>
+          
           <motion.h2 
-            className="text-3xl md:text-5xl font-black mb-4 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent"
+            className="text-4xl md:text-6xl lg:text-7xl font-black mb-6 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent relative"
+            style={{
+              filter: 'drop-shadow(0 0 30px rgba(34, 211, 238, 0.3))'
+            }}
             animate={{
               backgroundPosition: ['0% 50%', '100% 50%', '0% 50%']
             }}
             transition={{
-              duration: 6,
+              duration: 8,
               repeat: Infinity,
               ease: "easeInOut"
             }}
           >
-            Success Stories
+            Visionary Results
+            
+            {/* Holographic Accent */}
+            <motion.div
+              className="absolute -top-4 -right-8 w-12 h-12 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-full opacity-60 blur-sm"
+              animate={{
+                scale: [1, 1.5, 1],
+                rotate: [0, 360],
+                opacity: [0.6, 1, 0.6]
+              }}
+              transition={{ duration: 4, repeat: Infinity }}
+            />
           </motion.h2>
-          <p className="text-lg text-cyan-100 max-w-2xl mx-auto">
-            Real results from visionary entrepreneurs
-          </p>
+          
+          <motion.p 
+            className="text-xl text-cyan-100 max-w-3xl mx-auto leading-relaxed"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 1.5, delay: 0.3 }}
+          >
+            Real entrepreneurs. Revolutionary results. Exponential growth.
+          </motion.p>
         </motion.div>
 
-        {/* Circular Testimonial Container */}
-        <div className="relative flex items-center justify-center">
-          {/* Navigation Buttons */}
-          <motion.button
-            onClick={prevTestimonial}
-            className="absolute left-0 z-20 p-3 rounded-full bg-slate-800/80 backdrop-blur-xl border-2 border-cyan-400/40 hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-400/20 transition-all duration-300 group"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <ChevronLeft className="w-6 h-6 text-cyan-400 group-hover:scale-110 transition-transform duration-300" />
-          </motion.button>
+        {/* Holographic Testimonial Display */}
+        <div className="relative max-w-6xl mx-auto">
+          {/* Navigation Controls */}
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 z-20">
+            <motion.button
+              onClick={prevTestimonial}
+              className="group relative p-4 bg-gradient-to-r from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl border-2 border-cyan-400/40 hover:border-cyan-400 transition-all duration-300 overflow-hidden"
+              whileHover={{ scale: 1.1, x: -5 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <ChevronLeft className="w-8 h-8 text-cyan-400 relative z-10" />
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 to-purple-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </motion.button>
+          </div>
 
-          <motion.button
-            onClick={nextTestimonial}
-            className="absolute right-0 z-20 p-3 rounded-full bg-slate-800/80 backdrop-blur-xl border-2 border-cyan-400/40 hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-400/20 transition-all duration-300 group"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <ChevronRight className="w-6 h-6 text-cyan-400 group-hover:scale-110 transition-transform duration-300" />
-          </motion.button>
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 z-20">
+            <motion.button
+              onClick={nextTestimonial}
+              className="group relative p-4 bg-gradient-to-r from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl border-2 border-cyan-400/40 hover:border-cyan-400 transition-all duration-300 overflow-hidden"
+              whileHover={{ scale: 1.1, x: 5 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <ChevronRight className="w-8 h-8 text-cyan-400 relative z-10" />
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 to-purple-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </motion.button>
+          </div>
 
-          {/* Circular Testimonial Card */}
-          <motion.div
-            className="relative w-96 h-96 mx-16"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 1 }}
-          >
+          {/* Main Testimonial Card */}
+          <div className="mx-16">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
-                className="absolute inset-0 rounded-full bg-gradient-to-br from-slate-900/90 via-slate-800/80 to-slate-900/90 backdrop-blur-2xl border-2 border-cyan-400/30 p-8 overflow-hidden shadow-2xl"
-                initial={{ opacity: 0, rotateY: -90, scale: 0.8 }}
+                className="relative"
+                initial={{ opacity: 0, scale: 0.8, rotateY: -30 }}
                 animate={{ 
                   opacity: 1, 
-                  rotateY: 0, 
-                  scale: 1,
-                  borderColor: currentTestimonial.color + '60'
+                  scale: 1, 
+                  rotateY: 0,
+                  rotateX: mousePosition.y * 2,
+                  rotateZ: mousePosition.x * 1
                 }}
-                exit={{ opacity: 0, rotateY: 90, scale: 0.8 }}
-                transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
-                style={{
-                  boxShadow: `0 0 40px ${currentTestimonial.color}40`
-                }}
+                exit={{ opacity: 0, scale: 0.8, rotateY: 30 }}
+                transition={{ duration: 0.8, type: "spring", stiffness: 100 }}
               >
-                {/* Holographic Scanning Ring */}
-                <motion.div
-                  className="absolute inset-4 border-2 rounded-full opacity-30"
-                  style={{ borderColor: currentTestimonial.color }}
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                />
-
-                {/* Content Container */}
-                <div className="relative z-10 h-full flex flex-col items-center justify-center text-center">
-                  {/* Avatar with Neural Ring */}
+                {/* Holographic Card */}
+                <div 
+                  className={`relative bg-gradient-to-br from-slate-900/90 via-slate-800/80 to-slate-900/90 backdrop-blur-2xl rounded-3xl p-12 border-2 transition-all duration-500 overflow-hidden shadow-2xl`}
+                  style={{
+                    borderColor: currentTestimonial.color + '60',
+                    boxShadow: `0 0 60px ${currentTestimonial.color}40, inset 0 0 60px rgba(255,255,255,0.05)`
+                  }}
+                >
+                  {/* Neural Scanning Lines */}
                   <motion.div
-                    className="relative mb-4"
-                    whileHover={{ scale: 1.05 }}
-                  >
-                    <img
-                      src={currentTestimonial.avatar}
-                      alt={currentTestimonial.name}
-                      className="w-20 h-20 rounded-full border-3 shadow-xl relative z-10"
-                      style={{ 
-                        borderColor: currentTestimonial.color,
-                        filter: `drop-shadow(0 0 20px ${currentTestimonial.color}60)`
-                      }}
-                    />
-                    
-                    {/* Neural Activity Ring */}
-                    <motion.div
-                      className="absolute inset-0 border-2 rounded-full opacity-60"
-                      style={{ borderColor: currentTestimonial.color }}
-                      animate={{ rotate: -360 }}
-                      transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-                    />
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/10 to-transparent"
+                    animate={{
+                      x: ['-100%', '100%']
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      repeatDelay: 4
+                    }}
+                  />
 
-                    {/* Status Indicator */}
+                  {/* Holographic Grid Overlay */}
+                  <div className="absolute inset-0 opacity-20" style={{
+                    backgroundImage: `
+                      linear-gradient(${currentTestimonial.color}40 1px, transparent 1px),
+                      linear-gradient(90deg, ${currentTestimonial.color}40 1px, transparent 1px)
+                    `,
+                    backgroundSize: '30px 30px'
+                  }} />
+
+                  <div className="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
+                    {/* Avatar Section */}
                     <motion.div
-                      className="absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center shadow-lg"
-                      style={{ backgroundColor: currentTestimonial.color }}
+                      className="text-center lg:text-left"
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      <div className="relative inline-block mb-6">
+                        {/* Avatar with Neural Ring */}
+                        <div className="relative">
+                          <img
+                            src={currentTestimonial.avatar}
+                            alt={currentTestimonial.name}
+                            className="w-32 h-32 rounded-full border-4 shadow-2xl relative z-10"
+                            style={{ 
+                              borderColor: currentTestimonial.color,
+                              filter: `drop-shadow(0 0 30px ${currentTestimonial.color}60)`
+                            }}
+                          />
+                          
+                          {/* Rotating Neural Rings */}
+                          {[...Array(3)].map((_, i) => (
+                            <motion.div
+                              key={i}
+                              className="absolute inset-0 border-2 rounded-full opacity-40"
+                              style={{ 
+                                borderColor: currentTestimonial.color,
+                                width: `${140 + i * 20}px`,
+                                height: `${140 + i * 20}px`,
+                                left: `${-10 - i * 10}px`,
+                                top: `${-10 - i * 10}px`
+                              }}
+                              animate={{ rotate: i % 2 === 0 ? 360 : -360 }}
+                              transition={{ duration: 8 + i * 2, repeat: Infinity, ease: "linear" }}
+                            />
+                          ))}
+
+                          {/* Status Indicator */}
+                          <motion.div
+                            className="absolute -top-2 -right-2 w-12 h-12 rounded-full flex items-center justify-center shadow-2xl border-2 border-white/20"
+                            style={{ backgroundColor: currentTestimonial.color }}
+                            animate={{
+                              scale: [1, 1.2, 1],
+                              boxShadow: [
+                                `0 0 20px ${currentTestimonial.color}60`,
+                                `0 0 40px ${currentTestimonial.color}80`,
+                                `0 0 20px ${currentTestimonial.color}60`
+                              ]
+                            }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                          >
+                            <currentTestimonial.icon className="w-6 h-6 text-white" />
+                          </motion.div>
+                        </div>
+
+                        {/* Author Info */}
+                        <div className="mt-6">
+                          <h3 className="text-2xl font-black text-white mb-2">
+                            {currentTestimonial.name}
+                          </h3>
+                          <p className="text-cyan-300 font-semibold mb-4">
+                            {currentTestimonial.role}
+                          </p>
+                          
+                          {/* Stars */}
+                          <div className="flex justify-center lg:justify-start space-x-1">
+                            {[...Array(currentTestimonial.rating)].map((_, i) => (
+                              <motion.div
+                                key={i}
+                                animate={{ 
+                                  scale: [1, 1.3, 1],
+                                  rotate: [0, 360]
+                                }}
+                                transition={{ 
+                                  duration: 2, 
+                                  repeat: Infinity, 
+                                  delay: i * 0.2 
+                                }}
+                              >
+                                <Star 
+                                  className="w-6 h-6 text-yellow-400 fill-current" 
+                                  style={{ filter: 'drop-shadow(0 0 10px rgba(251, 191, 36, 0.8))' }}
+                                />
+                              </motion.div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+
+                    {/* Quote Section */}
+                    <div className="lg:col-span-2">
+                      <motion.blockquote 
+                        className="text-2xl md:text-3xl font-bold text-white leading-relaxed mb-8 relative"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1, delay: 0.3 }}
+                      >
+                        <span className="text-6xl text-cyan-400 opacity-50 absolute -top-4 -left-4">"</span>
+                        {currentTestimonial.content}
+                        <span className="text-6xl text-cyan-400 opacity-50 absolute -bottom-8 -right-4">"</span>
+                      </motion.blockquote>
+
+                      {/* Metrics Grid */}
+                      <div className="grid grid-cols-2 gap-6">
+                        <motion.div
+                          className="relative p-6 bg-gradient-to-br from-green-500/20 via-emerald-500/10 to-green-600/20 rounded-2xl border border-green-400/40 backdrop-blur-sm overflow-hidden"
+                          whileHover={{ scale: 1.05 }}
+                        >
+                          <div className="relative z-10">
+                            <div className="text-3xl font-black text-green-400 mb-2">
+                              {currentTestimonial.savings}
+                            </div>
+                            <div className="text-green-300 font-semibold">Total Saved</div>
+                          </div>
+                          <div className="absolute inset-0 bg-gradient-to-br from-green-400/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
+                        </motion.div>
+
+                        <motion.div
+                          className="relative p-6 bg-gradient-to-br from-purple-500/20 via-indigo-500/10 to-purple-600/20 rounded-2xl border border-purple-400/40 backdrop-blur-sm overflow-hidden"
+                          whileHover={{ scale: 1.05 }}
+                        >
+                          <div className="relative z-10">
+                            <div className="text-3xl font-black text-purple-400 mb-2">
+                              {currentTestimonial.metric}
+                            </div>
+                            <div className="text-purple-300 font-semibold">Performance</div>
+                          </div>
+                          <div className="absolute inset-0 bg-gradient-to-br from-purple-400/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
+                        </motion.div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Quantum Corners */}
+                  {[...Array(4)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      className={`absolute w-8 h-8 ${
+                        i === 0 ? 'top-6 left-6 border-l-2 border-t-2 rounded-tl-2xl' :
+                        i === 1 ? 'top-6 right-6 border-r-2 border-t-2 rounded-tr-2xl' :
+                        i === 2 ? 'bottom-6 left-6 border-l-2 border-b-2 rounded-bl-2xl' :
+                        'bottom-6 right-6 border-r-2 border-b-2 rounded-br-2xl'
+                      }`}
+                      style={{ borderColor: currentTestimonial.color }}
                       animate={{
-                        scale: [1, 1.2, 1],
-                        boxShadow: [
-                          `0 0 10px ${currentTestimonial.color}60`,
-                          `0 0 20px ${currentTestimonial.color}80`,
-                          `0 0 10px ${currentTestimonial.color}60`
+                        opacity: [0.4, 1, 0.4],
+                        borderColor: [
+                          currentTestimonial.color + '60', 
+                          currentTestimonial.color, 
+                          currentTestimonial.color + '60'
                         ]
                       }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    >
-                      <currentTestimonial.icon className="w-3 h-3 text-white" />
-                    </motion.div>
-                  </motion.div>
-
-                  {/* Quote */}
-                  <blockquote className="text-white text-sm mb-4 leading-relaxed max-w-xs">
-                    "{currentTestimonial.content}"
-                  </blockquote>
-
-                  {/* Author Info */}
-                  <div className="mb-4">
-                    <div className="text-white font-bold text-lg mb-1">
-                      {currentTestimonial.name}
-                    </div>
-                    <div className="text-cyan-300 text-sm mb-2">
-                      {currentTestimonial.role}
-                    </div>
-                    
-                    {/* Stars */}
-                    <div className="flex justify-center space-x-1 mb-3">
-                      {[...Array(currentTestimonial.rating)].map((_, i) => (
-                        <motion.div
-                          key={i}
-                          animate={{ scale: [1, 1.2, 1] }}
-                          transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}
-                        >
-                          <Star 
-                            className="w-4 h-4 text-yellow-400 fill-current" 
-                            style={{ filter: 'drop-shadow(0 0 8px rgba(251, 191, 36, 0.8))' }}
-                          />
-                        </motion.div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Metrics */}
-                  <div className="grid grid-cols-2 gap-3 w-full max-w-xs px-4">
-                    <div className="text-center p-2 bg-green-400/10 rounded-lg border border-green-400/30">
-                      <div className="text-green-400 font-bold text-sm">
-                        {currentTestimonial.savings}
-                      </div>
-                      <div className="text-green-300 text-xs truncate">Saved</div>
-                    </div>
-                    <div className="text-center p-2 bg-purple-400/10 rounded-lg border border-purple-400/30">
-                      <div className="text-purple-400 font-bold text-sm">
-                        {currentTestimonial.metric}
-                      </div>
-                      <div className="text-purple-300 text-xs truncate">Performance</div>
-                    </div>
-                  </div>
+                      transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }}
+                    />
+                  ))}
                 </div>
-
-                {/* Quantum Corners */}
-                {[...Array(4)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    className={`absolute w-8 h-8 ${
-                      i === 0 ? 'top-4 left-4 border-l-2 border-t-2 rounded-tl-full' :
-                      i === 1 ? 'top-4 right-4 border-r-2 border-t-2 rounded-tr-full' :
-                      i === 2 ? 'bottom-4 left-4 border-l-2 border-b-2 rounded-bl-full' :
-                      'bottom-4 right-4 border-r-2 border-b-2 rounded-br-full'
-                    }`}
-                    style={{ borderColor: currentTestimonial.color }}
-                    animate={{
-                      opacity: [0.4, 1, 0.4],
-                      borderColor: [currentTestimonial.color + '60', currentTestimonial.color, currentTestimonial.color + '60']
-                    }}
-                    transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }}
-                  />
-                ))}
               </motion.div>
             </AnimatePresence>
-          </motion.div>
+          </div>
         </div>
 
-        {/* Indicators */}
-        <div className="flex justify-center space-x-3 mt-8">
-          {testimonials.map((_, index) => (
+        {/* Neural Indicators */}
+        <div className="flex justify-center space-x-4 mt-12">
+          {testimonials.map((testimonial, index) => (
             <motion.button
               key={index}
               onClick={() => setCurrentIndex(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentIndex
-                  ? 'shadow-lg'
-                  : 'bg-slate-600/50 hover:bg-cyan-400/50 border border-cyan-400/30'
+              className={`relative w-4 h-4 rounded-full transition-all duration-300 overflow-hidden ${
+                index === currentIndex ? '' : 'bg-slate-600/50 hover:bg-cyan-400/50'
               }`}
               style={{
-                backgroundColor: index === currentIndex ? currentTestimonial.color : undefined,
-                boxShadow: index === currentIndex ? `0 0 15px ${currentTestimonial.color}60` : undefined
+                backgroundColor: index === currentIndex ? testimonial.color : undefined,
+                boxShadow: index === currentIndex ? `0 0 20px ${testimonial.color}60` : undefined
               }}
-              whileHover={{ scale: 1.2 }}
+              whileHover={{ scale: 1.3 }}
               animate={index === currentIndex ? {
                 boxShadow: [
-                  `0 0 10px ${currentTestimonial.color}40`,
-                  `0 0 20px ${currentTestimonial.color}80`,
-                  `0 0 10px ${currentTestimonial.color}40`
+                  `0 0 15px ${testimonial.color}40`,
+                  `0 0 30px ${testimonial.color}80`,
+                  `0 0 15px ${testimonial.color}40`
                 ]
               } : {}}
               transition={{ duration: 2, repeat: Infinity }}
-            />
+            >
+              {index === currentIndex && (
+                <motion.div
+                  className="absolute inset-0 rounded-full"
+                  style={{ backgroundColor: testimonial.color }}
+                  animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+              )}
+            </motion.button>
           ))}
         </div>
       </div>
