@@ -219,18 +219,18 @@ const TestimonialsSection: React.FC = () => {
                   </div>
 
                   {/* Metrics */}
-                  <div className="grid grid-cols-2 gap-4 w-full max-w-xs">
+                  <div className="grid grid-cols-2 gap-3 w-full max-w-xs px-4">
                     <div className="text-center p-2 bg-green-400/10 rounded-lg border border-green-400/30">
-                      <div className="text-green-400 font-bold text-lg">
+                      <div className="text-green-400 font-bold text-sm">
                         {currentTestimonial.savings}
                       </div>
-                      <div className="text-green-300 text-xs">Saved</div>
+                      <div className="text-green-300 text-xs truncate">Saved</div>
                     </div>
                     <div className="text-center p-2 bg-purple-400/10 rounded-lg border border-purple-400/30">
-                      <div className="text-purple-400 font-bold text-lg">
+                      <div className="text-purple-400 font-bold text-sm">
                         {currentTestimonial.metric}
                       </div>
-                      <div className="text-purple-300 text-xs">Performance</div>
+                      <div className="text-purple-300 text-xs truncate">Performance</div>
                     </div>
                   </div>
                 </div>
