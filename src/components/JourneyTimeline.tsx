@@ -528,7 +528,7 @@ const JourneyTimeline: React.FC = () => {
                   
                   {/* Step Number with Quantum Glow */}
                   <motion.div
-                    className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-slate-800 to-slate-900 rounded-full border-2 flex items-center justify-center font-bold text-lg shadow-2xl z-20"
+                    className="absolute top-4 left-4 w-12 h-12 bg-gradient-to-br from-slate-800 to-slate-900 rounded-full border-2 flex items-center justify-center font-bold text-lg shadow-2xl z-20"
                     style={{ 
                       borderColor: step.color,
                       color: step.color
@@ -591,20 +591,6 @@ const JourneyTimeline: React.FC = () => {
                   </motion.p>
 
                   {/* Quantum Status Indicator */}
-                  <motion.div 
-                    className="absolute top-4 right-4 w-3 h-3 rounded-full"
-                    style={{ backgroundColor: step.color }}
-                    animate={{
-                      opacity: [0.6, 1, 0.6],
-                      scale: [1, 1.3, 1],
-                      boxShadow: [
-                        `0 0 10px ${step.color}60`,
-                        `0 0 20px ${step.color}`,
-                        `0 0 10px ${step.color}60`
-                      ]
-                    }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  />
                   
                   {/* Neural Connection Lines */}
                   <motion.div
