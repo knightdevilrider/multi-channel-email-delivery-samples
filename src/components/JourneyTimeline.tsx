@@ -855,18 +855,17 @@ const JourneyTimeline: React.FC = () => {
           </motion.p>
         </motion.div>
 
-        <div ref={ref} className="relative">
+        <div ref={ref} className="relative mt-8">
           {/* Journey Steps as Advanced Floating Cards */}
-          <div className="relative min-h-[700px] md:min-h-[650px] w-full max-w-6xl mx-auto">
+          <div className="relative min-h-[600px] w-full max-w-5xl mx-auto px-4">
             {journeySteps.map((step, index) => (
               <motion.div
                 key={index}
                 className="absolute z-10"
                 style={{
-                  // 2x2 Grid Layout: 1(left-top), 2(right-top), 3(left-bottom), 4(right-bottom)
-                  left: index % 2 === 0 ? '10%' : '60%', // Left column (10%) or Right column (60%)
-                  top: index < 2 ? '10px' : '380px', // Top row (10px) or Bottom row (380px)
-                  transform: 'translate(-50%, -50%)',
+                  left: index % 2 === 0 ? '5%' : '55%',
+                  top: index < 2 ? '20px' : '320px',
+                  transform: 'translate(0, 0)',
                 }}
                 initial={{ opacity: 0, scale: 0.7, y: 100 }}
                 animate={inView ? { opacity: 1, scale: 1, y: 0 } : {}}
@@ -879,7 +878,7 @@ const JourneyTimeline: React.FC = () => {
               >
                 {/* Advanced Holographic Card */}
                 <motion.div
-                  className="relative bg-gradient-to-br from-slate-900/95 via-slate-800/85 to-slate-900/95 backdrop-blur-2xl rounded-3xl p-4 md:p-6 border-2 border-cyan-400/30 shadow-2xl w-[300px] max-w-[40vw] overflow-hidden"
+                  className="relative bg-gradient-to-br from-slate-900/95 via-slate-800/85 to-slate-900/95 backdrop-blur-2xl rounded-3xl p-4 md:p-6 border-2 border-cyan-400/30 shadow-2xl w-[260px] max-w-[42vw] overflow-hidden"
                   whileHover={{ 
                     scale: 1.05,
                     borderColor: step.color + '80',
@@ -966,7 +965,7 @@ const JourneyTimeline: React.FC = () => {
                 
                 {/* Step number positioned outside the card */}
                 <motion.div
-                  className="absolute -top-8 -left-8 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-slate-800 to-slate-900 rounded-full border-2 flex items-center justify-center font-bold text-lg shadow-2xl z-20"
+                  className="absolute -top-6 -left-6 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-slate-800 to-slate-900 rounded-full border-2 flex items-center justify-center font-bold text-lg shadow-2xl z-20"
                   style={{ 
                     borderColor: step.color,
                     color: step.color
@@ -1007,16 +1006,16 @@ const JourneyTimeline: React.FC = () => {
               
               {/* Grid Flow Connections: 1→2, 2→4, 4→3, 3→1 */}
               {[
-                { from: [18, 70], to: [68, 70], delay: 0 }, // 1→2 (horizontal top)
-                { from: [68, 70], to: [68, 440], delay: 1 }, // 2→4 (vertical right)
-                { from: [68, 440], to: [18, 440], delay: 2 }, // 4→3 (horizontal bottom)
-                { from: [18, 440], to: [18, 70], delay: 3 }, // 3→1 (vertical left)
+                { from: [18, 80], to: [68, 80], delay: 0 }, // 1→2 (horizontal top)
+                { from: [68, 80], to: [68, 380], delay: 1 }, // 2→4 (vertical right)
+                { from: [68, 380], to: [18, 380], delay: 2 }, // 4→3 (horizontal bottom)
+                { from: [18, 380], to: [18, 80], delay: 3 }, // 3→1 (vertical left)
               ].map((connection, i) => (
                 <motion.line
                   key={`grid-connection-${i}`}
-                  x1={`${connection.from[0]}%`}
+                  x1={connection.from[0]}
                   y1={connection.from[1]}
-                  x2={`${connection.to[0]}%`}
+                  x2={connection.to[0]}
                   y2={connection.to[1]}
                   stroke="url(#connectionGradient)"
                   strokeWidth="3"
@@ -1039,14 +1038,14 @@ const JourneyTimeline: React.FC = () => {
               
               {/* Grid Connection Nodes */}
               {[
-                { pos: [18, 70], color: '#00D4FF' }, // Step 1
-                { pos: [68, 70], color: '#FF0080' }, // Step 2  
-                { pos: [18, 440], color: '#00D4FF' }, // Step 3
-                { pos: [68, 440], color: '#FFD700' }, // Step 4
+                { pos: [18, 80], color: '#00D4FF' }, // Step 1
+                { pos: [68, 80], color: '#FF0080' }, // Step 2  
+                { pos: [18, 380], color: '#00D4FF' }, // Step 3
+                { pos: [68, 380], color: '#FFD700' }, // Step 4
               ].map((node, i) => (
                 <motion.circle
                   key={`node-${i}`}
-                  cx={`${node.pos[0]}%`}
+                  cx={node.pos[0]}
                   cy={node.pos[1]}
                   r="4"
                   fill={node.color}
