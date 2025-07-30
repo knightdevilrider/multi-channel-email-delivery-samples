@@ -1,147 +1,138 @@
 import React, { useRef, useMemo, useState, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Float } from '@react-three/drei';
+import { Float, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
-// AI Data Particle Component
-const DataParticle: React.FC<{
-  position: THREE.Vector3;
-  targetPosition: THREE.Vector3;
+// Expense Data Particle Component
+const ExpenseParticle: React.FC<{
+  startPosition: THREE.Vector3;
+  targetCluster: THREE.Vector3;
   color: string;
   size: number;
   speed: number;
-  onReachTarget: () => void;
-}> = ({ position, targetPosition, color, size, speed, onReachTarget }) => {
+  category: string;
+  onReachCluster: (category: string) => void;
+}> = ({ startPosition, targetCluster, color, size, speed, category, onReachCluster }) => {
   const meshRef = useRef<THREE.Mesh>(null);
-  const [hasReachedTarget, setHasReachedTarget] = useState(false);
+  const [hasReached, setHasReached] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   useFrame((state) => {
-    if (meshRef.current && !hasReachedTarget) {
-      // Move particle towards the central nexus
-      const direction = targetPosition.clone().sub(meshRef.current.position).normalize();
-      meshRef.current.position.add(direction.multiplyScalar(speed));
+    if (meshRef.current && !hasReached) {
+      // Move particle towards cluster
+      setProgress(prev => Math.min(prev + speed, 1));
       
-      // Check if reached target
-      const distance = meshRef.current.position.distanceTo(targetPosition);
-      if (distance < 1) {
-        setHasReachedTarget(true);
-        onReachTarget();
-      }
+      // Smooth curve path to cluster
+      const currentPos = new THREE.Vector3().lerpVectors(startPosition, targetCluster, progress);
+      currentPos.y += Math.sin(progress * Math.PI) * 2; // Arc trajectory
+      
+      meshRef.current.position.copy(currentPos);
       
       // Add subtle floating motion
-      meshRef.current.position.y += Math.sin(state.clock.elapsedTime * 2 + position.x) * 0.01;
+      meshRef.current.position.y += Math.sin(state.clock.elapsedTime * 3 + startPosition.x) * 0.1;
+      
+      // Rotation
+      meshRef.current.rotation.x += 0.02;
+      meshRef.current.rotation.y += 0.01;
+      
+      // Check if reached cluster
+      if (progress >= 0.95) {
+        setHasReached(true);
+        onReachCluster(category);
+      }
     }
   });
 
-  if (hasReachedTarget) return null;
+  if (hasReached) return null;
 
   return (
-    <mesh ref={meshRef} position={position}>
+    <mesh ref={meshRef} position={startPosition}>
       <sphereGeometry args={[size, 8, 8]} />
       <meshStandardMaterial
         color={color}
         emissive={color}
-        emissiveIntensity={0.3}
+        emissiveIntensity={0.4}
         transparent
         opacity={0.8}
       />
-    </mesh>
-  );
-};
-
-// Organized Data Cluster Component
-const DataCluster: React.FC<{
-  position: THREE.Vector3;
-  color: string;
-  shape: 'cube' | 'sphere' | 'octahedron';
-  category: string;
-}> = ({ position, color, shape, category }) => {
-  const meshRef = useRef<THREE.Mesh>(null);
-
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.5) * 0.2;
-      meshRef.current.rotation.y += 0.01;
-      meshRef.current.position.y = position.y + Math.sin(state.clock.elapsedTime + position.x) * 0.2;
-    }
-  });
-
-  const geometry = useMemo(() => {
-    switch (shape) {
-      case 'cube':
-        return <boxGeometry args={[1, 1, 1]} />;
-      case 'sphere':
-        return <sphereGeometry args={[0.6, 16, 16]} />;
-      case 'octahedron':
-        return <octahedronGeometry args={[0.8]} />;
-      default:
-        return <boxGeometry args={[1, 1, 1]} />;
-    }
-  }, [shape]);
-
-  return (
-    <Float speed={1} rotationIntensity={0.5} floatIntensity={0.5}>
-      <mesh ref={meshRef} position={position}>
-        {geometry}
+      {/* Particle trail effect */}
+      <mesh position={[0, 0, -0.3]} scale={[0.5, 0.5, 0.5]}>
+        <sphereGeometry args={[size * 0.7, 6, 6]} />
         <meshStandardMaterial
           color={color}
           emissive={color}
           emissiveIntensity={0.2}
-          metalness={0.8}
-          roughness={0.2}
           transparent
-          opacity={0.9}
+          opacity={0.4}
         />
       </mesh>
-    </Float>
+    </mesh>
   );
 };
 
-// Central AI Nexus Brain Component
-const AIBrain: React.FC<{ onParticleAbsorbed: (category: string) => void }> = ({ onParticleAbsorbed }) => {
-  const brainRef = useRef<THREE.Group>(null);
+// Data Cluster Component
+const DataCluster: React.FC<{
+  position: THREE.Vector3;
+  color: string;
+  category: string;
+  particleCount: number;
+  isHovered: boolean;
+  onHover: (category: string) => void;
+  onLeave: () => void;
+}> = ({ position, color, category, particleCount, isHovered, onHover, onLeave }) => {
+  const groupRef = useRef<THREE.Group>(null);
   const coreRef = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
-    if (brainRef.current) {
-      brainRef.current.rotation.y += 0.005;
+    if (groupRef.current) {
+      groupRef.current.rotation.y += 0.005;
+      
+      // Hover effects
+      const targetScale = isHovered ? 1.2 : 1;
+      groupRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
     }
+    
     if (coreRef.current) {
       coreRef.current.scale.setScalar(1 + Math.sin(state.clock.elapsedTime * 2) * 0.1);
     }
   });
 
   return (
-    <group ref={brainRef} position={[0, 2, 0]}>
-      {/* Central Core */}
+    <group
+      ref={groupRef}
+      position={position}
+      onPointerEnter={() => onHover(category)}
+      onPointerLeave={onLeave}
+    >
+      {/* Core cluster sphere */}
       <mesh ref={coreRef}>
-        <sphereGeometry args={[2, 32, 32]} />
+        <sphereGeometry args={[0.8, 16, 16]} />
         <meshStandardMaterial
-          color="#4169E1"
-          emissive="#4169E1"
-          emissiveIntensity={0.5}
-          metalness={0.3}
-          roughness={0.1}
+          color={color}
+          emissive={color}
+          emissiveIntensity={isHovered ? 0.6 : 0.3}
+          metalness={0.7}
+          roughness={0.2}
           transparent
-          opacity={0.8}
+          opacity={0.9}
         />
       </mesh>
 
-      {/* Neural Network Nodes */}
-      {Array.from({ length: 12 }).map((_, i) => {
-        const angle = (i / 12) * Math.PI * 2;
-        const radius = 3;
+      {/* Orbiting particles around cluster */}
+      {Array.from({ length: Math.min(particleCount, 8) }).map((_, i) => {
+        const angle = (i / 8) * Math.PI * 2;
+        const radius = 1.5;
         const x = Math.cos(angle) * radius;
         const z = Math.sin(angle) * radius;
-        const y = Math.sin(i * 0.5) * 1;
+        const y = Math.sin(i * 0.5) * 0.5;
 
         return (
           <Float key={i} speed={1 + i * 0.1} rotationIntensity={0.3} floatIntensity={0.3}>
             <mesh position={[x, y, z]}>
-              <sphereGeometry args={[0.3, 16, 16]} />
+              <sphereGeometry args={[0.15, 8, 8]} />
               <meshStandardMaterial
-                color="#00ffff"
-                emissive="#00ffff"
+                color={color}
+                emissive={color}
                 emissiveIntensity={0.4}
                 transparent
                 opacity={0.7}
@@ -151,22 +142,85 @@ const AIBrain: React.FC<{ onParticleAbsorbed: (category: string) => void }> = ({
         );
       })}
 
-      {/* Neural Connections */}
-      {Array.from({ length: 8 }).map((_, i) => {
-        const angle = (i / 8) * Math.PI * 2;
-        const radius = 3;
+      {/* Category label (floating text effect) */}
+      {isHovered && (
+        <mesh position={[0, 2, 0]}>
+          <planeGeometry args={[2, 0.5]} />
+          <meshBasicMaterial
+            color={color}
+            transparent
+            opacity={0.8}
+          />
+        </mesh>
+      )}
+    </group>
+  );
+};
+
+// Central Convergence Nexus
+const ConvergenceNexus: React.FC<{
+  clusteredData: Map<string, number>;
+}> = ({ clusteredData }) => {
+  const nexusRef = useRef<THREE.Group>(null);
+  const coreRef = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    if (nexusRef.current) {
+      nexusRef.current.rotation.y += 0.01;
+    }
+    
+    if (coreRef.current) {
+      const intensity = Math.max(clusteredData.size / 7, 0.5);
+      coreRef.current.scale.setScalar(1 + Math.sin(state.clock.elapsedTime * 1.5) * 0.2 * intensity);
+    }
+  });
+
+  return (
+    <group ref={nexusRef} position={[0, 0, 0]}>
+      {/* Central core */}
+      <mesh ref={coreRef}>
+        <icosahedronGeometry args={[1.5, 2]} />
+        <meshStandardMaterial
+          color="#FFFFFF"
+          emissive="#4169E1"
+          emissiveIntensity={0.5}
+          metalness={0.8}
+          roughness={0.1}
+          transparent
+          opacity={0.9}
+        />
+      </mesh>
+
+      {/* Energy rings */}
+      {[1, 2, 3].map((ring, i) => (
+        <mesh key={i} rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+          <torusGeometry args={[2 + i * 0.5, 0.05, 8, 32]} />
+          <meshStandardMaterial
+            color="#00D4FF"
+            emissive="#00D4FF"
+            emissiveIntensity={0.4}
+            transparent
+            opacity={0.6}
+          />
+        </mesh>
+      ))}
+
+      {/* Data consolidation beams */}
+      {Array.from(clusteredData.entries()).map(([category, count], i) => {
+        const angle = (i / clusteredData.size) * Math.PI * 2;
+        const radius = 4;
         const x = Math.cos(angle) * radius;
         const z = Math.sin(angle) * radius;
 
         return (
-          <mesh key={`connection-${i}`} position={[x * 0.5, 0, z * 0.5]} rotation={[0, angle, 0]}>
+          <mesh key={category} position={[x * 0.5, 0, z * 0.5]} rotation={[0, angle, 0]}>
             <cylinderGeometry args={[0.02, 0.02, radius, 8]} />
             <meshStandardMaterial
-              color="#00ffff"
-              emissive="#00ffff"
+              color="#00FF88"
+              emissive="#00FF88"
               emissiveIntensity={0.3}
               transparent
-              opacity={0.4}
+              opacity={0.5}
             />
           </mesh>
         );
@@ -175,207 +229,144 @@ const AIBrain: React.FC<{ onParticleAbsorbed: (category: string) => void }> = ({
   );
 };
 
-// Storage Zone Component
-const StorageZone: React.FC<{
-  position: THREE.Vector3;
-  color: string;
-  category: string;
-}> = ({ position, color, category }) => {
-  const zoneRef = useRef<THREE.Mesh>(null);
-
-  useFrame((state) => {
-    if (zoneRef.current) {
-      zoneRef.current.material.emissiveIntensity = 0.1 + Math.sin(state.clock.elapsedTime + position.x) * 0.05;
-    }
-  });
-
-  return (
-    <mesh ref={zoneRef} position={position}>
-      <boxGeometry args={[4, 0.1, 4]} />
-      <meshStandardMaterial
-        color={color}
-        emissive={color}
-        emissiveIntensity={0.1}
-        transparent
-        opacity={0.3}
-      />
-    </mesh>
-  );
-};
-
-// Data Stream Manager Component
+// Data Stream Manager
 const DataStreamManager: React.FC = () => {
   const [particles, setParticles] = useState<Array<{
     id: number;
-    position: THREE.Vector3;
+    startPosition: THREE.Vector3;
+    targetCluster: THREE.Vector3;
     color: string;
     size: number;
     speed: number;
     category: string;
   }>>([]);
   
-  const [clusters, setClusters] = useState<Array<{
-    id: number;
-    position: THREE.Vector3;
-    color: string;
-    shape: 'cube' | 'sphere' | 'octahedron';
-    category: string;
-  }>>([]);
-
+  const [clusteredData, setClusteredData] = useState<Map<string, number>>(new Map());
+  const [hoveredCluster, setHoveredCluster] = useState<string | null>(null);
+  
   const nextParticleId = useRef(0);
-  const nextClusterId = useRef(0);
 
-  const dataTypes = [
-    { color: '#4169E1', category: 'receipts', shape: 'cube' as const },
-    { color: '#FF007A', category: 'voice', shape: 'sphere' as const },
-    { color: '#00ff88', category: 'transactions', shape: 'octahedron' as const },
-    { color: '#ffd700', category: 'reports', shape: 'cube' as const },
+  // Expense categories with their properties
+  const expenseCategories = [
+    { name: 'Travel', color: '#4169E1', position: new THREE.Vector3(-6, 2, -4) },
+    { name: 'Office', color: '#00D4FF', position: new THREE.Vector3(-3, 3, -6) },
+    { name: 'Marketing', color: '#FF007A', position: new THREE.Vector3(3, 2.5, -5) },
+    { name: 'Technology', color: '#00FF88', position: new THREE.Vector3(6, 3, -3) },
+    { name: 'Legal', color: '#FFD700', position: new THREE.Vector3(-4, 2.8, 4) },
+    { name: 'Entertainment', color: '#8A2BE2', position: new THREE.Vector3(2, 2.2, 6) },
+    { name: 'Operations', color: '#FF6B6B', position: new THREE.Vector3(5, 2.6, 4) },
   ];
 
-  const storagePositions = [
-    new THREE.Vector3(-8, -2, -8),
-    new THREE.Vector3(8, -2, -8),
-    new THREE.Vector3(-8, -2, 8),
-    new THREE.Vector3(8, -2, 8),
-  ];
-
-  // Generate new particles
+  // Generate new expense particles
   useEffect(() => {
     const interval = setInterval(() => {
-      const dataType = dataTypes[Math.floor(Math.random() * dataTypes.length)];
+      const category = expenseCategories[Math.floor(Math.random() * expenseCategories.length)];
       const angle = Math.random() * Math.PI * 2;
-      const radius = 15 + Math.random() * 5;
+      const radius = 12 + Math.random() * 3;
       const startPosition = new THREE.Vector3(
         Math.cos(angle) * radius,
-        Math.random() * 4 - 2,
+        Math.random() * 4 + 1,
         Math.sin(angle) * radius
       );
 
       const newParticle = {
         id: nextParticleId.current++,
-        position: startPosition,
-        color: dataType.color,
+        startPosition,
+        targetCluster: category.position,
+        color: category.color,
         size: 0.1 + Math.random() * 0.1,
-        speed: 0.05 + Math.random() * 0.03,
-        category: dataType.category,
+        speed: 0.008 + Math.random() * 0.004,
+        category: category.name,
       };
 
       setParticles(prev => [...prev, newParticle]);
-    }, 500);
+    }, 300);
 
     return () => clearInterval(interval);
   }, []);
 
-  const handleParticleAbsorbed = (particleId: number, category: string) => {
-    // Remove the particle
+  const handleParticleReachCluster = (particleId: number, category: string) => {
+    // Remove particle
     setParticles(prev => prev.filter(p => p.id !== particleId));
-
-    // Create a new organized cluster
-    const dataType = dataTypes.find(dt => dt.category === category) || dataTypes[0];
-    const storageIndex = dataTypes.findIndex(dt => dt.category === category);
-    const targetPosition = storagePositions[storageIndex] || storagePositions[0];
     
-    // Add some randomness to the final position
-    const finalPosition = targetPosition.clone().add(
-      new THREE.Vector3(
-        (Math.random() - 0.5) * 3,
-        Math.random() * 2,
-        (Math.random() - 0.5) * 3
-      )
-    );
-
-    const newCluster = {
-      id: nextClusterId.current++,
-      position: finalPosition,
-      color: dataType.color,
-      shape: dataType.shape,
-      category: category,
-    };
-
-    setClusters(prev => [...prev, newCluster]);
-
-    // Remove old clusters to prevent memory issues
-    setTimeout(() => {
-      setClusters(prev => prev.filter(c => c.id !== newCluster.id));
-    }, 10000);
+    // Update clustered data count
+    setClusteredData(prev => {
+      const newMap = new Map(prev);
+      newMap.set(category, (newMap.get(category) || 0) + 1);
+      return newMap;
+    });
   };
 
   return (
     <>
-      {/* Render particles */}
+      {/* Render flowing particles */}
       {particles.map((particle) => (
-        <DataParticle
+        <ExpenseParticle
           key={particle.id}
-          position={particle.position}
-          targetPosition={new THREE.Vector3(0, 2, 0)}
+          startPosition={particle.startPosition}
+          targetCluster={particle.targetCluster}
           color={particle.color}
           size={particle.size}
           speed={particle.speed}
-          onReachTarget={() => handleParticleAbsorbed(particle.id, particle.category)}
+          category={particle.category}
+          onReachCluster={() => handleParticleReachCluster(particle.id, particle.category)}
         />
       ))}
 
-      {/* Render organized clusters */}
-      {clusters.map((cluster) => (
+      {/* Render data clusters */}
+      {expenseCategories.map((category) => (
         <DataCluster
-          key={cluster.id}
-          position={cluster.position}
-          color={cluster.color}
-          shape={cluster.shape}
-          category={cluster.category}
+          key={category.name}
+          position={category.position}
+          color={category.color}
+          category={category.name}
+          particleCount={clusteredData.get(category.name) || 0}
+          isHovered={hoveredCluster === category.name}
+          onHover={setHoveredCluster}
+          onLeave={() => setHoveredCluster(null)}
         />
       ))}
 
-      {/* Storage zones */}
-      {storagePositions.map((position, index) => (
-        <StorageZone
-          key={index}
-          position={position}
-          color={dataTypes[index].color}
-          category={dataTypes[index].category}
-        />
-      ))}
+      {/* Central convergence nexus */}
+      <ConvergenceNexus clusteredData={clusteredData} />
     </>
   );
 };
 
-// Mouse Interaction Handler
-const MouseHandler: React.FC = () => {
-  const { camera } = useThree();
-
-  useFrame((state) => {
-    // Gentle camera movement
-    const time = state.clock.elapsedTime;
-    camera.position.x += (Math.sin(time * 0.1) * 2 - camera.position.x) * 0.02;
-    camera.position.z += (Math.cos(time * 0.08) * 3 - camera.position.z) * 0.02;
-    camera.lookAt(0, 2, 0);
-  });
-
-  return null;
-};
-
-// Main Scene Component
-const AIDataNexusScene: React.FC = () => {
+// Main Data Stream Scene
+const DataStreamScene: React.FC = () => {
   return (
     <>
-      {/* Ambient Lighting */}
-      <ambientLight intensity={0.2} />
+      {/* Advanced Lighting Setup */}
+      <ambientLight intensity={0.3} />
       <pointLight position={[10, 10, 10]} intensity={0.8} color="#4169E1" />
-      <pointLight position={[-10, 10, -10]} intensity={0.6} color="#00ffff" />
+      <pointLight position={[-10, 10, -10]} intensity={0.6} color="#00D4FF" />
       <pointLight position={[0, 15, 0]} intensity={0.4} color="#FF007A" />
-      <pointLight position={[0, -5, 0]} intensity={0.3} color="#00ff88" />
-
-      {/* Central AI Brain */}
-      <AIBrain onParticleAbsorbed={() => {}} />
+      <pointLight position={[0, -5, 0]} intensity={0.3} color="#00FF88" />
+      <spotLight
+        position={[0, 20, 0]}
+        angle={0.3}
+        penumbra={1}
+        intensity={0.5}
+        color="#FFFFFF"
+        target-position={[0, 0, 0]}
+      />
 
       {/* Data Stream Management */}
       <DataStreamManager />
 
-      {/* Mouse Interaction */}
-      <MouseHandler />
+      {/* Subtle Camera Controls */}
+      <OrbitControls
+        enableZoom={false}
+        enablePan={false}
+        autoRotate
+        autoRotateSpeed={0.5}
+        maxPolarAngle={Math.PI / 2}
+        minPolarAngle={Math.PI / 4}
+      />
 
-      {/* Ambient Fog */}
-      <fog attach="fog" args={['#0a0a0a', 10, 50]} />
+      {/* Atmospheric Fog */}
+      <fog attach="fog" args={['#0a0a0a', 15, 40]} />
     </>
   );
 };
@@ -387,7 +378,7 @@ const Interactive3DBackground: React.FC = () => {
         camera={{ position: [0, 8, 15], fov: 60 }}
         style={{ background: 'transparent' }}
       >
-        <AIDataNexusScene />
+        <DataStreamScene />
       </Canvas>
     </div>
   );
