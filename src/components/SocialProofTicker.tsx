@@ -1,122 +1,217 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, Users, DollarSign, Zap } from 'lucide-react';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, Sphere, MeshDistortMaterial } from '@react-three/drei';
+import { Mic, Play, QrCode, Star, TrendingUp } from 'lucide-react';
 
-const liveUpdates = [
-  { name: 'Priya S.', action: 'unlocked $2,100 in savings', icon: DollarSign },
-  { name: 'Alex M.', action: 'automated 500+ transactions', icon: Zap },
-  { name: 'Jordan K.', action: 'gained 15% cost visibility', icon: TrendingUp },
-  { name: 'Sam R.', action: 'joined the revolution', icon: Users },
-  { name: 'Casey L.', action: 'discovered $890 in hidden costs', icon: DollarSign },
-  { name: 'Morgan D.', action: 'streamlined expense workflow', icon: Zap },
-];
+const HeroSection: React.FC = () => {
+  const phrases = [
+    "Command Your Finances",
+    "Conquer Chaos", 
+    "Amplify Growth"
+  ];
 
-const SocialProofTicker: React.FC = () => {
-  const [currentUpdate, setCurrentUpdate] = useState(0);
+  const [currentPhrase, setCurrentPhrase] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentUpdate((prev) => (prev + 1) % liveUpdates.length);
+      setCurrentPhrase((prev) => (prev + 1) % phrases.length);
     }, 3000);
     return () => clearInterval(interval);
   }, []);
 
-  return (
-    <section className="py-16 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Live Updates Ticker */}
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 50, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100
+      }
+    }
+  };
+
+  const titleVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 12
+      }
+    }
+  };
+
+  const VoiceDemo = () => {
+    const [isListening, setIsListening] = useState(false);
+    
+    return (
+      <div className="text-center">
         <motion.div
-          className="bg-gradient-to-r from-neon-blue/10 via-neon-magenta/10 to-neon-blue/10 rounded-2xl p-6 mb-12 border border-neon-blue/20"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center cursor-pointer"
+          style={{ background: 'linear-gradient(135deg, var(--primary-blue), var(--primary-magenta))' }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          animate={isListening ? { scale: [1, 1.2, 1] } : {}}
+          transition={{ duration: 0.5, repeat: isListening ? Infinity : 0 }}
+          onClick={() => setIsListening(!isListening)}
         >
-          <div className="flex items-center justify-center space-x-4">
-            <div className="w-3 h-3 bg-neon-magenta rounded-full animate-pulse" />
-            <span className="text-cyber-silver font-semibold">LIVE:</span>
-            
-            <motion.div
-              key={currentUpdate}
-              className="flex items-center space-x-2"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.5 }}
-            >
-              {React.createElement(liveUpdates[currentUpdate].icon, { className: "w-5 h-5 text-neon-blue" })}
-              <span className="text-white font-medium">
-                {liveUpdates[currentUpdate].name}
-              </span>
-              <span className="text-cyber-silver">
-                {liveUpdates[currentUpdate].action}
-              </span>
-            </motion.div>
+          <Mic className="w-8 h-8" />
+        </motion.div>
+        <h3 className="text-lg font-semibold mb-2">Voice Command</h3>
+        <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+          {isListening ? "Listening..." : "Try: 'Show me my expenses'"}
+        </p>
+      </div>
+    );
+  };
+
+  return (
+    <section 
+      id="main-content"
+      className="unified-section min-h-screen flex items-center justify-center pt-16"
+      aria-label="Hero section"
+    >
+      <motion.div
+        className="unified-container text-center relative z-10"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <div className="h-32 md:h-40 lg:h-48 flex items-center justify-center mb-8">
+          <motion.h1
+            key={currentPhrase}
+            className="text-5xl md:text-7xl lg:text-8xl font-black leading-tight text-center unified-gradient-text unified-glow"
+            initial={{ opacity: 0, y: 50, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -50, scale: 0.8 }}
+            transition={{ 
+              duration: 0.8,
+              type: "spring",
+              stiffness: 100,
+              damping: 15
+            }}
+          >
+            {phrases[currentPhrase]}
+          </motion.h1>
+        </div>
+
+        {/* Subtitle */}
+        <motion.p
+          className="text-xl md:text-2xl mb-12 max-w-4xl mx-auto leading-relaxed"
+          style={{ color: 'var(--text-secondary)' }}
+          variants={itemVariants}
+        >
+          The ultimate AI-powered finance management revolution for visionary entrepreneurs. 
+          Transform chaos into clarity with voice-first commands and predictive intelligence.
+        </motion.p>
+
+        {/* Social Proof */}
+        <motion.div
+          className="flex flex-wrap justify-center items-center gap-6 mb-12"
+          variants={itemVariants}
+        >
+          <div className="flex items-center space-x-2 unified-card rounded-full px-6 py-3">
+            <Star className="w-5 h-5 text-yellow-400" />
+            <span style={{ color: 'var(--text-secondary)' }}>Trusted by 3,000+ visionary entrepreneurs</span>
+          </div>
+          <div className="flex items-center space-x-2 unified-card rounded-full px-6 py-3">
+            <TrendingUp className="w-5 h-5" style={{ color: 'var(--primary-magenta)' }} />
+            <span style={{ color: 'var(--text-secondary)' }}>Savings Unlocked: $1.5M+</span>
           </div>
         </motion.div>
 
-        {/* Stats Grid */}
+        {/* CTA Buttons */}
         <motion.div
-          className="grid grid-cols-2 md:grid-cols-4 gap-6"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16"
+          variants={itemVariants}
         >
-          {[
-            { number: '3,000+', label: 'Visionary Entrepreneurs', icon: Users },
-            { number: '$1.5M+', label: 'Savings Unlocked', icon: DollarSign },
-            { number: '98%', label: 'Accuracy Rate', icon: TrendingUp },
-            { number: '4.9/5', label: 'User Rating', icon: Zap },
-          ].map((stat, index) => (
-            <motion.div
-              key={index}
-              className="text-center p-6 bg-card-bg backdrop-blur-sm rounded-2xl border border-white/10 hover:border-neon-blue/30 transition-all duration-300"
-              whileHover={{ scale: 1.05 }}
-            >
-              <stat.icon className="w-8 h-8 text-neon-blue mx-auto mb-3" />
-              <div className="text-3xl font-black text-white mb-2 bg-gradient-to-r from-neon-blue to-neon-magenta bg-clip-text text-transparent">
-                {stat.number}
-              </div>
-              <div className="text-cyber-silver text-sm font-medium">
-                {stat.label}
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Viral CTA */}
-        <motion.div
-          className="text-center mt-16"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-        >
-          <h3 className="text-3xl md:text-4xl font-black mb-6 bg-gradient-to-r from-neon-blue to-neon-magenta bg-clip-text text-transparent">
-            Join the Financial Revolution
-          </h3>
-          
           <motion.button
-            className="group relative px-10 py-4 bg-gradient-to-r from-neon-blue to-neon-magenta rounded-full font-bold text-lg overflow-hidden"
+            className="unified-button-primary text-lg px-12 py-4"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            aria-label="Launch your financial revolution with ExpenseIQ"
             onClick={() => {
-              // Share functionality would be implemented here
-              console.log('Sharing ExpenseIQ revolution!');
+              // Particle explosion effect would go here
+              console.log('Launch Your Financial Revolution!');
             }}
           >
-            <span className="relative z-10 flex items-center space-x-2">
-              <span>Share the Revolution</span>
-              <Zap className="w-5 h-5" />
-            </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-neon-magenta to-neon-blue opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            Launch Your Financial Revolution
           </motion.button>
-          
-          <p className="text-cyber-silver mt-4">
-            Help other entrepreneurs discover financial mastery
-          </p>
+
+          <motion.button
+            className="unified-button-secondary flex items-center space-x-2"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            aria-label="Watch live demo of ExpenseIQ"
+          >
+            <Play className="w-5 h-5" />
+            <span>Watch Live Demo</span>
+          </motion.button>
         </motion.div>
-      </div>
+
+        {/* Interactive Elements */}
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto"
+          variants={itemVariants}
+        >
+          {/* Voice Demo */}
+          <motion.div
+            className="unified-card p-6"
+            whileHover={{ scale: 1.02 }}
+          >
+            <VoiceDemo />
+          </motion.div>
+
+          {/* AI Showcase */}
+          <motion.div
+            className="unified-card p-6"
+            whileHover={{ scale: 1.02 }}
+          >
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center unified-pulse" style={{ background: 'linear-gradient(135deg, var(--primary-magenta), var(--primary-blue))' }}>
+                <TrendingUp className="w-8 h-8" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">AI Insights</h3>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Real-time predictive analytics for smarter financial decisions</p>
+            </div>
+          </motion.div>
+
+          {/* AR Portal */}
+          <motion.div
+            className="unified-card p-6"
+            whileHover={{ scale: 1.02 }}
+          >
+            <div className="text-center">
+              <motion.div
+                className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center"
+                style={{ background: 'linear-gradient(135deg, var(--neutral-silver), white)' }}
+                animate={{ rotate: 360 }}
+                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+              >
+                <QrCode className="w-8 h-8" style={{ color: 'var(--dark-bg)' }} />
+              </motion.div>
+              <h3 className="text-lg font-semibold mb-2">AR Experience</h3>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Scan to experience your dashboard in augmented reality</p>
+            </div>
+          </motion.div>
+        </motion.div>
+      </motion.div>
     </section>
   );
 };
 
-export default SocialProofTicker;
+export default HeroSection;

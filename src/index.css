@@ -1,243 +1,212 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+import React, { useRef, useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, Sphere, MeshDistortMaterial } from '@react-three/drei';
+import { Mic, Play, QrCode, Star, TrendingUp } from 'lucide-react';
+import VoiceDemo from './VoiceDemo';
+import ThreeScene from './ThreeScene';
 
-/* Base styles */
-@layer base {
-  * {
-    @apply border-border;
-  }
-  
-  body {
-    @apply bg-dark-bg text-white font-sans;
-    font-feature-settings: "rlig" 1, "calt" 1;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-display font-bold tracking-tight;
-  }
-  
-  h1 {
-    @apply text-4xl md:text-6xl lg:text-7xl;
-  }
-  
-  h2 {
-    @apply text-3xl md:text-5xl lg:text-6xl;
-  }
-  
-  h3 {
-    @apply text-2xl md:text-3xl lg:text-4xl;
-  }
-  
-  h4 {
-    @apply text-xl md:text-2xl lg:text-3xl;
-  }
-  
-  p {
-    @apply text-surface-300 leading-relaxed;
-  }
-  
-  a {
-    @apply transition-colors duration-200;
-  }
-  
-  button {
-    @apply transition-all duration-200;
-  }
-}
+const HeroSection: React.FC = () => {
+  const [currentPhrase, setCurrentPhrase] = useState(0);
+  const phrases = [
+    "Command Your Finances",
+    "Conquer Chaos", 
+    "Amplify Growth"
+  ];
 
-/* Component styles */
-@layer components {
-  .glass-card {
-    @apply bg-glass backdrop-blur-xl border border-glass-border rounded-2xl shadow-glass;
-  }
-  
-  .glass-button {
-    @apply glass-card px-6 py-3 hover:bg-white/10 active:scale-95 transition-all duration-200;
-  }
-  
-  .gradient-text {
-    @apply bg-gradient-to-r from-primary-400 via-secondary-400 to-accent-400 bg-clip-text text-transparent;
-  }
-  
-  .gradient-border {
-    @apply relative overflow-hidden rounded-2xl;
-  }
-  
-  .gradient-border::before {
-    @apply absolute inset-0 rounded-2xl p-[1px] bg-gradient-to-r from-primary-500 via-secondary-500 to-accent-500;
-    content: '';
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask-composite: xor;
-  }
-  
-  .section-padding {
-    @apply py-20 lg:py-32;
-  }
-  
-  .container-padding {
-    @apply px-4 sm:px-6 lg:px-8;
-  }
-  
-  .hero-text {
-    @apply text-5xl md:text-7xl lg:text-8xl font-black leading-tight gradient-text;
-  }
-  
-  .section-title {
-    @apply text-4xl md:text-6xl lg:text-7xl font-black gradient-text;
-  }
-  
-  .card-hover {
-    @apply hover:scale-102 hover:shadow-glow-lg transition-all duration-300;
-  }
-  
-  .btn-primary {
-    @apply bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 text-white font-semibold px-8 py-4 rounded-2xl shadow-glow hover:shadow-glow-lg transition-all duration-300 hover:scale-102;
-  }
-  
-  .btn-secondary {
-    @apply glass-card hover:bg-white/10 text-white font-semibold px-8 py-4 rounded-2xl border-primary-500/30 hover:border-primary-500 transition-all duration-300 hover:scale-102;
-  }
-  
-  .floating-element {
-    @apply animate-float;
-  }
-  
-  .glow-effect {
-    @apply animate-glow;
-  }
-}
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentPhrase((prev) => (prev + 1) % phrases.length);
+    }, 3000); // Change phrase every 3 seconds
 
-/* Accessibility enhancements */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
+    return () => clearInterval(interval);
+  }, []);
 
-/* High contrast mode */
-.high-contrast {
-  --primary-500: #0066ff;
-  --secondary-500: #ff0066;
-  --surface-300: #ffffff;
-  --dark-bg: #000000;
-}
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.3,
+        staggerChildren: 0.2
+      }
+    }
+  };
 
-.high-contrast * {
-  border-color: currentColor !important;
-}
+  const itemVariants = {
+    hidden: { y: 50, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100
+      }
+    }
+  };
 
-.high-contrast .glass-card {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  border: 2px solid currentColor !important;
-}
+  const titleVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 12
+      }
+    }
+  };
+  return (
+    <section 
+      id="main-content"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16"
+      aria-label="Hero section"
+    >
+      {/* 3D Background */}
+      <div className="absolute inset-0 z-0">
+        <Canvas camera={{ position: [0, 0, 10] }}>
+          <ThreeScene />
+          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
+        </Canvas>
+      </div>
 
-/* Reduced motion */
-.reduce-motion *,
-.reduce-motion *::before,
-.reduce-motion *::after {
-  animation-duration: 0.01ms !important;
-  animation-iteration-count: 1 !important;
-  transition-duration: 0.01ms !important;
-  scroll-behavior: auto !important;
-}
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-dark-bg/20 to-dark-bg z-10" />
 
-/* Font size variations */
-.text-small {
-  font-size: 0.875rem;
-}
+      <motion.div
+        className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <div className="h-32 md:h-40 lg:h-48 flex items-center justify-center mb-8">
+          <motion.h1
+            key={currentPhrase}
+            className="text-5xl md:text-7xl lg:text-8xl font-black leading-tight text-center"
+            initial={{ opacity: 0, y: 50, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -50, scale: 0.8 }}
+            transition={{ 
+              duration: 0.8,
+              type: "spring",
+              stiffness: 100,
+              damping: 15
+            }}
+            style={{
+             background: 'linear-gradient(135deg, #4169E1, #FF007A, #4169E1, #FF007A)',
+              backgroundSize: '300% 300%',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent'
+            }}
+          >
+            {phrases[currentPhrase]}
+          </motion.h1>
+        </div>
 
-.text-medium {
-  font-size: 1rem;
-}
+        {/* Subtitle */}
+        <motion.p
+          className="text-xl md:text-2xl text-cyber-silver mb-12 max-w-4xl mx-auto leading-relaxed"
+          variants={itemVariants}
+        >
+          The ultimate AI-powered finance management revolution for visionary entrepreneurs. 
+          Transform chaos into clarity with voice-first commands and predictive intelligence.
+        </motion.p>
 
-.text-large {
-  font-size: 1.125rem;
-}
+        {/* Social Proof */}
+        <motion.div
+          className="flex flex-wrap justify-center items-center gap-6 mb-12"
+          variants={itemVariants}
+        >
+          <div className="flex items-center space-x-2 bg-card-bg backdrop-blur-sm rounded-full px-6 py-3 border border-neon-blue/20">
+            <Star className="w-5 h-5 text-yellow-400" />
+            <span className="text-cyber-silver">Trusted by 3,000+ visionary entrepreneurs</span>
+          </div>
+          <div className="flex items-center space-x-2 bg-card-bg backdrop-blur-sm rounded-full px-6 py-3 border border-neon-magenta/20">
+            <TrendingUp className="w-5 h-5 text-neon-magenta" />
+            <span className="text-cyber-silver">Savings Unlocked: $1.5M+</span>
+          </div>
+        </motion.div>
 
-/* Enhanced focus indicators */
-.focus-visible *:focus {
-  outline: 3px solid #4169E1 !important;
-  outline-offset: 2px !important;
-}
+        {/* CTA Buttons */}
+        <motion.div
+          className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16"
+          variants={itemVariants}
+        >
+          <motion.button
+            className="group relative px-12 py-4 bg-gradient-to-r from-neon-blue to-neon-magenta rounded-full font-bold text-lg overflow-hidden"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            aria-label="Launch your financial revolution with ExpenseIQ"
+            onClick={() => {
+              // Particle explosion effect would go here
+              console.log('Launch Your Financial Revolution!');
+            }}
+          >
+            <span className="relative z-10">Launch Your Financial Revolution</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-neon-magenta to-neon-blue opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          </motion.button>
 
-.focus-visible button:focus,
-.focus-visible a:focus,
-.focus-visible input:focus,
-.focus-visible select:focus,
-.focus-visible textarea:focus {
-  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.5) !important;
-}
+          <motion.button
+            className="flex items-center space-x-2 px-8 py-4 border-2 border-neon-blue rounded-full font-semibold hover:bg-neon-blue/10 transition-colors duration-300"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            aria-label="Watch live demo of ExpenseIQ"
+          >
+            <Play className="w-5 h-5" />
+            <span>Watch Live Demo</span>
+          </motion.button>
+        </motion.div>
 
-/* Skip links */
-.skip-link {
-  position: absolute;
-  top: -40px;
-  left: 6px;
-  background: theme('colors.primary.500');
-  color: white;
-  padding: 8px;
-  text-decoration: none;
-  border-radius: 4px;
-  z-index: 1000;
-}
+        {/* Interactive Elements */}
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto"
+          variants={itemVariants}
+        >
+          {/* Voice Demo */}
+          <motion.div
+            className="bg-card-bg backdrop-blur-sm rounded-2xl p-6 border border-neon-blue/20"
+            whileHover={{ scale: 1.02 }}
+          >
+            <VoiceDemo />
+          </motion.div>
 
-.skip-link:focus {
-  top: 6px;
-}
+          {/* AI Showcase */}
+          <motion.div
+            className="bg-card-bg backdrop-blur-sm rounded-2xl p-6 border border-neon-magenta/20"
+            whileHover={{ scale: 1.02 }}
+          >
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-neon-magenta to-neon-blue flex items-center justify-center animate-pulse-neon">
+                <TrendingUp className="w-8 h-8" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">AI Insights</h3>
+              <p className="text-cyber-silver text-sm">Real-time predictive analytics for smarter financial decisions</p>
+            </div>
+          </motion.div>
 
-/* Ensure sufficient color contrast */
-@media (prefers-contrast: high) {
-  :root {
-    --primary-500: #0066ff;
-    --secondary-500: #ff0066;
-    --surface-300: #ffffff;
-  }
-}
+          {/* AR Portal */}
+          <motion.div
+            className="bg-card-bg backdrop-blur-sm rounded-2xl p-6 border border-cyber-silver/20"
+            whileHover={{ scale: 1.02 }}
+          >
+            <div className="text-center">
+              <motion.div
+                className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-cyber-silver to-white flex items-center justify-center"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+              >
+                <QrCode className="w-8 h-8 text-dark-bg" />
+              </motion.div>
+              <h3 className="text-lg font-semibold mb-2">AR Experience</h3>
+              <p className="text-cyber-silver text-sm">Scan to experience your dashboard in augmented reality</p>
+            </div>
+          </motion.div>
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+};
 
-/* Respect user's motion preferences */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: theme('colors.dark-surface');
-}
-
-::-webkit-scrollbar-thumb {
-  background: theme('colors.primary.500');
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: theme('colors.primary.600');
-}
-
-/* Selection styles */
-::selection {
-  background: theme('colors.primary.500');
-  color: white;
-}
-
-::-moz-selection {
-  background: theme('colors.primary.500');
-  color: white;
-}
+export default HeroSection;
