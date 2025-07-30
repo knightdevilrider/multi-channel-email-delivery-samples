@@ -492,8 +492,8 @@ const JourneyTimeline: React.FC = () => {
             <g key={i}>
               {/* Glowing connection nodes */}
               <motion.circle
-                cx={benefit.position.x}
-                cy={benefit.position.y / 8}
+                cx={step.position.x}
+                cy={step.position.y / 8}
                 r="1.2"
                 fill={step.color}
                 initial={{ opacity: 0, scale: 0 }}
@@ -516,8 +516,8 @@ const JourneyTimeline: React.FC = () => {
               {/* Connection lines between steps */}
               {i < journeySteps.length - 1 && (
                 <motion.line
-                  x1={benefit.position.x}
-                  y1={benefit.position.y / 8}
+                  x1={step.position.x}
+                  y1={step.position.y / 8}
                   x2={journeySteps[i + 1].position.x}
                   y2={journeySteps[i + 1].position.y / 8}
                   stroke="url(#connectionGlow)"
@@ -537,8 +537,8 @@ const JourneyTimeline: React.FC = () => {
               
               {/* Pulsing energy rings */}
               <motion.circle
-                cx={benefit.position.x}
-                cy={benefit.position.y / 8}
+                cx={step.position.x}
+                cy={step.position.y / 8}
                 r="3"
                 fill="none"
                 stroke={step.color}
