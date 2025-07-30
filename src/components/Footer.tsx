@@ -2,15 +2,45 @@ import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mic, Play, QrCode, Star, TrendingUp } from 'lucide-react';
 
+const HeroSection = () => {
+  const [currentPhrase, setCurrentPhrase] = useState(0);
+
   const phrases = [
     "Command Your Finances",
     "Conquer Chaos", 
     "Amplify Growth"
   ];
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentPhrase((prev) => (prev + 1) % phrases.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
     }
   };
-          <p className="text-xl mb-8 max-w-3xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 12
+      }
+    }
+  };
+
   const titleVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
@@ -23,18 +53,39 @@ import { Mic, Play, QrCode, Star, TrendingUp } from 'lucide-react';
       }
     }
   };
+
+  const VoiceDemo = () => {
+    return (
+      <div className="text-center">
+        <motion.div
+          className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
+          style={{ background: 'linear-gradient(135deg, var(--primary-blue), var(--primary-magenta))' }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+        >
+          <Mic className="w-8 h-8" />
+        </motion.div>
+        <h3 className="text-lg font-semibold mb-2">Voice Commands</h3>
+        <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+          "Show me my Q3 expenses" - Experience the future of finance management
+        </p>
+      </div>
+    );
+  };
+
   return (
     <section 
       id="main-content"
       className="unified-section min-h-screen flex items-center justify-center pt-16"
       aria-label="Hero section"
     >
-              <Zap className="w-10 h-10 unified-pulse" style={{ color: 'var(--primary-blue)' }} />
-              <span className="text-3xl font-black unified-gradient-text">
+      <motion.div
+        className="container mx-auto px-6 text-center"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-            <p className="leading-relaxed mb-6 max-w-md" style={{ color: 'var(--text-secondary)' }}>
+      >
+        {/* Dynamic Title */}
         <div className="h-32 md:h-40 lg:h-48 flex items-center justify-center mb-8">
           <motion.h1
             key={currentPhrase}
@@ -48,12 +99,13 @@ import { Mic, Play, QrCode, Star, TrendingUp } from 'lucide-react';
               stiffness: 100,
               damping: 15
             }}
-            className="unified-gradient-text unified-glow"
-                  className="w-12 h-12 rounded-full unified-card flex items-center justify-center hover:scale-110 transition-all duration-300"
-            {phrases[currentPhrase]}
+          >
+            <span className="unified-gradient-text unified-glow">
+              {phrases[currentPhrase]}
+            </span>
           </motion.h1>
         </div>
-                  <social.icon className="w-5 h-5" style={{ color: 'var(--primary-blue)' }} />
+
         {/* Subtitle */}
         <motion.p
           className="text-xl md:text-2xl mb-12 max-w-4xl mx-auto leading-relaxed"
@@ -65,7 +117,7 @@ import { Mic, Play, QrCode, Star, TrendingUp } from 'lucide-react';
         </motion.p>
 
         {/* Social Proof */}
-                  <a href="#" className="transition-colors duration-300" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--primary-blue)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>
+        <motion.div
           className="flex flex-wrap justify-center items-center gap-6 mb-12"
           variants={itemVariants}
         >
@@ -78,7 +130,7 @@ import { Mic, Play, QrCode, Star, TrendingUp } from 'lucide-react';
             <span style={{ color: 'var(--text-secondary)' }}>Savings Unlocked: $1.5M+</span>
           </div>
         </motion.div>
-                  <a href="#" className="transition-colors duration-300" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => e.target.style.color = 'var(--primary-blue)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>
+
         {/* CTA Buttons */}
         <motion.div
           className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16"
@@ -90,21 +142,21 @@ import { Mic, Play, QrCode, Star, TrendingUp } from 'lucide-react';
             whileTap={{ scale: 0.95 }}
             aria-label="Launch your financial revolution with ExpenseIQ"
             onClick={() => {
-            <div className="flex items-center space-x-6 text-sm" style={{ color: 'var(--text-secondary)' }}>
               console.log('Launch Your Financial Revolution!');
-              <a href="#" className="transition-colors duration-300" onMouseEnter={(e) => e.target.style.color = 'var(--primary-blue)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>Privacy Policy</a>
-              <a href="#" className="transition-colors duration-300" onMouseEnter={(e) => e.target.style.color = 'var(--primary-blue)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>Terms of Service</a>
+            }}
+          >
             Launch Your Financial Revolution
           </motion.button>
-            className="unified-button-primary px-12 py-4 text-lg unified-pulse"
+
           <motion.button
-              className="flex items-center space-x-2 text-sm"
-              style={{ color: 'var(--text-secondary)' }}
+            className="unified-button-primary px-12 py-4 text-lg unified-pulse"
             whileHover={{ scale: 1.05 }}
-            <span className="flex items-center space-x-2">
-              <Shield className="w-4 h-4" style={{ color: 'var(--primary-blue)' }} />
+            whileTap={{ scale: 0.95 }}
           >
-            <Play className="w-5 h-5" />
+            <span className="flex items-center space-x-2">
+              <Play className="w-5 h-5" />
+              <span>Watch Demo</span>
+            </span>
           </motion.button>
         </motion.div>
 
@@ -113,7 +165,7 @@ import { Mic, Play, QrCode, Star, TrendingUp } from 'lucide-react';
           className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto"
           variants={itemVariants}
         >
-          <div className="text-xs font-mono" style={{ color: 'var(--primary-blue)' }}>
+          {/* Voice Demo */}
           <motion.div
             className="unified-card p-6"
             whileHover={{ scale: 1.02 }}

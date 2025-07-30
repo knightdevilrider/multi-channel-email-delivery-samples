@@ -72,3 +72,5 @@ import { Mic, Play, QrCode, Star, TrendingUp } from 'lucide-react';
 };
 
 export default HeroSection;
+  )
+}
