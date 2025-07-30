@@ -273,7 +273,7 @@ const TestimonialsSection: React.FC = () => {
               duration: 3 + Math.random() * 2,
               repeat: Infinity,
               delay: i * 0.4
-            </div>
+            }}
           />
         ))}
       </div>
@@ -362,7 +362,7 @@ const TestimonialsSection: React.FC = () => {
           >
             Real quantum results from real entrepreneurs who've revolutionized their financial neural networks
           </motion.p>
-        </div>
+        </motion.div>
 
         <AccessibleCarousel
           items={carouselItems}
