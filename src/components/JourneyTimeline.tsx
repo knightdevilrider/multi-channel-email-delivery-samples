@@ -638,7 +638,7 @@ const journeySteps = [
     subtitle: 'AI-Powered Recognition',
     description: 'Instantly capture and digitize receipts, invoices, and expenses with advanced AI that understands context and extracts key financial data automatically.',
     color: '#00D4FF',
-    position: { x: 15, y: 15 }
+    position: { x: 20, y: 100 }
   },
   {
     AnimatedIcon: AIProcessingIcon,
@@ -646,7 +646,7 @@ const journeySteps = [
     subtitle: 'Intelligent Analysis',
     description: 'Advanced machine learning categorizes, analyzes patterns, and optimizes your financial data while providing predictive insights for better decision-making.',
     color: '#FF0080',
-    position: { x: 75, y: 35 }
+    position: { x: 70, y: 150 }
   },
   {
     AnimatedIcon: UnifiedDashboardIcon,
@@ -654,7 +654,7 @@ const journeySteps = [
     subtitle: 'Complete Integration',
     description: 'All financial data from multiple sources converges into one intelligent command center with real-time analytics and comprehensive reporting.',
     color: '#00D4FF',
-    position: { x: 20, y: 65 }
+    position: { x: 25, y: 350 }
   },
   {
     AnimatedIcon: GrowthAccelerationIcon,
@@ -662,7 +662,7 @@ const journeySteps = [
     subtitle: 'Strategic Optimization',
     description: 'Make data-driven decisions that accelerate business growth, maximize profitability, and unlock hidden revenue opportunities through AI-powered insights.',
     color: '#FFD700',
-    position: { x: 70, y: 85 }
+    position: { x: 75, y: 400 }
   }
 ];
 
@@ -857,14 +857,14 @@ const JourneyTimeline: React.FC = () => {
 
         <div ref={ref} className="relative">
           {/* Journey Steps as Advanced Floating Cards */}
-          <div className="relative min-h-[900px] w-full">
+          <div className="relative min-h-[600px] w-full">
             {journeySteps.map((step, index) => (
               <motion.div
                 key={index}
                 className="absolute z-10"
                 style={{
                   left: `${step.position.x}%`,
-                  top: `${step.position.y * 10}px`,
+                  top: `${step.position.y}px`,
                   transform: 'translate(-50%, -50%)'
                 }}
                 initial={{ opacity: 0, scale: 0.7, y: 100 }}
@@ -878,7 +878,7 @@ const JourneyTimeline: React.FC = () => {
               >
                 {/* Advanced Holographic Card */}
                 <motion.div
-                  className="relative bg-gradient-to-br from-slate-900/95 via-slate-800/85 to-slate-900/95 backdrop-blur-2xl rounded-3xl p-8 border-2 border-cyan-400/30 shadow-2xl w-[350px] max-w-[90vw] overflow-hidden"
+                  className="relative bg-gradient-to-br from-slate-900/95 via-slate-800/85 to-slate-900/95 backdrop-blur-2xl rounded-3xl p-6 border-2 border-cyan-400/30 shadow-2xl w-[280px] max-w-[90vw] overflow-hidden"
                   whileHover={{ 
                     scale: 1.05,
                     borderColor: step.color + '80',
@@ -914,7 +914,7 @@ const JourneyTimeline: React.FC = () => {
                   
                   {/* Large animated icon */}
                   <motion.div 
-                    className="w-32 h-32 mx-auto mb-6 cursor-pointer relative"
+                    className="w-24 h-24 mx-auto mb-4 cursor-pointer relative"
                     whileHover={{ 
                       scale: 1.1,
                       rotateY: 15,
@@ -927,7 +927,7 @@ const JourneyTimeline: React.FC = () => {
                   
                   {/* Title with ultra-slow animation */}
                   <motion.h3 
-                    className="text-2xl font-black mb-3 text-center text-white"
+                    className="text-xl font-black mb-3 text-center text-white"
                     initial={{ opacity: 0, y: 30 }}
                     animate={inView ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 2, delay: index * 0.6 + 1 }}
@@ -937,7 +937,7 @@ const JourneyTimeline: React.FC = () => {
                   
                   {/* Subtitle with color */}
                   <motion.p 
-                    className="text-lg font-semibold mb-4 text-center"
+                    className="text-base font-semibold mb-4 text-center"
                     style={{ color: step.color }}
                     initial={{ opacity: 0, y: 30 }}
                     animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -948,7 +948,7 @@ const JourneyTimeline: React.FC = () => {
                   
                   {/* Description with ultra-slow reveal */}
                   <motion.p 
-                    className="text-cyan-100 leading-relaxed text-center"
+                    className="text-cyan-100 leading-relaxed text-center text-sm"
                     initial={{ opacity: 0, y: 40 }}
                     animate={inView ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 3, delay: index * 0.6 + 1.6 }}
@@ -958,27 +958,106 @@ const JourneyTimeline: React.FC = () => {
 
                   {/* Status indicator */}
                   <div 
-                    className="absolute top-6 right-6 w-4 h-4 rounded-full opacity-90 animate-pulse"
+                    className="absolute top-4 right-4 w-3 h-3 rounded-full opacity-90 animate-pulse"
                     style={{ backgroundColor: step.color }}
                   />
-                  
-                  {/* Step number */}
-                  <motion.div
-                    className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-slate-800 to-slate-900 rounded-full border-2 border-cyan-400/60 flex items-center justify-center text-cyan-400 font-bold text-lg shadow-2xl"
-                    animate={{
-                      boxShadow: [
-                        '0 0 20px rgba(34, 211, 238, 0.4)',
-                        '0 0 40px rgba(34, 211, 238, 0.8)',
-                        '0 0 20px rgba(34, 211, 238, 0.4)'
-                      ]
-                    }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                  >
-                    {index + 1}
-                  </motion.div>
+                </motion.div>
+                
+                {/* Step number positioned outside the card */}
+                <motion.div
+                  className="absolute -top-8 -left-8 w-12 h-12 bg-gradient-to-br from-slate-800 to-slate-900 rounded-full border-2 flex items-center justify-center font-bold text-lg shadow-2xl z-20"
+                  style={{ 
+                    borderColor: step.color,
+                    color: step.color
+                  }}
+                  animate={{
+                    boxShadow: [
+                      `0 0 20px ${step.color}40`,
+                      `0 0 40px ${step.color}80`,
+                      `0 0 20px ${step.color}40`
+                    ]
+                  }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={inView ? { opacity: 1, scale: 1 } : {}}
+                >
+                  {index + 1}
                 </motion.div>
               </motion.div>
             ))}
+            
+            {/* Connecting Lines between steps */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 5 }}>
+              <defs>
+                <linearGradient id="connectionGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#00D4FF" stopOpacity="0.8" />
+                  <stop offset="25%" stopColor="#FF0080" stopOpacity="0.8" />
+                  <stop offset="75%" stopColor="#00D4FF" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="#FFD700" stopOpacity="0.8" />
+                </linearGradient>
+                <filter id="lineGlow">
+                  <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                  <feMerge> 
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+              
+              {/* Connection lines 1→2→3→4→1 */}
+              {journeySteps.map((step, i) => {
+                const nextIndex = (i + 1) % journeySteps.length;
+                const nextStep = journeySteps[nextIndex];
+                
+                return (
+                  <motion.line
+                    key={`connection-${i}`}
+                    x1={`${step.position.x}%`}
+                    y1={step.position.y}
+                    x2={`${nextStep.position.x}%`}
+                    y2={nextStep.position.y}
+                    stroke="url(#connectionGradient)"
+                    strokeWidth="3"
+                    filter="url(#lineGlow)"
+                    strokeDasharray="10,5"
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    animate={{ 
+                      pathLength: [0, 1, 0], 
+                      opacity: [0, 0.8, 0],
+                      strokeDashoffset: [0, -20, -40]
+                    }}
+                    transition={{ 
+                      duration: 4, 
+                      repeat: Infinity, 
+                      delay: i * 1,
+                      ease: "easeInOut"
+                    }}
+                  />
+                );
+              })}
+              
+              {/* Animated connection nodes */}
+              {journeySteps.map((step, i) => (
+                <motion.circle
+                  key={`node-${i}`}
+                  cx={`${step.position.x}%`}
+                  cy={step.position.y}
+                  r="4"
+                  fill={step.color}
+                  filter="url(#lineGlow)"
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ 
+                    opacity: [0.6, 1, 0.6], 
+                    scale: [1, 1.5, 1]
+                  }}
+                  transition={{ 
+                    duration: 2, 
+                    repeat: Infinity, 
+                    delay: i * 0.5 
+                  }}
+                />
+              ))}
+            </svg>
           </div>
         </div>
       </div>
