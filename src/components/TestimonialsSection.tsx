@@ -281,7 +281,7 @@ const TestimonialsSection: React.FC = () => {
   }));
 
   return (
-    <section className="py-20 relative overflow-hidden bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900" id="testimonials">
+    <section className="py-20 relative overflow-hidden" id="testimonials">
       {/* Advanced Quantum Grid */}
       <div className="absolute inset-0 opacity-15">
         <div className="absolute inset-0" style={{
