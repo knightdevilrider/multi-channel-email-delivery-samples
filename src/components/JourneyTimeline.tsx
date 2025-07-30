@@ -673,7 +673,7 @@ const JourneyTimeline: React.FC = () => {
   });
 
   return (
-    <section className="py-32 relative overflow-hidden bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
+    <section className="py-16 md:py-32 relative overflow-hidden bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
       {/* Advanced Grid Network Background */}
       <div className="absolute inset-0">
         {/* Dynamic grid pattern */}
@@ -825,12 +825,12 @@ const JourneyTimeline: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           className="text-center mb-20"
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 2, ease: "easeOut" }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
         >
           <motion.h2 
-            className="text-6xl md:text-8xl lg:text-9xl font-black mb-8 bg-gradient-to-r from-cyan-400 via-purple-500 to-yellow-400 bg-clip-text text-transparent"
+            className="text-4xl md:text-6xl lg:text-8xl font-black mb-6 md:mb-8 bg-gradient-to-r from-cyan-400 via-purple-500 to-yellow-400 bg-clip-text text-transparent"
             style={{
               filter: 'drop-shadow(0 0 40px rgba(34, 211, 238, 0.4))'
             }}
@@ -846,10 +846,10 @@ const JourneyTimeline: React.FC = () => {
             Your Path to Financial Mastery
           </motion.h2>
           <motion.p 
-            className="text-2xl text-cyan-100 max-w-4xl mx-auto leading-relaxed"
+            className="text-lg md:text-2xl text-cyan-100 max-w-4xl mx-auto leading-relaxed px-4"
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 2.5, delay: 1 }}
+            transition={{ duration: 2, delay: 0.5 }}
           >
             Four revolutionary steps that transform financial chaos into entrepreneurial mastery through AI-powered intelligence
           </motion.p>
@@ -857,15 +857,16 @@ const JourneyTimeline: React.FC = () => {
 
         <div ref={ref} className="relative">
           {/* Journey Steps as Advanced Floating Cards */}
-          <div className="relative min-h-[600px] w-full">
+          <div className="relative min-h-[800px] md:min-h-[600px] w-full">
             {journeySteps.map((step, index) => (
               <motion.div
                 key={index}
-                className="absolute z-10"
+                className="absolute z-10 md:absolute"
                 style={{
-                  left: `${step.position.x}%`,
-                  top: `${step.position.y}px`,
-                  transform: 'translate(-50%, -50%)'
+                  // Mobile: Stack vertically, Desktop: Use original positions
+                  left: window.innerWidth < 768 ? '50%' : `${step.position.x}%`,
+                  top: window.innerWidth < 768 ? `${120 + index * 180}px` : `${step.position.y}px`,
+                  transform: 'translate(-50%, -50%)',
                 }}
                 initial={{ opacity: 0, scale: 0.7, y: 100 }}
                 animate={inView ? { opacity: 1, scale: 1, y: 0 } : {}}
@@ -878,7 +879,7 @@ const JourneyTimeline: React.FC = () => {
               >
                 {/* Advanced Holographic Card */}
                 <motion.div
-                  className="relative bg-gradient-to-br from-slate-900/95 via-slate-800/85 to-slate-900/95 backdrop-blur-2xl rounded-3xl p-6 border-2 border-cyan-400/30 shadow-2xl w-[280px] max-w-[90vw] overflow-hidden"
+                  className="relative bg-gradient-to-br from-slate-900/95 via-slate-800/85 to-slate-900/95 backdrop-blur-2xl rounded-3xl p-4 md:p-6 border-2 border-cyan-400/30 shadow-2xl w-[300px] max-w-[85vw] overflow-hidden"
                   whileHover={{ 
                     scale: 1.05,
                     borderColor: step.color + '80',
@@ -914,7 +915,7 @@ const JourneyTimeline: React.FC = () => {
                   
                   {/* Large animated icon */}
                   <motion.div 
-                    className="w-24 h-24 mx-auto mb-4 cursor-pointer relative"
+                    className="w-16 h-16 md:w-24 md:h-24 mx-auto mb-3 md:mb-4 cursor-pointer relative"
                     whileHover={{ 
                       scale: 1.1,
                       rotateY: 15,
@@ -927,7 +928,7 @@ const JourneyTimeline: React.FC = () => {
                   
                   {/* Title with ultra-slow animation */}
                   <motion.h3 
-                    className="text-xl font-black mb-3 text-center text-white"
+                    className="text-lg md:text-xl font-black mb-2 md:mb-3 text-center text-white"
                     initial={{ opacity: 0, y: 30 }}
                     animate={inView ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 2, delay: index * 0.6 + 1 }}
@@ -937,7 +938,7 @@ const JourneyTimeline: React.FC = () => {
                   
                   {/* Subtitle with color */}
                   <motion.p 
-                    className="text-base font-semibold mb-4 text-center"
+                    className="text-sm md:text-base font-semibold mb-3 md:mb-4 text-center"
                     style={{ color: step.color }}
                     initial={{ opacity: 0, y: 30 }}
                     animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -948,7 +949,7 @@ const JourneyTimeline: React.FC = () => {
                   
                   {/* Description with ultra-slow reveal */}
                   <motion.p 
-                    className="text-cyan-100 leading-relaxed text-center text-sm"
+                    className="text-cyan-100 leading-relaxed text-center text-xs md:text-sm"
                     initial={{ opacity: 0, y: 40 }}
                     animate={inView ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 3, delay: index * 0.6 + 1.6 }}
@@ -958,14 +959,14 @@ const JourneyTimeline: React.FC = () => {
 
                   {/* Status indicator */}
                   <div 
-                    className="absolute top-4 right-4 w-3 h-3 rounded-full opacity-90 animate-pulse"
+                    className="absolute top-3 right-3 md:top-4 md:right-4 w-2 h-2 md:w-3 md:h-3 rounded-full opacity-90 animate-pulse"
                     style={{ backgroundColor: step.color }}
                   />
                 </motion.div>
                 
                 {/* Step number positioned outside the card */}
                 <motion.div
-                  className="absolute -top-8 -left-8 w-12 h-12 bg-gradient-to-br from-slate-800 to-slate-900 rounded-full border-2 flex items-center justify-center font-bold text-lg shadow-2xl z-20"
+                  className="absolute -top-6 -left-6 md:-top-8 md:-left-8 w-8 h-8 md:w-12 md:h-12 bg-gradient-to-br from-slate-800 to-slate-900 rounded-full border-2 flex items-center justify-center font-bold text-sm md:text-lg shadow-2xl z-20"
                   style={{ 
                     borderColor: step.color,
                     color: step.color
@@ -987,7 +988,7 @@ const JourneyTimeline: React.FC = () => {
             ))}
             
             {/* Connecting Lines between steps */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 5 }}>
+            <svg className="absolute inset-0 w-full h-full pointer-events-none hidden md:block" style={{ zIndex: 5 }}>
               <defs>
                 <linearGradient id="connectionGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stopColor="#00D4FF" stopOpacity="0.8" />
@@ -1058,6 +1059,31 @@ const JourneyTimeline: React.FC = () => {
                 />
               ))}
             </svg>
+            
+            {/* Mobile Connection Indicators - Simple vertical flow */}
+            <div className="absolute left-1/2 transform -translate-x-1/2 md:hidden" style={{ zIndex: 5 }}>
+              {journeySteps.slice(0, -1).map((_, i) => (
+                <motion.div
+                  key={`mobile-connection-${i}`}
+                  className="w-0.5 bg-gradient-to-b from-cyan-400 to-purple-400 rounded-full shadow-lg"
+                  style={{
+                    height: '60px',
+                    top: `${200 + i * 180}px`,
+                    left: '0px'
+                  }}
+                  initial={{ scaleY: 0, opacity: 0 }}
+                  animate={{ 
+                    scaleY: [0, 1, 0], 
+                    opacity: [0, 0.8, 0]
+                  }}
+                  transition={{ 
+                    duration: 2, 
+                    repeat: Infinity, 
+                    delay: i * 0.5 + 1
+                  }}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
