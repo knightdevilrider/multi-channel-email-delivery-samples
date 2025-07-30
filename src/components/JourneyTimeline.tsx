@@ -387,7 +387,7 @@ const JourneyTimeline: React.FC = () => {
   });
 
   return (
-    <section className="py-20 relative overflow-hidden bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
+    <section className="py-20 relative overflow-hidden">
       {/* Quantum Grid Background */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute inset-0" style={{
