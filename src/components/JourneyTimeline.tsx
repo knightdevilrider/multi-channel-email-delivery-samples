@@ -857,15 +857,15 @@ const JourneyTimeline: React.FC = () => {
 
         <div ref={ref} className="relative">
           {/* Journey Steps as Advanced Floating Cards */}
-          <div className="relative min-h-[800px] md:min-h-[600px] w-full">
+          <div className="relative min-h-[600px] md:min-h-[500px] w-full max-w-6xl mx-auto">
             {journeySteps.map((step, index) => (
               <motion.div
                 key={index}
-                className="absolute z-10 md:absolute"
+                className="absolute z-10"
                 style={{
-                  // Mobile: Stack vertically, Desktop: Use original positions
-                  left: window.innerWidth < 768 ? '50%' : `${step.position.x}%`,
-                  top: window.innerWidth < 768 ? `${120 + index * 180}px` : `${step.position.y}px`,
+                  // 2x2 Grid Layout: 1(left-top), 2(right-top), 3(left-bottom), 4(right-bottom)
+                  left: index % 2 === 0 ? '10%' : '60%', // Left column (10%) or Right column (60%)
+                  top: index < 2 ? '50px' : '300px', // Top row (50px) or Bottom row (300px)
                   transform: 'translate(-50%, -50%)',
                 }}
                 initial={{ opacity: 0, scale: 0.7, y: 100 }}
@@ -879,7 +879,7 @@ const JourneyTimeline: React.FC = () => {
               >
                 {/* Advanced Holographic Card */}
                 <motion.div
-                  className="relative bg-gradient-to-br from-slate-900/95 via-slate-800/85 to-slate-900/95 backdrop-blur-2xl rounded-3xl p-4 md:p-6 border-2 border-cyan-400/30 shadow-2xl w-[300px] max-w-[85vw] overflow-hidden"
+                  className="relative bg-gradient-to-br from-slate-900/95 via-slate-800/85 to-slate-900/95 backdrop-blur-2xl rounded-3xl p-4 md:p-6 border-2 border-cyan-400/30 shadow-2xl w-[300px] max-w-[40vw] overflow-hidden"
                   whileHover={{ 
                     scale: 1.05,
                     borderColor: step.color + '80',
@@ -966,7 +966,7 @@ const JourneyTimeline: React.FC = () => {
                 
                 {/* Step number positioned outside the card */}
                 <motion.div
-                  className="absolute -top-6 -left-6 md:-top-8 md:-left-8 w-8 h-8 md:w-12 md:h-12 bg-gradient-to-br from-slate-800 to-slate-900 rounded-full border-2 flex items-center justify-center font-bold text-sm md:text-lg shadow-2xl z-20"
+                  className="absolute -top-8 -left-8 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-slate-800 to-slate-900 rounded-full border-2 flex items-center justify-center font-bold text-lg shadow-2xl z-20"
                   style={{ 
                     borderColor: step.color,
                     color: step.color
@@ -987,8 +987,8 @@ const JourneyTimeline: React.FC = () => {
               </motion.div>
             ))}
             
-            {/* Connecting Lines between steps */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none hidden md:block" style={{ zIndex: 5 }}>
+            {/* Connecting Lines: 1→2→4→3→1 (Grid Flow) */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 5 }}>
               <defs>
                 <linearGradient id="connectionGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stopColor="#00D4FF" stopOpacity="0.8" />
@@ -1005,46 +1005,51 @@ const JourneyTimeline: React.FC = () => {
                 </filter>
               </defs>
               
-              {/* Connection lines 1→2→3→4→1 */}
-              {journeySteps.map((step, i) => {
-                const nextIndex = (i + 1) % journeySteps.length;
-                const nextStep = journeySteps[nextIndex];
-                
-                return (
-                  <motion.line
-                    key={`connection-${i}`}
-                    x1={`${step.position.x}%`}
-                    y1={step.position.y}
-                    x2={`${nextStep.position.x}%`}
-                    y2={nextStep.position.y}
-                    stroke="url(#connectionGradient)"
-                    strokeWidth="3"
-                    filter="url(#lineGlow)"
-                    strokeDasharray="10,5"
-                    initial={{ pathLength: 0, opacity: 0 }}
-                    animate={{ 
-                      pathLength: [0, 1, 0], 
-                      opacity: [0, 0.8, 0],
-                      strokeDashoffset: [0, -20, -40]
-                    }}
-                    transition={{ 
-                      duration: 4, 
-                      repeat: Infinity, 
-                      delay: i * 1,
-                      ease: "easeInOut"
-                    }}
-                  />
-                );
-              })}
+              {/* Grid Flow Connections: 1→2, 2→4, 4→3, 3→1 */}
+              {[
+                { from: [10, 50], to: [60, 50], delay: 0 }, // 1→2 (horizontal top)
+                { from: [60, 50], to: [60, 300], delay: 1 }, // 2→4 (vertical right)
+                { from: [60, 300], to: [10, 300], delay: 2 }, // 4→3 (horizontal bottom)
+                { from: [10, 300], to: [10, 50], delay: 3 }, // 3→1 (vertical left)
+              ].map((connection, i) => (
+                <motion.line
+                  key={`grid-connection-${i}`}
+                  x1={`${connection.from[0]}%`}
+                  y1={connection.from[1]}
+                  x2={`${connection.to[0]}%`}
+                  y2={connection.to[1]}
+                  stroke="url(#connectionGradient)"
+                  strokeWidth="3"
+                  filter="url(#lineGlow)"
+                  strokeDasharray="10,5"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={{ 
+                    pathLength: [0, 1, 0], 
+                    opacity: [0, 0.8, 0],
+                    strokeDashoffset: [0, -20, -40]
+                  }}
+                  transition={{ 
+                    duration: 3, 
+                    repeat: Infinity, 
+                    delay: connection.delay,
+                    ease: "easeInOut"
+                  }}
+                />
+              ))}
               
-              {/* Animated connection nodes */}
-              {journeySteps.map((step, i) => (
+              {/* Grid Connection Nodes */}
+              {[
+                { pos: [10, 50], color: '#00D4FF' }, // Step 1
+                { pos: [60, 50], color: '#FF0080' }, // Step 2  
+                { pos: [10, 300], color: '#00D4FF' }, // Step 3
+                { pos: [60, 300], color: '#FFD700' }, // Step 4
+              ].map((node, i) => (
                 <motion.circle
                   key={`node-${i}`}
-                  cx={`${step.position.x}%`}
-                  cy={step.position.y}
+                  cx={`${node.pos[0]}%`}
+                  cy={node.pos[1]}
                   r="4"
-                  fill={step.color}
+                  fill={node.color}
                   filter="url(#lineGlow)"
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ 
@@ -1059,31 +1064,6 @@ const JourneyTimeline: React.FC = () => {
                 />
               ))}
             </svg>
-            
-            {/* Mobile Connection Indicators - Simple vertical flow */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 md:hidden" style={{ zIndex: 5 }}>
-              {journeySteps.slice(0, -1).map((_, i) => (
-                <motion.div
-                  key={`mobile-connection-${i}`}
-                  className="w-0.5 bg-gradient-to-b from-cyan-400 to-purple-400 rounded-full shadow-lg"
-                  style={{
-                    height: '60px',
-                    top: `${200 + i * 180}px`,
-                    left: '0px'
-                  }}
-                  initial={{ scaleY: 0, opacity: 0 }}
-                  animate={{ 
-                    scaleY: [0, 1, 0], 
-                    opacity: [0, 0.8, 0]
-                  }}
-                  transition={{ 
-                    duration: 2, 
-                    repeat: Infinity, 
-                    delay: i * 0.5 + 1
-                  }}
-                />
-              ))}
-            </div>
           </div>
         </div>
       </div>
