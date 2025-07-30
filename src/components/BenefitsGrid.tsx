@@ -5,20 +5,13 @@ import { OrbitControls, Sphere, MeshDistortMaterial } from '@react-three/drei';
 import { Mic, Play, QrCode, Star, TrendingUp } from 'lucide-react';
 
 const HeroSection: React.FC = () => {
+  const [currentPhrase, setCurrentPhrase] = useState(0);
+  
   const phrases = [
     "Command Your Finances",
     "Conquer Chaos", 
     "Amplify Growth"
   ];
-
-  const [currentPhrase, setCurrentPhrase] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentPhrase((prev) => (prev + 1) % phrases.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -56,25 +49,13 @@ const HeroSection: React.FC = () => {
   };
 
   const VoiceDemo = () => {
-    const [isListening, setIsListening] = useState(false);
-    
     return (
       <div className="text-center">
-        <motion.div
-          className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center cursor-pointer"
-          style={{ background: 'linear-gradient(135deg, var(--primary-magenta), var(--primary-blue))' }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          animate={isListening ? { scale: [1, 1.2, 1] } : {}}
-          transition={{ duration: 0.5, repeat: isListening ? Infinity : 0 }}
-          onClick={() => setIsListening(!isListening)}
-        >
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center unified-pulse" style={{ background: 'linear-gradient(135deg, var(--primary-magenta), var(--primary-blue))' }}>
           <Mic className="w-8 h-8" />
-        </motion.div>
+        </div>
         <h3 className="text-lg font-semibold mb-2">Voice Commands</h3>
-        <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-          {isListening ? "Listening..." : "Try: 'Show me last month's expenses'"}
-        </p>
+        <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Control your finances with natural voice commands</p>
       </div>
     );
   };

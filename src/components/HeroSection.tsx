@@ -5,12 +5,19 @@ import { OrbitControls, Sphere, MeshDistortMaterial } from '@react-three/drei';
 import { Mic, Play, QrCode, Star, TrendingUp } from 'lucide-react';
 
 const HeroSection: React.FC = () => {
+  const [currentPhrase, setCurrentPhrase] = useState(0);
+  
   const phrases = [
     "Command Your Finances",
     "Conquer Chaos", 
     "Amplify Growth"
   ];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
         staggerChildren: 0.2
       }
     }
@@ -40,6 +47,19 @@ const HeroSection: React.FC = () => {
       }
     }
   };
+
+  const VoiceDemo = () => {
+    return (
+      <div className="text-center">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center unified-pulse" style={{ background: 'linear-gradient(135deg, var(--primary-magenta), var(--primary-blue))' }}>
+          <Mic className="w-8 h-8" />
+        </div>
+        <h3 className="text-lg font-semibold mb-2">Voice Commands</h3>
+        <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Control your finances with natural voice commands</p>
+      </div>
+    );
+  };
+
   return (
     <section 
       id="main-content"
@@ -55,7 +75,7 @@ const HeroSection: React.FC = () => {
         <div className="h-32 md:h-40 lg:h-48 flex items-center justify-center mb-8">
           <motion.h1
             key={currentPhrase}
-            className="text-5xl md:text-7xl lg:text-8xl font-black leading-tight text-center"
+            className="text-5xl md:text-7xl lg:text-8xl font-black leading-tight text-center unified-gradient-text unified-glow"
             initial={{ opacity: 0, y: 50, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -50, scale: 0.8 }}
@@ -65,7 +85,6 @@ const HeroSection: React.FC = () => {
               stiffness: 100,
               damping: 15
             }}
-            className="unified-gradient-text unified-glow"
           >
             {phrases[currentPhrase]}
           </motion.h1>
