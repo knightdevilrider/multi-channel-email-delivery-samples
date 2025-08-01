@@ -128,17 +128,15 @@ const InteractiveCards: React.FC = () => {
 
     setAnimatingCard(cardIndex);
     
-    // Start particle animation after content fades out
-    setTimeout(() => {
-      createParticles(cardIndex);
-      animateParticles(cardIndex);
-    }, 200);
+    // Create and start particle animation immediately
+    createParticles(cardIndex);
+    animateParticles(cardIndex);
 
     // Reset after animation completes
     setTimeout(() => {
       setAnimatingCard(null);
       setParticles([]);
-    }, 1200); // 200ms fade out + 800ms animation + 200ms delay
+    }, 1000); // 800ms animation + 200ms delay
   };
 
   useEffect(() => {
@@ -188,12 +186,13 @@ const InteractiveCards: React.FC = () => {
 
           {/* Content fade back in */}
           <AnimatePresence>
-            {animatingCard === index && (
+            {animatingCard !== index && (
               <motion.div
                 className="text-center relative z-20"
-                initial={{ opacity: 0 }}
+                initial={{ opacity: 1 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.2, delay: 1.0 }} // Delay for animation to complete
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
               >
                 <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r ${card.iconColor} flex items-center justify-center`}>
                   <card.icon className="w-8 h-8 text-white" />
