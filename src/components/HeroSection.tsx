@@ -274,7 +274,7 @@ const HeroSection: React.FC = () => {
                   }}
                 >
                   ×
-                </div>
+                </motion.button>
               </motion.div>
             )}
             <motion.div
@@ -424,7 +424,7 @@ const HeroSection: React.FC = () => {
                   }}
                 >
                   ×
-                </div>
+                </motion.button>
               </motion.div>
             )}
             <motion.div 
@@ -573,7 +573,7 @@ const HeroSection: React.FC = () => {
                   }}
                 >
                   ×
-                </div>
+                </motion.button>
               </motion.div>
             )}
             <motion.div 
