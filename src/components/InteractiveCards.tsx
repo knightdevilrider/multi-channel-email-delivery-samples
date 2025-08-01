@@ -37,7 +37,7 @@ const cardData: CardData[] = [
     icon: QrCode,
     title: 'AR Experience',
     subtitle: 'Scan to experience your dashboard in augmented reality',
-    iconColor: 'from-cyber-silver to-white'
+    iconColor: 'from-neon-blue to-cyan-400'
   }
 ];
 
@@ -59,10 +59,10 @@ const InteractiveCards: React.FC = () => {
 
     const newParticles: Particle[] = [];
     
-    // Create 40 particles for a more vibrant burst
-    for (let i = 0; i < 40; i++) {
-      const angle = (Math.PI * 2 * i) / 40;
-      const velocity = 3 + Math.random() * 4;
+    // Create 60 particles for an explosive burst
+    for (let i = 0; i < 60; i++) {
+      const angle = (Math.PI * 2 * i) / 60 + (Math.random() - 0.5) * 0.5;
+      const velocity = 2 + Math.random() * 6;
       
       newParticles.push({
         id: i,
@@ -71,7 +71,7 @@ const InteractiveCards: React.FC = () => {
         vx: Math.cos(angle) * velocity,
         vy: Math.sin(angle) * velocity,
         color: colors[Math.floor(Math.random() * colors.length)],
-        size: 4 + Math.random() * 6,
+        size: 3 + Math.random() * 8,
         life: 1.0
       });
     }
@@ -103,12 +103,24 @@ const InteractiveCards: React.FC = () => {
         updatedParticles.forEach(particle => {
           ctx.save();
           ctx.globalAlpha = particle.life;
-          ctx.fillStyle = particle.color;
-          ctx.shadowBlur = 15;
+          
+          // Create intense glow effect
+          ctx.shadowBlur = 20;
           ctx.shadowColor = particle.color;
+          ctx.fillStyle = particle.color;
+          
+          // Draw outer glow
           ctx.beginPath();
-          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+          ctx.arc(particle.x, particle.y, particle.size * 1.5, 0, Math.PI * 2);
           ctx.fill();
+          
+          // Draw inner bright core
+          ctx.shadowBlur = 5;
+          ctx.fillStyle = '#FFFFFF';
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.size * 0.3, 0, Math.PI * 2);
+          ctx.fill();
+          
           ctx.restore();
         });
 
@@ -181,7 +193,7 @@ const InteractiveCards: React.FC = () => {
                 transition={{ duration: 0.2 }}
               >
                 <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r ${card.iconColor} flex items-center justify-center`}>
-                  <card.icon className="w-8 h-8 text-white" />
+                  <card.icon className="w-8 h-8 text-white drop-shadow-lg" />
                 </div>
                 <h3 className="text-lg font-semibold mb-2 text-white">{card.title}</h3>
                 <p className="text-cyber-silver text-sm leading-relaxed">{card.subtitle}</p>
