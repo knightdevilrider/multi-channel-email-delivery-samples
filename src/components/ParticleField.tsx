@@ -1,7 +1,10 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
 const ParticleField: React.FC = () => {
-  return null; // Empty component to prevent any interference
+  return (
+    <div className="fixed inset-0 overflow-hidden pointer-events-none z-0" />
+  );
 };
 
 export default ParticleField;

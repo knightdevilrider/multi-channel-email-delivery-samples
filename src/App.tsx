@@ -9,12 +9,14 @@ import TestimonialsSection from './components/TestimonialsSection';
 import SocialProofTicker from './components/SocialProofTicker';
 import FAQSection from './components/FAQSection';
 import Footer from './components/Footer';
+import ParticleField from './components/ParticleField';
 import Navigation from './components/Navigation';
 
 function App() {
   return (
     <AccessibilityProvider>
       <div className="min-h-screen bg-dark-bg text-white font-montserrat relative overflow-x-hidden">
+        <ParticleField />
         <Navigation />
         
         <motion.div

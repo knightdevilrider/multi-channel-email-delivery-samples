@@ -14,8 +14,6 @@ const Footer: React.FC = () => {
           transition={{ duration: 0.8 }}
         >
           <h2 className="text-4xl md:text-6xl font-black mb-6 bg-gradient-to-r from-neon-blue via-neon-magenta to-cyan-400 bg-clip-text text-transparent animate-glow">
-          </h2>
-          <h2 className="text-4xl md:text-6xl font-black mb-6 bg-gradient-to-r from-neon-blue to-neon-magenta bg-clip-text text-transparent">
             Ready to Revolutionize Your Finances?
           </h2>
           <p className="text-xl text-cyber-silver mb-8 max-w-3xl mx-auto">
