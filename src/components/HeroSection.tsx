@@ -8,6 +8,7 @@ import ThreeScene from './ThreeScene';
 
 const HeroSection: React.FC = () => {
   const [currentPhrase, setCurrentPhrase] = useState(0);
+  const [activeDemo, setActiveDemo] = useState<string | null>(null);
   const phrases = [
     "Command Your Finances",
     "Conquer Chaos", 
@@ -166,17 +167,133 @@ const HeroSection: React.FC = () => {
         >
           {/* Voice Demo */}
           <motion.div
-            className="bg-card-bg backdrop-blur-sm rounded-2xl p-6 border border-neon-blue/20"
+            className="bg-card-bg backdrop-blur-sm rounded-2xl p-6 border border-neon-blue/20 cursor-pointer relative overflow-hidden"
             whileHover={{ scale: 1.02 }}
+            onClick={() => setActiveDemo('voice')}
           >
+            {activeDemo === 'voice' && (
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-br from-neon-blue/20 to-neon-magenta/20 rounded-2xl flex items-center justify-center z-10"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="text-center">
+                  <motion.div
+                    className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-r from-neon-blue to-neon-magenta flex items-center justify-center"
+                    animate={{ 
+                      scale: [1, 1.2, 1],
+                      rotate: [0, 360]
+                    }}
+                    transition={{ 
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    <Mic className="w-10 h-10 text-white" />
+                  </motion.div>
+                  <motion.h3 
+                    className="text-2xl font-bold text-white mb-2"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    Voice Activated!
+                  </motion.h3>
+                  <motion.p 
+                    className="text-neon-blue mb-4"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    "Add $50 coffee to marketing"
+                  </motion.p>
+                  <motion.button
+                    className="px-6 py-2 bg-gradient-to-r from-neon-blue to-neon-magenta rounded-full text-white font-semibold"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    whileHover={{ scale: 1.05 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveDemo(null);
+                    }}
+                  >
+                    Try Voice Commands
+                  </motion.button>
+                </div>
+              </motion.div>
+            )}
             <VoiceDemo />
           </motion.div>
 
           {/* AI Showcase */}
           <motion.div
-            className="bg-card-bg backdrop-blur-sm rounded-2xl p-6 border border-neon-magenta/20"
+            className="bg-card-bg backdrop-blur-sm rounded-2xl p-6 border border-neon-magenta/20 cursor-pointer relative overflow-hidden"
             whileHover={{ scale: 1.02 }}
+            onClick={() => setActiveDemo('ai')}
           >
+            {activeDemo === 'ai' && (
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-br from-neon-magenta/20 to-neon-blue/20 rounded-2xl flex items-center justify-center z-10"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="text-center">
+                  <motion.div
+                    className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-r from-neon-magenta to-neon-blue flex items-center justify-center"
+                    animate={{ 
+                      scale: [1, 1.1, 1],
+                      boxShadow: [
+                        "0 0 20px rgba(255, 0, 122, 0.5)",
+                        "0 0 40px rgba(255, 0, 122, 0.8)",
+                        "0 0 20px rgba(255, 0, 122, 0.5)"
+                      ]
+                    }}
+                    transition={{ 
+                      duration: 1.5,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    <TrendingUp className="w-10 h-10 text-white" />
+                  </motion.div>
+                  <motion.h3 
+                    className="text-2xl font-bold text-white mb-2"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    AI Analyzing...
+                  </motion.h3>
+                  <motion.p 
+                    className="text-neon-magenta mb-4"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    Predicting 23% cost savings next quarter
+                  </motion.p>
+                  <motion.button
+                    className="px-6 py-2 bg-gradient-to-r from-neon-magenta to-neon-blue rounded-full text-white font-semibold"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    whileHover={{ scale: 1.05 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveDemo(null);
+                    }}
+                  >
+                    View AI Insights
+                  </motion.button>
+                </div>
+              </motion.div>
+            )}
             <div className="text-center">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-neon-magenta to-neon-blue flex items-center justify-center animate-pulse-neon">
                 <TrendingUp className="w-8 h-8" />
@@ -188,9 +305,65 @@ const HeroSection: React.FC = () => {
 
           {/* AR Portal */}
           <motion.div
-            className="bg-card-bg backdrop-blur-sm rounded-2xl p-6 border border-cyber-silver/20"
+            className="bg-card-bg backdrop-blur-sm rounded-2xl p-6 border border-cyber-silver/20 cursor-pointer relative overflow-hidden"
             whileHover={{ scale: 1.02 }}
+            onClick={() => setActiveDemo('ar')}
           >
+            {activeDemo === 'ar' && (
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-br from-neon-blue/20 to-cyber-silver/20 rounded-2xl flex items-center justify-center z-10"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="text-center">
+                  <motion.div
+                    className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-neon-blue to-cyber-silver flex items-center justify-center"
+                    animate={{ 
+                      rotateY: [0, 180, 360],
+                      scale: [1, 1.1, 1]
+                    }}
+                    transition={{ 
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    <QrCode className="w-10 h-10 text-dark-bg" />
+                  </motion.div>
+                  <motion.h3 
+                    className="text-2xl font-bold text-white mb-2"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    AR Portal Active!
+                  </motion.h3>
+                  <motion.p 
+                    className="text-neon-blue mb-4"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    Scan with your phone to enter AR mode
+                  </motion.p>
+                  <motion.button
+                    className="px-6 py-2 bg-gradient-to-r from-neon-blue to-cyber-silver text-dark-bg rounded-full font-semibold"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    whileHover={{ scale: 1.05 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveDemo(null);
+                    }}
+                  >
+                    Launch AR Experience
+                  </motion.button>
+                </div>
+              </motion.div>
+            )}
             <div className="text-center">
               <motion.div
                 className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-cyber-silver to-white flex items-center justify-center"
