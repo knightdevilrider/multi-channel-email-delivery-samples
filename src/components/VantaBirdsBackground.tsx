@@ -16,16 +16,16 @@ const BirdsSystem: React.FC<{ mousePosition: { x: number; y: number } }> = ({ mo
 
   // Initialize birds
   useEffect(() => {
-    birds.current = Array.from({ length: 50 }, () => ({
+    birds.current = Array.from({ length: 5 }, () => ({
       position: new THREE.Vector3(
         (Math.random() - 0.5) * 20,
         (Math.random() - 0.5) * 10,
         (Math.random() - 0.5) * 20
       ),
       velocity: new THREE.Vector3(
-        (Math.random() - 0.5) * 0.02,
-        (Math.random() - 0.5) * 0.01,
-        (Math.random() - 0.5) * 0.02
+        (Math.random() - 0.5) * 0.1,
+        (Math.random() - 0.5) * 0.05,
+        (Math.random() - 0.5) * 0.1
       ),
       phase: Math.random() * Math.PI * 2,
       wingPhase: Math.random() * Math.PI * 2
@@ -57,7 +57,7 @@ const BirdsSystem: React.FC<{ mousePosition: { x: number; y: number } }> = ({ mo
         
         const distance = bird.position.distanceTo(otherBird.position);
         
-        if (distance < 2) {
+        if (distance < 4) {
           // Separation
           const diff = new THREE.Vector3().subVectors(bird.position, otherBird.position);
           diff.normalize();
@@ -89,14 +89,14 @@ const BirdsSystem: React.FC<{ mousePosition: { x: number; y: number } }> = ({ mo
       }
 
       // Apply forces
-      bird.velocity.add(separation.multiplyScalar(0.01));
-      bird.velocity.add(alignment.multiplyScalar(0.005));
-      bird.velocity.add(cohesion.multiplyScalar(0.005));
+      bird.velocity.add(separation.multiplyScalar(0.04));
+      bird.velocity.add(alignment.multiplyScalar(0.04));
+      bird.velocity.add(cohesion.multiplyScalar(0.04));
       bird.velocity.add(mouseForce);
 
       // Limit velocity
-      if (bird.velocity.length() > 0.05) {
-        bird.velocity.normalize().multiplyScalar(0.05);
+      if (bird.velocity.length() > 0.1) {
+        bird.velocity.normalize().multiplyScalar(0.1);
       }
 
       // Update position
@@ -139,28 +139,28 @@ const BirdsSystem: React.FC<{ mousePosition: { x: number; y: number } }> = ({ mo
         <group key={index}>
           {/* Bird body */}
           <mesh>
-            <sphereGeometry args={[0.05, 8, 6]} />
+            <sphereGeometry args={[0.1, 8, 6]} />
             <meshBasicMaterial 
-              color="#4169E1" 
+              color="#ff0000" 
               transparent 
               opacity={0.8}
             />
           </mesh>
           
           {/* Bird wings */}
-          <mesh position={[-0.08, 0, 0]} rotation={[0, 0, Math.PI / 6]}>
-            <planeGeometry args={[0.1, 0.03]} />
+          <mesh position={[-0.15, 0, 0]} rotation={[0, 0, Math.PI / 6]}>
+            <planeGeometry args={[0.3, 0.1]} />
             <meshBasicMaterial 
-              color="#FF007A" 
+              color="#00d1ff" 
               transparent 
               opacity={0.6}
               side={THREE.DoubleSide}
             />
           </mesh>
-          <mesh position={[0.08, 0, 0]} rotation={[0, 0, -Math.PI / 6]}>
-            <planeGeometry args={[0.1, 0.03]} />
+          <mesh position={[0.15, 0, 0]} rotation={[0, 0, -Math.PI / 6]}>
+            <planeGeometry args={[0.3, 0.1]} />
             <meshBasicMaterial 
-              color="#FF007A" 
+              color="#00d1ff" 
               transparent 
               opacity={0.6}
               side={THREE.DoubleSide}
@@ -205,16 +205,16 @@ const VantaBirdsBackground: React.FC = () => {
     <div className="fixed inset-0 pointer-events-none z-0">
       <Canvas
         camera={{ position: [0, 0, 10], fov: 75 }}
-        style={{ background: 'transparent' }}
+        style={{ background: '#07192f' }}
       >
         <ambientLight intensity={0.3} />
-        <pointLight position={[10, 10, 10]} intensity={0.5} color="#4169E1" />
-        <pointLight position={[-10, -10, -10]} intensity={0.3} color="#FF007A" />
+        <pointLight position={[10, 10, 10]} intensity={0.5} color="#ff0000" />
+        <pointLight position={[-10, -10, -10]} intensity={0.3} color="#00d1ff" />
         
         <BirdsSystem mousePosition={mousePosition} />
         
         {/* Subtle fog for depth */}
-        <fog attach="fog" args={['#0a0a0a', 15, 25]} />
+        <fog attach="fog" args={['#07192f', 15, 25]} />
       </Canvas>
     </div>
   );
