@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Sphere, MeshDistortMaterial } from '@react-three/drei';
 import { Mic, Play, QrCode, Star, TrendingUp } from 'lucide-react';
-import InteractiveCards from './InteractiveCards';
+import VoiceDemo from './VoiceDemo';
 import ThreeScene from './ThreeScene';
 
 const HeroSection: React.FC = () => {
@@ -159,11 +159,50 @@ const HeroSection: React.FC = () => {
           </motion.button>
         </motion.div>
 
-        {/* Interactive Cards with Particle Animation */}
+        {/* Interactive Elements */}
         <motion.div
+          className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto"
           variants={itemVariants}
         >
-          <InteractiveCards />
+          {/* Voice Demo */}
+          <motion.div
+            className="bg-card-bg backdrop-blur-sm rounded-2xl p-6 border border-neon-blue/20"
+            whileHover={{ scale: 1.02 }}
+          >
+            <VoiceDemo />
+          </motion.div>
+
+          {/* AI Showcase */}
+          <motion.div
+            className="bg-card-bg backdrop-blur-sm rounded-2xl p-6 border border-neon-magenta/20"
+            whileHover={{ scale: 1.02 }}
+          >
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-neon-magenta to-neon-blue flex items-center justify-center animate-pulse-neon">
+                <TrendingUp className="w-8 h-8" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">AI Insights</h3>
+              <p className="text-cyber-silver text-sm">Real-time predictive analytics for smarter financial decisions</p>
+            </div>
+          </motion.div>
+
+          {/* AR Portal */}
+          <motion.div
+            className="bg-card-bg backdrop-blur-sm rounded-2xl p-6 border border-cyber-silver/20"
+            whileHover={{ scale: 1.02 }}
+          >
+            <div className="text-center">
+              <motion.div
+                className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-cyber-silver to-white flex items-center justify-center"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+              >
+                <QrCode className="w-8 h-8 text-dark-bg" />
+              </motion.div>
+              <h3 className="text-lg font-semibold mb-2">AR Experience</h3>
+              <p className="text-cyber-silver text-sm">Scan to experience your dashboard in augmented reality</p>
+            </div>
+          </motion.div>
         </motion.div>
       </motion.div>
     </section>
