@@ -142,272 +142,77 @@ const BenefitsGrid: React.FC = () => {
                   key={index}
                   className="absolute top-1/2 left-1/2 w-80 h-96"
                   style={{
-                    transform: `translate(-50%, -50%) rotateY(${rotateY}deg) translateZ(${translateZ}px) rotateY(${-rotateY}deg)`,
+                    transform: `translate(-50%, -50%) rotateY(${rotateY}deg) translateZ(${translateZ}px)`,
                     transformStyle: 'preserve-3d'
                   }}
                   initial={{ opacity: 0 }}
                   animate={inView ? { opacity: 1 } : {}}
                   transition={{ duration: 0.8, delay: index * 0.1 }}
                 >
-                  <motion.div 
-                    className="group relative w-full h-full"
-                  >
+                  <div className="group relative w-full h-full">
                     {/* Glow Effect */}
-                    <motion.div 
-                      className="absolute inset-0 bg-gradient-to-r opacity-20 rounded-2xl blur-xl group-hover:opacity-60 transition-opacity duration-300"
+                    <div 
+                      className="absolute inset-0 bg-gradient-to-r opacity-20 rounded-2xl blur-xl group-hover:opacity-40 transition-opacity duration-300"
                       style={{ background: `linear-gradient(135deg, ${benefit.color.split(' ')[1]}, ${benefit.color.split(' ')[3]})` }} 
-                      animate={{
-                        scale: [1, 1.05, 1],
-                        opacity: [0.2, 0.4, 0.2]
-                      }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
                     />
                     
-                    {/* Futuristic Border Animation */}
-                    <motion.div
-                      className="absolute inset-0 rounded-2xl border-2 border-transparent"
-                      style={{
-                        background: `linear-gradient(45deg, ${benefit.color.split(' ')[1]}, transparent, ${benefit.color.split(' ')[3]}) border-box`,
-                        mask: 'linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)',
-                        maskComposite: 'exclude'
-                      }}
-                      animate={{
-                        rotate: [0, 360]
-                      }}
-                      transition={{
-                        duration: 8,
-                        repeat: Infinity,
-                        ease: "linear"
-                      }}
-                    />
-
-                    {/* Holographic Scan Lines */}
-                    <motion.div
-                      className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: [0, 0.3, 0] }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        delay: index * 0.4
-                      }}
-                    >
-                      <motion.div
-                        className="absolute w-full h-1 bg-gradient-to-r from-transparent via-neon-blue to-transparent"
-                        animate={{
-                          y: [-20, 400]
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: "linear",
-                          delay: index * 0.4
-                        }}
-                      />
-                    </motion.div>
-
                     {/* Card Content */}
-                    <motion.div 
-                      className="relative bg-card-bg backdrop-blur-md rounded-2xl p-8 border border-white/10 group-hover:border-white/30 transition-all duration-500 h-full flex flex-col justify-center overflow-hidden"
-                      whileHover={{
-                        scale: 1.02,
-                        boxShadow: `0 20px 40px rgba(65, 105, 225, 0.3)`
-                      }}
-                    >
-                      {/* Neural Grid Background */}
-                      <div className="absolute inset-0 opacity-10">
-                        <div className="grid grid-cols-8 grid-rows-8 h-full w-full">
-                          {Array.from({ length: 64 }).map((_, i) => (
-                            <motion.div
-                              key={i}
-                              className="border border-neon-blue/20"
-                              animate={{
-                                opacity: [0.1, 0.3, 0.1],
-                                backgroundColor: [
-                                  'rgba(65, 105, 225, 0.1)',
-                                  'rgba(255, 0, 122, 0.1)',
-                                  'rgba(65, 105, 225, 0.1)'
-                                ]
-                              }}
-                              transition={{
-                                duration: 2,
-                                repeat: Infinity,
-                                delay: i * 0.05
-                              }}
-                            />
-                          ))}
-                        </div>
-                      </div>
-
+                    <div className="relative bg-card-bg backdrop-blur-sm rounded-2xl p-8 border border-white/10 group-hover:border-white/20 transition-all duration-300 h-full flex flex-col justify-center">
                       {/* Icon */}
                       <motion.div 
                         className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${benefit.color} p-4 mb-6 mx-auto`}
                         whileHover={{ 
-                          scale: 1.2,
-                          rotate: [0, -15, 15, -15, 0],
-                          boxShadow: `0 0 30px rgba(65, 105, 225, 0.6)`,
-                          transition: { duration: 0.6 }
-                        }}
-                        animate={{
-                          y: [0, -5, 0],
-                          rotate: [0, 2, -2, 0]
-                        }}
-                        transition={{
-                          duration: 4,
-                          repeat: Infinity,
-                          ease: "easeInOut"
+                          scale: 1.1,
+                          rotate: [0, -10, 10, -10, 0],
+                          transition: { duration: 0.5 }
                         }}
                       >
-                        {/* Icon Glow Effect */}
-                        <motion.div
-                          className="absolute inset-0 rounded-2xl bg-gradient-to-r from-neon-blue to-neon-magenta opacity-50 blur-md"
-                          animate={{
-                            scale: [1, 1.2, 1],
-                            opacity: [0.3, 0.6, 0.3]
-                          }}
-                          transition={{
-                            duration: 2,
-                            repeat: Infinity
-                          }}
-                        />
                         <benefit.icon className="w-full h-full text-white" />
                       </motion.div>
                       
                       {/* Title */}
-                      <motion.h3 
-                        className="text-2xl font-bold mb-4 text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-neon-blue group-hover:to-neon-magenta group-hover:bg-clip-text transition-all duration-500 text-center relative z-10"
-                        animate={{
-                          textShadow: [
-                            '0 0 10px rgba(65, 105, 225, 0.3)',
-                            '0 0 20px rgba(255, 0, 122, 0.3)',
-                            '0 0 10px rgba(65, 105, 225, 0.3)'
-                          ]
-                        }}
-                        transition={{
-                          duration: 3,
-                          repeat: Infinity
-                        }}
-                      >
+                      <h3 className="text-2xl font-bold mb-4 text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-neon-blue group-hover:to-neon-magenta group-hover:bg-clip-text transition-all duration-300 text-center">
                         {benefit.title}
-                      </motion.h3>
+                      </h3>
                       
                       {/* Description */}
-                      <motion.p 
-                        className="text-cyber-silver group-hover:text-white transition-colors duration-500 leading-relaxed text-center relative z-10"
-                        animate={{
-                          opacity: [0.8, 1, 0.8]
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity
-                        }}
-                      >
+                      <p className="text-cyber-silver group-hover:text-white transition-colors duration-300 leading-relaxed text-center">
                         {benefit.description}
-                      </motion.p>
+                      </p>
 
-                      {/* Floating Particles */}
-                      {Array.from({ length: 3 }).map((_, i) => (
-                        <motion.div
-                          key={i}
-                          className="absolute w-1 h-1 bg-neon-blue rounded-full"
-                          style={{
-                            top: `${20 + i * 30}%`,
-                            right: `${10 + i * 5}%`
-                          }}
-                          animate={{
-                            y: [0, -20, 0],
-                            opacity: [0, 1, 0],
-                            scale: [0.5, 1, 0.5]
-                          }}
-                          transition={{
-                            duration: 3,
-                            repeat: Infinity,
-                            delay: i * 0.5
-                          }}
-                        />
-                      ))}
-
-                      {/* Data Stream Effect */}
-                      <motion.div
-                        className="absolute bottom-4 left-4 right-4 h-px bg-gradient-to-r from-transparent via-neon-magenta to-transparent"
-                        animate={{
-                          scaleX: [0, 1, 0],
-                          opacity: [0, 1, 0]
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          delay: index * 0.3
-                        }}
-                      />
-                    </motion.div>
-                  </motion.div>
+                      {/* Animated corner accent */}
+                      <div className="absolute top-4 right-4 w-2 h-2 bg-neon-blue rounded-full opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-300" />
+                    </div>
+                  </div>
                 </motion.div>
               );
             })}
           </div>
 
           {/* Navigation Dots */}
-          <motion.div 
-            className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1 }}
-          >
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
             {benefits.map((_, index) => {
               const isActive = Math.abs((currentRotation / cardAngle) % benefits.length) === index;
               return (
-                <motion.button
+                <button
                   key={index}
                   onClick={() => setCurrentRotation(-index * cardAngle)}
-                  className={`w-4 h-4 rounded-full transition-all duration-500 relative ${
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
                     isActive 
-                      ? 'bg-neon-blue scale-125' 
-                      : 'bg-cyber-silver/30 hover:bg-cyber-silver/60'
+                      ? 'bg-neon-blue shadow-neon scale-125' 
+                      : 'bg-cyber-silver/30 hover:bg-cyber-silver/50'
                   }`}
-                  whileHover={{ scale: 1.3 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  {isActive && (
-                    <motion.div
-                      className="absolute inset-0 rounded-full bg-neon-blue"
-                      animate={{
-                        boxShadow: [
-                          '0 0 10px rgba(65, 105, 225, 0.5)',
-                          '0 0 20px rgba(65, 105, 225, 0.8)',
-                          '0 0 10px rgba(65, 105, 225, 0.5)'
-                        ]
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity
-                      }}
-                    />
-                  )}
-                </motion.button>
+                />
               );
             })}
-          </motion.div>
+          </div>
 
           {/* Instructions */}
-          <motion.div 
-            className="absolute top-8 left-1/2 transform -translate-x-1/2 text-center"
-            animate={{
-              opacity: [0.6, 1, 0.6]
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity
-            }}
-          >
-            <p className="text-cyber-silver text-sm font-mono bg-dark-bg/50 backdrop-blur-sm px-4 py-2 rounded-full border border-neon-blue/20">
+          <div className="absolute top-8 left-1/2 transform -translate-x-1/2 text-center">
+            <p className="text-cyber-silver text-sm">
               Click and drag to rotate • Swipe on mobile
             </p>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>
