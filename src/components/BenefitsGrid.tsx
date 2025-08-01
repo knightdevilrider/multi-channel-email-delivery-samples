@@ -151,10 +151,6 @@ const BenefitsGrid: React.FC = () => {
                 >
                   <motion.div 
                     className="group relative w-full h-full"
-                    animate={{
-                      rotateY: -currentRotation / cardAngle * cardAngle + rotateY
-                    }}
-                    transition={{ duration: 0.3, ease: "easeOut" }}
                   >
                     {/* Glow Effect */}
                     <motion.div 
