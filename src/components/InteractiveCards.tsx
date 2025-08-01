@@ -47,22 +47,22 @@ const InteractiveCards: React.FC = () => {
   const canvasRefs = useRef<(HTMLCanvasElement | null)[]>([]);
   const animationFrameRef = useRef<number>();
 
-  const colors = ['#4169E1', '#FF007A', '#C0C0C0', '#00FFFF', '#FF69B4', '#9370DB'];
+  const colors = ['#FF007A', '#9370DB', '#4169E1', '#00FFFF', '#FF69B4', '#8A2BE2'];
 
   const createParticles = (cardIndex: number) => {
     const canvas = canvasRefs.current[cardIndex];
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
 
     const newParticles: Particle[] = [];
     
-    // Create 30 particles for a vibrant burst
-    for (let i = 0; i < 30; i++) {
-      const angle = (Math.PI * 2 * i) / 30;
-      const velocity = 2 + Math.random() * 3;
+    // Create 40 particles for a more vibrant burst
+    for (let i = 0; i < 40; i++) {
+      const angle = (Math.PI * 2 * i) / 40;
+      const velocity = 3 + Math.random() * 4;
       
       newParticles.push({
         id: i,
@@ -71,7 +71,7 @@ const InteractiveCards: React.FC = () => {
         vx: Math.cos(angle) * velocity,
         vy: Math.sin(angle) * velocity,
         color: colors[Math.floor(Math.random() * colors.length)],
-        size: 3 + Math.random() * 4,
+        size: 4 + Math.random() * 6,
         life: 1.0
       });
     }
@@ -94,17 +94,17 @@ const InteractiveCards: React.FC = () => {
           ...particle,
           x: particle.x + particle.vx,
           y: particle.y + particle.vy,
-          vx: particle.vx * 0.98, // Slight deceleration
-          vy: particle.vy * 0.98,
-          life: particle.life - 0.02 // Fade out over time
+          vx: particle.vx * 0.96, // Deceleration
+          vy: particle.vy * 0.96,
+          life: particle.life - 0.025 // Fade out over time
         })).filter(particle => particle.life > 0);
 
-        // Draw particles
+        // Draw particles with glow effect
         updatedParticles.forEach(particle => {
           ctx.save();
           ctx.globalAlpha = particle.life;
           ctx.fillStyle = particle.color;
-          ctx.shadowBlur = 10;
+          ctx.shadowBlur = 15;
           ctx.shadowColor = particle.color;
           ctx.beginPath();
           ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
@@ -136,7 +136,7 @@ const InteractiveCards: React.FC = () => {
     setTimeout(() => {
       setAnimatingCard(null);
       setParticles([]);
-    }, 1000); // 800ms animation + 200ms delay
+    }, 1000);
   };
 
   useEffect(() => {
@@ -153,7 +153,11 @@ const InteractiveCards: React.FC = () => {
         <motion.div
           key={index}
           className="relative bg-card-bg backdrop-blur-sm rounded-2xl p-6 border border-white/10 cursor-pointer overflow-hidden"
-          whileHover={{ scale: 1.02, boxShadow: '0 0 30px rgba(65, 105, 225, 0.3)' }}
+          whileHover={{ 
+            scale: 1.02, 
+            boxShadow: '0 0 30px rgba(65, 105, 225, 0.3)',
+            borderColor: 'rgba(65, 105, 225, 0.5)'
+          }}
           whileTap={{ scale: 0.98 }}
           onClick={() => handleCardClick(index)}
         >
@@ -167,31 +171,13 @@ const InteractiveCards: React.FC = () => {
           />
 
           {/* Card content */}
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {animatingCard !== index && (
               <motion.div
                 className="text-center relative z-20"
                 initial={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r ${card.iconColor} flex items-center justify-center`}>
-                  <card.icon className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2 text-white">{card.title}</h3>
-                <p className="text-cyber-silver text-sm leading-relaxed">{card.subtitle}</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Content fade back in */}
-          <AnimatePresence>
-            {animatingCard !== index && (
-              <motion.div
-                className="text-center relative z-20"
-                initial={{ opacity: 1 }}
                 animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
               >
                 <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r ${card.iconColor} flex items-center justify-center`}>
