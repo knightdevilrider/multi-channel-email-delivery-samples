@@ -173,18 +173,74 @@ const HeroSection: React.FC = () => {
           >
             {activeDemo === 'voice' && (
               <motion.div
-                className="absolute inset-0 bg-gradient-to-br from-neon-blue/20 to-neon-magenta/20 rounded-2xl flex items-center justify-center z-10"
+                className="absolute inset-0 bg-gradient-to-br from-neon-blue/30 to-neon-magenta/30 rounded-2xl flex items-center justify-center z-10 backdrop-blur-sm"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.5 }}
               >
+                {/* Futuristic Grid Background */}
+                <div className="absolute inset-0 opacity-20">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-neon-blue/30 to-transparent animate-pulse" 
+                       style={{ 
+                         backgroundImage: 'linear-gradient(90deg, transparent 0%, rgba(65, 105, 225, 0.3) 50%, transparent 100%)',
+                         backgroundSize: '200% 100%',
+                         animation: 'gradient-shift 2s ease-in-out infinite'
+                       }} />
+                  <div className="grid grid-cols-8 grid-rows-6 h-full w-full gap-1 p-4">
+                    {Array.from({ length: 48 }).map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className="border border-neon-blue/20 rounded-sm"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: [0, 0.5, 0] }}
+                        transition={{ 
+                          duration: 2,
+                          delay: i * 0.05,
+                          repeat: Infinity,
+                          repeatDelay: 1
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Holographic Particles */}
+                <div className="absolute inset-0">
+                  {Array.from({ length: 12 }).map((_, i) => (
+                    <motion.div
+                      key={i}
+                      className="absolute w-1 h-1 bg-neon-blue rounded-full"
+                      style={{
+                        left: `${Math.random() * 100}%`,
+                        top: `${Math.random() * 100}%`,
+                      }}
+                      animate={{
+                        y: [-20, -40, -20],
+                        opacity: [0, 1, 0],
+                        scale: [0, 1.5, 0]
+                      }}
+                      transition={{
+                        duration: 3,
+                        delay: i * 0.2,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                  ))}
+                </div>
+
                 <div className="text-center">
                   <motion.div
-                    className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-r from-neon-blue to-neon-magenta flex items-center justify-center"
+                    className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-r from-neon-blue to-neon-magenta flex items-center justify-center relative"
                     animate={{ 
                       scale: [1, 1.2, 1],
-                      rotate: [0, 360]
+                      rotate: [0, 360],
+                      boxShadow: [
+                        "0 0 20px rgba(65, 105, 225, 0.5), 0 0 40px rgba(255, 0, 122, 0.3)",
+                        "0 0 40px rgba(255, 0, 122, 0.8), 0 0 80px rgba(65, 105, 225, 0.5)",
+                        "0 0 20px rgba(65, 105, 225, 0.5), 0 0 40px rgba(255, 0, 122, 0.3)"
+                      ]
                     }}
                     transition={{ 
                       duration: 2,
@@ -192,41 +248,70 @@ const HeroSection: React.FC = () => {
                       ease: "easeInOut"
                     }}
                   >
+                    {/* Orbital Rings */}
+                    <motion.div
+                      className="absolute inset-0 border-2 border-neon-blue/30 rounded-full"
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                    />
+                    <motion.div
+                      className="absolute inset-2 border border-neon-magenta/30 rounded-full"
+                      animate={{ rotate: -360 }}
+                      transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                    />
                     <Mic className="w-10 h-10 text-white" />
                   </motion.div>
                   <motion.h3 
-                    className="text-2xl font-bold text-white mb-2"
+                    className="text-3xl font-bold text-white mb-2 bg-gradient-to-r from-neon-blue to-neon-magenta bg-clip-text text-transparent"
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.2 }}
                   >
-                    Voice Activated!
+                    VOICE NEURAL LINK ACTIVE
                   </motion.h3>
                   <motion.p 
-                    className="text-neon-blue mb-4"
+                    className="text-neon-blue mb-4 font-mono text-sm"
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.3 }}
                   >
-                    "Add $50 coffee to marketing"
+                    > PROCESSING: "Add $50 coffee to marketing"
+                    <motion.span
+                      className="inline-block ml-1"
+                      animate={{ opacity: [1, 0] }}
+                      transition={{ duration: 0.8, repeat: Infinity }}
+                    >
+                      |
+                    </motion.span>
                   </motion.p>
                   <motion.button
-                    className="px-6 py-2 bg-gradient-to-r from-neon-blue to-neon-magenta rounded-full text-white font-semibold"
+                    className="px-8 py-3 bg-gradient-to-r from-neon-blue to-neon-magenta rounded-full text-white font-bold text-sm tracking-wider border border-white/20 hover:border-white/40 transition-all duration-300"
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.4 }}
-                    whileHover={{ scale: 1.05 }}
+                    whileHover={{ 
+                      scale: 1.05,
+                      boxShadow: "0 0 20px rgba(65, 105, 225, 0.5)"
+                    }}
                     onClick={(e) => {
                       e.stopPropagation();
                       setActiveDemo(null);
                     }}
                   >
-                    Try Voice Commands
+                    INITIALIZE NEURAL INTERFACE
                   </motion.button>
                 </div>
               </motion.div>
             )}
-            <VoiceDemo />
+            <motion.div
+              animate={{ 
+                opacity: activeDemo === 'voice' ? 0.1 : 1,
+                scale: activeDemo === 'voice' ? 0.95 : 1
+              }}
+              transition={{ duration: 0.3 }}
+            >
+              <VoiceDemo />
+            </motion.div>
           </motion.div>
 
           {/* AI Showcase */}
@@ -237,70 +322,145 @@ const HeroSection: React.FC = () => {
           >
             {activeDemo === 'ai' && (
               <motion.div
-                className="absolute inset-0 bg-gradient-to-br from-neon-magenta/20 to-neon-blue/20 rounded-2xl flex items-center justify-center z-10"
+                className="absolute inset-0 bg-gradient-to-br from-neon-magenta/30 to-neon-blue/30 rounded-2xl flex items-center justify-center z-10 backdrop-blur-sm"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.5 }}
               >
+                {/* Neural Network Background */}
+                <div className="absolute inset-0 opacity-20">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <motion.div
+                      key={i}
+                      className="absolute border border-neon-magenta/30 rounded-full"
+                      style={{
+                        width: `${(i + 1) * 60}px`,
+                        height: `${(i + 1) * 60}px`,
+                        left: '50%',
+                        top: '50%',
+                        transform: 'translate(-50%, -50%)'
+                      }}
+                      animate={{
+                        scale: [1, 1.1, 1],
+                        opacity: [0.3, 0.6, 0.3]
+                      }}
+                      transition={{
+                        duration: 3,
+                        delay: i * 0.3,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                  ))}
+                </div>
+
+                {/* Data Stream Lines */}
+                <div className="absolute inset-0">
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <motion.div
+                      key={i}
+                      className="absolute h-px bg-gradient-to-r from-transparent via-neon-magenta to-transparent"
+                      style={{
+                        width: '100%',
+                        top: `${10 + i * 10}%`,
+                        left: 0
+                      }}
+                      animate={{
+                        x: ['-100%', '100%'],
+                        opacity: [0, 1, 0]
+                      }}
+                      transition={{
+                        duration: 2,
+                        delay: i * 0.2,
+                        repeat: Infinity,
+                        ease: "linear"
+                      }}
+                    />
+                  ))}
+                </div>
+
                 <div className="text-center">
                   <motion.div
-                    className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-r from-neon-magenta to-neon-blue flex items-center justify-center"
+                    className="w-24 h-24 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-neon-magenta to-neon-blue flex items-center justify-center relative"
                     animate={{ 
                       scale: [1, 1.1, 1],
+                      rotateY: [0, 180, 360],
                       boxShadow: [
                         "0 0 20px rgba(255, 0, 122, 0.5)",
-                        "0 0 40px rgba(255, 0, 122, 0.8)",
+                        "0 0 60px rgba(255, 0, 122, 0.8), 0 0 80px rgba(65, 105, 225, 0.4)",
                         "0 0 20px rgba(255, 0, 122, 0.5)"
                       ]
                     }}
                     transition={{ 
-                      duration: 1.5,
+                      duration: 3,
                       repeat: Infinity,
                       ease: "easeInOut"
                     }}
                   >
+                    {/* AI Processing Indicators */}
+                    <div className="absolute -top-2 -right-2 w-4 h-4 bg-neon-blue rounded-full animate-ping" />
+                    <div className="absolute -bottom-2 -left-2 w-3 h-3 bg-neon-magenta rounded-full animate-pulse" />
                     <TrendingUp className="w-10 h-10 text-white" />
                   </motion.div>
                   <motion.h3 
-                    className="text-2xl font-bold text-white mb-2"
+                    className="text-3xl font-bold text-white mb-2 bg-gradient-to-r from-neon-magenta to-neon-blue bg-clip-text text-transparent"
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.2 }}
                   >
-                    AI Analyzing...
+                    QUANTUM AI PROCESSING
                   </motion.h3>
                   <motion.p 
-                    className="text-neon-magenta mb-4"
+                    className="text-neon-magenta mb-4 font-mono text-sm"
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.3 }}
                   >
-                    Predicting 23% cost savings next quarter
+                    > NEURAL PREDICTION: 23% cost optimization detected
+                    <motion.div
+                      className="w-full bg-neon-magenta/20 h-1 rounded-full mt-2 overflow-hidden"
+                    >
+                      <motion.div
+                        className="h-full bg-gradient-to-r from-neon-magenta to-neon-blue"
+                        animate={{ width: ['0%', '100%'] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      />
+                    </motion.div>
                   </motion.p>
                   <motion.button
-                    className="px-6 py-2 bg-gradient-to-r from-neon-magenta to-neon-blue rounded-full text-white font-semibold"
+                    className="px-8 py-3 bg-gradient-to-r from-neon-magenta to-neon-blue rounded-full text-white font-bold text-sm tracking-wider border border-white/20 hover:border-white/40 transition-all duration-300"
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.4 }}
-                    whileHover={{ scale: 1.05 }}
+                    whileHover={{ 
+                      scale: 1.05,
+                      boxShadow: "0 0 20px rgba(255, 0, 122, 0.5)"
+                    }}
                     onClick={(e) => {
                       e.stopPropagation();
                       setActiveDemo(null);
                     }}
                   >
-                    View AI Insights
+                    ACCESS QUANTUM INSIGHTS
                   </motion.button>
                 </div>
               </motion.div>
             )}
-            <div className="text-center">
+            <motion.div 
+              className="text-center"
+              animate={{ 
+                opacity: activeDemo === 'ai' ? 0.1 : 1,
+                scale: activeDemo === 'ai' ? 0.95 : 1
+              }}
+              transition={{ duration: 0.3 }}
+            >
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-neon-magenta to-neon-blue flex items-center justify-center animate-pulse-neon">
                 <TrendingUp className="w-8 h-8" />
               </div>
               <h3 className="text-lg font-semibold mb-2">AI Insights</h3>
               <p className="text-cyber-silver text-sm">Real-time predictive analytics for smarter financial decisions</p>
-            </div>
+            </motion.div>
           </motion.div>
 
           {/* AR Portal */}
@@ -311,18 +471,69 @@ const HeroSection: React.FC = () => {
           >
             {activeDemo === 'ar' && (
               <motion.div
-                className="absolute inset-0 bg-gradient-to-br from-neon-blue/20 to-cyber-silver/20 rounded-2xl flex items-center justify-center z-10"
+                className="absolute inset-0 bg-gradient-to-br from-neon-blue/30 to-cyber-silver/30 rounded-2xl flex items-center justify-center z-10 backdrop-blur-sm"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.5 }}
               >
+                {/* Holographic Scan Lines */}
+                <div className="absolute inset-0 opacity-30">
+                  {Array.from({ length: 20 }).map((_, i) => (
+                    <motion.div
+                      key={i}
+                      className="absolute w-full h-px bg-gradient-to-r from-transparent via-neon-blue to-transparent"
+                      style={{ top: `${i * 5}%` }}
+                      animate={{
+                        opacity: [0, 1, 0],
+                        scaleX: [0, 1, 0]
+                      }}
+                      transition={{
+                        duration: 2,
+                        delay: i * 0.1,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                  ))}
+                </div>
+
+                {/* AR Portal Effect */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <motion.div
+                      key={i}
+                      className="absolute border-2 border-neon-blue/40 rounded-2xl"
+                      style={{
+                        width: `${100 + i * 20}px`,
+                        height: `${100 + i * 20}px`,
+                      }}
+                      animate={{
+                        rotate: [0, 360],
+                        scale: [1, 1.1, 1],
+                        opacity: [0.2, 0.6, 0.2]
+                      }}
+                      transition={{
+                        duration: 4,
+                        delay: i * 0.5,
+                        repeat: Infinity,
+                        ease: "linear"
+                      }}
+                    />
+                  ))}
+                </div>
+
                 <div className="text-center">
                   <motion.div
-                    className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-neon-blue to-cyber-silver flex items-center justify-center"
+                    className="w-24 h-24 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-neon-blue to-cyber-silver flex items-center justify-center relative"
                     animate={{ 
                       rotateY: [0, 180, 360],
-                      scale: [1, 1.1, 1]
+                      scale: [1, 1.1, 1],
+                      boxShadow: [
+                        "0 0 20px rgba(65, 105, 225, 0.5)",
+                        "0 0 40px rgba(65, 105, 225, 0.8), 0 0 60px rgba(192, 192, 192, 0.4)",
+                        "0 0 20px rgba(65, 105, 225, 0.5)"
+                      ]
                     }}
                     transition={{ 
                       duration: 3,
@@ -330,41 +541,70 @@ const HeroSection: React.FC = () => {
                       ease: "easeInOut"
                     }}
                   >
+                    {/* Holographic Frame */}
+                    <div className="absolute inset-0 border border-cyber-silver/50 rounded-2xl animate-pulse" />
+                    <div className="absolute -inset-1 border border-neon-blue/30 rounded-2xl" />
                     <QrCode className="w-10 h-10 text-dark-bg" />
                   </motion.div>
                   <motion.h3 
-                    className="text-2xl font-bold text-white mb-2"
+                    className="text-3xl font-bold text-white mb-2 bg-gradient-to-r from-neon-blue to-cyber-silver bg-clip-text text-transparent"
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.2 }}
                   >
-                    AR Portal Active!
+                    HOLOGRAPHIC PORTAL ONLINE
                   </motion.h3>
                   <motion.p 
-                    className="text-neon-blue mb-4"
+                    className="text-neon-blue mb-4 font-mono text-sm"
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.3 }}
                   >
-                    Scan with your phone to enter AR mode
+                    > DIMENSIONAL GATEWAY: Ready for neural scan
+                    <motion.div
+                      className="flex justify-center mt-2 space-x-1"
+                    >
+                      {Array.from({ length: 3 }).map((_, i) => (
+                        <motion.div
+                          key={i}
+                          className="w-2 h-2 bg-neon-blue rounded-full"
+                          animate={{ scale: [1, 1.5, 1] }}
+                          transition={{
+                            duration: 1,
+                            delay: i * 0.2,
+                            repeat: Infinity
+                          }}
+                        />
+                      ))}
+                    </motion.div>
                   </motion.p>
                   <motion.button
-                    className="px-6 py-2 bg-gradient-to-r from-neon-blue to-cyber-silver text-dark-bg rounded-full font-semibold"
+                    className="px-8 py-3 bg-gradient-to-r from-neon-blue to-cyber-silver text-dark-bg rounded-full font-bold text-sm tracking-wider border border-white/20 hover:border-white/40 transition-all duration-300"
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.4 }}
-                    whileHover={{ scale: 1.05 }}
+                    whileHover={{ 
+                      scale: 1.05,
+                      boxShadow: "0 0 20px rgba(65, 105, 225, 0.5)"
+                    }}
                     onClick={(e) => {
                       e.stopPropagation();
                       setActiveDemo(null);
                     }}
                   >
-                    Launch AR Experience
+                    ENTER HOLOGRAPHIC REALM
                   </motion.button>
                 </div>
               </motion.div>
             )}
-            <div className="text-center">
+            <motion.div 
+              className="text-center"
+              animate={{ 
+                opacity: activeDemo === 'ar' ? 0.1 : 1,
+                scale: activeDemo === 'ar' ? 0.95 : 1
+              }}
+              transition={{ duration: 0.3 }}
+            >
               <motion.div
                 className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-cyber-silver to-white flex items-center justify-center"
                 animate={{ rotate: 360 }}
@@ -374,7 +614,7 @@ const HeroSection: React.FC = () => {
               </motion.div>
               <h3 className="text-lg font-semibold mb-2">AR Experience</h3>
               <p className="text-cyber-silver text-sm">Scan to experience your dashboard in augmented reality</p>
-            </div>
+            </motion.div>
           </motion.div>
         </motion.div>
       </motion.div>
