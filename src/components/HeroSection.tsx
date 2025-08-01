@@ -275,7 +275,7 @@ const HeroSection: React.FC = () => {
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.3 }}
                   >
-                    > PROCESSING: "Add $50 coffee to marketing"
+                    {"> PROCESSING: \"Add $50 coffee to marketing\""}
                     <motion.span
                       className="inline-block ml-1"
                       animate={{ opacity: [1, 0] }}
@@ -417,7 +417,7 @@ const HeroSection: React.FC = () => {
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.3 }}
                   >
-                    > NEURAL PREDICTION: 23% cost optimization detected
+                    {"> NEURAL PREDICTION: 23% cost optimization detected"}
                     <motion.div
                       className="w-full bg-neon-magenta/20 h-1 rounded-full mt-2 overflow-hidden"
                     >
@@ -560,7 +560,7 @@ const HeroSection: React.FC = () => {
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.3 }}
                   >
-                    > DIMENSIONAL GATEWAY: Ready for neural scan
+                    {"> DIMENSIONAL GATEWAY: Ready for neural scan"}
                     <motion.div
                       className="flex justify-center mt-2 space-x-1"
                     >
