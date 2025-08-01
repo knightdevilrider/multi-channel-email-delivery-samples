@@ -173,133 +173,107 @@ const HeroSection: React.FC = () => {
           >
             {activeDemo === 'voice' && (
               <motion.div
-                className="absolute inset-0 bg-gradient-to-br from-neon-blue/30 to-neon-magenta/30 rounded-2xl flex items-center justify-center z-10 backdrop-blur-sm"
+                className="absolute inset-0 bg-gradient-to-br from-neon-blue/30 to-neon-magenta/30 rounded-2xl flex items-center justify-center z-10 backdrop-blur-sm overflow-hidden"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.5 }}
               >
-                {/* Futuristic Grid Background */}
-                <div className="absolute inset-0 opacity-20">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-neon-blue/30 to-transparent animate-pulse" 
-                       style={{ 
-                         backgroundImage: 'linear-gradient(90deg, transparent 0%, rgba(65, 105, 225, 0.3) 50%, transparent 100%)',
-                         backgroundSize: '200% 100%',
-                         animation: 'gradient-shift 2s ease-in-out infinite'
-                       }} />
-                  <div className="grid grid-cols-8 grid-rows-6 h-full w-full gap-1 p-4">
-                    {Array.from({ length: 48 }).map((_, i) => (
+                {/* Mobile Phone - Left Side */}
+                <motion.div
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2"
+                  initial={{ x: -100, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.2, duration: 0.8 }}
+                >
+                  <div className="w-16 h-24 bg-gradient-to-b from-neon-blue to-neon-magenta rounded-lg p-1 shadow-lg">
+                    <div className="w-full h-full bg-dark-bg rounded-md flex flex-col items-center justify-center">
                       <motion.div
-                        key={i}
-                        className="border border-neon-blue/20 rounded-sm"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: [0, 0.5, 0] }}
+                        className="w-8 h-8 bg-neon-blue rounded-full flex items-center justify-center mb-1"
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 1, repeat: Infinity }}
+                      >
+                        <Mic className="w-4 h-4 text-white" />
+                      </motion.div>
+                      <div className="text-xs text-neon-blue font-mono">LISTENING</div>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Person with Receipt - Right Side */}
+                <motion.div
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2"
+                  initial={{ x: 100, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.4, duration: 0.8 }}
+                >
+                  {/* Person Figure */}
+                  <div className="relative">
+                    {/* Head */}
+                    <div className="w-6 h-6 bg-cyber-silver rounded-full mx-auto mb-1"></div>
+                    {/* Body */}
+                    <div className="w-8 h-12 bg-gradient-to-b from-neon-blue to-neon-magenta rounded-lg relative">
+                      {/* Arm with Receipt */}
+                      <motion.div
+                        className="absolute -right-2 top-2 w-3 h-1 bg-cyber-silver rounded-full"
+                        animate={{ rotate: [0, -30, 0] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      />
+                      {/* Receipt */}
+                      <motion.div
+                        className="absolute -right-4 top-1 w-2 h-3 bg-white rounded-sm text-xs"
+                        animate={{ 
+                          x: [0, -20, -40],
+                          y: [0, 5, 10],
+                          rotate: [0, 45, 90],
+                          opacity: [1, 0.5, 0]
+                        }}
                         transition={{ 
-                          duration: 2,
-                          delay: i * 0.05,
+                          duration: 3,
                           repeat: Infinity,
                           repeatDelay: 1
                         }}
                       />
-                    ))}
+                    </div>
                   </div>
-                </div>
+                </motion.div>
 
-                {/* Holographic Particles */}
-                <div className="absolute inset-0">
-                  {Array.from({ length: 12 }).map((_, i) => (
-                    <motion.div
-                      key={i}
-                      className="absolute w-1 h-1 bg-neon-blue rounded-full"
-                      style={{
-                        left: `${Math.random() * 100}%`,
-                        top: `${Math.random() * 100}%`,
-                      }}
-                      animate={{
-                        y: [-20, -40, -20],
-                        opacity: [0, 1, 0],
-                        scale: [0, 1.5, 0]
-                      }}
-                      transition={{
-                        duration: 3,
-                        delay: i * 0.2,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    />
-                  ))}
-                </div>
+                {/* Speech Bubble */}
+                <motion.div
+                  className="absolute top-4 left-1/2 transform -translate-x-1/2"
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.6, duration: 0.5 }}
+                >
+                  <div className="bg-neon-blue/20 backdrop-blur-sm rounded-lg px-3 py-2 border border-neon-blue/30">
+                    <p className="text-xs text-neon-blue font-mono">"Add $50 coffee to marketing"</p>
+                  </div>
+                </motion.div>
 
-                <div className="text-center">
-                  <motion.div
-                    className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-r from-neon-blue to-neon-magenta flex items-center justify-center relative"
-                    animate={{ 
-                      scale: [1, 1.2, 1],
-                      rotate: [0, 360],
-                      boxShadow: [
-                        "0 0 20px rgba(65, 105, 225, 0.5), 0 0 40px rgba(255, 0, 122, 0.3)",
-                        "0 0 40px rgba(255, 0, 122, 0.8), 0 0 80px rgba(65, 105, 225, 0.5)",
-                        "0 0 20px rgba(65, 105, 225, 0.5), 0 0 40px rgba(255, 0, 122, 0.3)"
-                      ]
-                    }}
-                    transition={{ 
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  >
-                    {/* Orbital Rings */}
-                    <motion.div
-                      className="absolute inset-0 border-2 border-neon-blue/30 rounded-full"
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                    />
-                    <motion.div
-                      className="absolute inset-2 border border-neon-magenta/30 rounded-full"
-                      animate={{ rotate: -360 }}
-                      transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                    />
-                    <Mic className="w-10 h-10 text-white" />
-                  </motion.div>
-                  <motion.h3 
-                    className="text-3xl font-bold text-white mb-2 bg-gradient-to-r from-neon-blue to-neon-magenta bg-clip-text text-transparent"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    VOICE NEURAL LINK ACTIVE
-                  </motion.h3>
-                  <motion.p 
-                    className="text-neon-blue mb-4 font-mono text-sm"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    {"> PROCESSING: \"Add $50 coffee to marketing\""}
-                    <motion.span
-                      className="inline-block ml-1"
-                      animate={{ opacity: [1, 0] }}
-                      transition={{ duration: 0.8, repeat: Infinity }}
-                    >
-                      |
-                    </motion.span>
-                  </motion.p>
-                  <motion.button
-                    className="px-8 py-3 bg-gradient-to-r from-neon-blue to-neon-magenta rounded-full text-white font-bold text-sm tracking-wider border border-white/20 hover:border-white/40 transition-all duration-300"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                    whileHover={{ 
-                      scale: 1.05,
-                      boxShadow: "0 0 20px rgba(65, 105, 225, 0.5)"
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setActiveDemo(null);
-                    }}
-                  >
-                    INITIALIZE NEURAL INTERFACE
-                  </motion.button>
+                {/* Success Checkmark */}
+                <motion.div
+                  className="absolute bottom-4 left-1/2 transform -translate-x-1/2"
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 1.5, duration: 0.5 }}
+                >
+                  <div className="w-8 h-8 bg-gradient-to-r from-neon-blue to-neon-magenta rounded-full flex items-center justify-center">
+                    <span className="text-white text-lg">✓</span>
+                  </div>
+                </motion.div>
+
+                {/* Close Button */}
+                <motion.button
+                  className="absolute top-2 right-2 w-6 h-6 bg-neon-magenta/20 rounded-full flex items-center justify-center text-white text-sm hover:bg-neon-magenta/40 transition-colors"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveDemo(null);
+                  }}
+                >
+                  ×
                 </div>
               </motion.div>
             )}
@@ -322,128 +296,134 @@ const HeroSection: React.FC = () => {
           >
             {activeDemo === 'ai' && (
               <motion.div
-                className="absolute inset-0 bg-gradient-to-br from-neon-magenta/30 to-neon-blue/30 rounded-2xl flex items-center justify-center z-10 backdrop-blur-sm"
+                className="absolute inset-0 bg-gradient-to-br from-neon-magenta/30 to-neon-blue/30 rounded-2xl flex items-center justify-center z-10 backdrop-blur-sm overflow-hidden"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.5 }}
               >
-                {/* Neural Network Background */}
-                <div className="absolute inset-0 opacity-20">
-                  {Array.from({ length: 6 }).map((_, i) => (
+                {/* AI Brain - Left Side */}
+                <motion.div
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2"
+                  initial={{ x: -100, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.2, duration: 0.8 }}
+                >
+                  <div className="relative">
+                    {/* AI Brain Core */}
+                    <motion.div
+                      className="w-12 h-12 bg-gradient-to-r from-neon-magenta to-neon-blue rounded-full flex items-center justify-center"
+                      animate={{ 
+                        scale: [1, 1.2, 1],
+                        boxShadow: [
+                          "0 0 10px rgba(255, 0, 122, 0.5)",
+                          "0 0 20px rgba(255, 0, 122, 0.8)",
+                          "0 0 10px rgba(255, 0, 122, 0.5)"
+                        ]
+                      }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    >
+                      <TrendingUp className="w-6 h-6 text-white" />
+                    </motion.div>
+                    {/* Neural Connections */}
+                    {Array.from({ length: 4 }).map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className="absolute w-1 h-4 bg-neon-blue rounded-full"
+                        style={{
+                          top: `${20 + i * 8}px`,
+                          right: `${-5 + i * 2}px`,
+                        }}
+                        animate={{ 
+                          opacity: [0, 1, 0],
+                          scaleY: [0.5, 1, 0.5]
+                        }}
+                        transition={{ 
+                          duration: 1.5,
+                          delay: i * 0.2,
+                          repeat: Infinity 
+                        }}
+                      />
+                    ))}
+                  </div>
+                </motion.div>
+
+                {/* Data Visualization - Right Side */}
+                <motion.div
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2"
+                  initial={{ x: 100, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.4, duration: 0.8 }}
+                >
+                  <div className="w-16 h-20 bg-dark-bg/50 rounded-lg border border-neon-magenta/30 p-2">
+                    {/* Chart Bars */}
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className="bg-gradient-to-t from-neon-magenta to-neon-blue rounded-sm mb-1"
+                        style={{ width: '100%' }}
+                        animate={{ 
+                          height: [`${20 + i * 5}px`, `${30 + i * 8}px`, `${20 + i * 5}px`]
+                        }}
+                        transition={{ 
+                          duration: 2,
+                          delay: i * 0.1,
+                          repeat: Infinity 
+                        }}
+                      />
+                    ))}
+                  </div>
+                </motion.div>
+
+                {/* Data Flow */}
+                <motion.div
+                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6 }}
+                >
+                  {Array.from({ length: 3 }).map((_, i) => (
                     <motion.div
                       key={i}
-                      className="absolute border border-neon-magenta/30 rounded-full"
-                      style={{
-                        width: `${(i + 1) * 60}px`,
-                        height: `${(i + 1) * 60}px`,
-                        left: '50%',
-                        top: '50%',
-                        transform: 'translate(-50%, -50%)'
-                      }}
+                      className="absolute w-2 h-2 bg-neon-blue rounded-full"
                       animate={{
-                        scale: [1, 1.1, 1],
-                        opacity: [0.3, 0.6, 0.3]
+                        x: [-30, 30],
+                        opacity: [0, 1, 0]
                       }}
                       transition={{
-                        duration: 3,
+                        duration: 2,
                         delay: i * 0.3,
                         repeat: Infinity,
                         ease: "easeInOut"
                       }}
                     />
                   ))}
-                </div>
+                </motion.div>
 
-                {/* Data Stream Lines */}
-                <div className="absolute inset-0">
-                  {Array.from({ length: 8 }).map((_, i) => (
-                    <motion.div
-                      key={i}
-                      className="absolute h-px bg-gradient-to-r from-transparent via-neon-magenta to-transparent"
-                      style={{
-                        width: '100%',
-                        top: `${10 + i * 10}%`,
-                        left: 0
-                      }}
-                      animate={{
-                        x: ['-100%', '100%'],
-                        opacity: [0, 1, 0]
-                      }}
-                      transition={{
-                        duration: 2,
-                        delay: i * 0.2,
-                        repeat: Infinity,
-                        ease: "linear"
-                      }}
-                    />
-                  ))}
-                </div>
+                {/* Insight Popup */}
+                <motion.div
+                  className="absolute top-4 left-1/2 transform -translate-x-1/2"
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 1, duration: 0.5 }}
+                >
+                  <div className="bg-neon-magenta/20 backdrop-blur-sm rounded-lg px-3 py-2 border border-neon-magenta/30">
+                    <p className="text-xs text-neon-magenta font-mono">23% cost optimization detected</p>
+                  </div>
+                </motion.div>
 
-                <div className="text-center">
-                  <motion.div
-                    className="w-24 h-24 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-neon-magenta to-neon-blue flex items-center justify-center relative"
-                    animate={{ 
-                      scale: [1, 1.1, 1],
-                      rotateY: [0, 180, 360],
-                      boxShadow: [
-                        "0 0 20px rgba(255, 0, 122, 0.5)",
-                        "0 0 60px rgba(255, 0, 122, 0.8), 0 0 80px rgba(65, 105, 225, 0.4)",
-                        "0 0 20px rgba(255, 0, 122, 0.5)"
-                      ]
-                    }}
-                    transition={{ 
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  >
-                    {/* AI Processing Indicators */}
-                    <div className="absolute -top-2 -right-2 w-4 h-4 bg-neon-blue rounded-full animate-ping" />
-                    <div className="absolute -bottom-2 -left-2 w-3 h-3 bg-neon-magenta rounded-full animate-pulse" />
-                    <TrendingUp className="w-10 h-10 text-white" />
-                  </motion.div>
-                  <motion.h3 
-                    className="text-3xl font-bold text-white mb-2 bg-gradient-to-r from-neon-magenta to-neon-blue bg-clip-text text-transparent"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    QUANTUM AI PROCESSING
-                  </motion.h3>
-                  <motion.p 
-                    className="text-neon-magenta mb-4 font-mono text-sm"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    {"> NEURAL PREDICTION: 23% cost optimization detected"}
-                    <motion.div
-                      className="w-full bg-neon-magenta/20 h-1 rounded-full mt-2 overflow-hidden"
-                    >
-                      <motion.div
-                        className="h-full bg-gradient-to-r from-neon-magenta to-neon-blue"
-                        animate={{ width: ['0%', '100%'] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                      />
-                    </motion.div>
-                  </motion.p>
-                  <motion.button
-                    className="px-8 py-3 bg-gradient-to-r from-neon-magenta to-neon-blue rounded-full text-white font-bold text-sm tracking-wider border border-white/20 hover:border-white/40 transition-all duration-300"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                    whileHover={{ 
-                      scale: 1.05,
-                      boxShadow: "0 0 20px rgba(255, 0, 122, 0.5)"
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setActiveDemo(null);
-                    }}
-                  >
-                    ACCESS QUANTUM INSIGHTS
-                  </motion.button>
+                {/* Close Button */}
+                <motion.button
+                  className="absolute top-2 right-2 w-6 h-6 bg-neon-blue/20 rounded-full flex items-center justify-center text-white text-sm hover:bg-neon-blue/40 transition-colors"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveDemo(null);
+                  }}
+                >
+                  ×
                 </div>
               </motion.div>
             )}
@@ -471,129 +451,128 @@ const HeroSection: React.FC = () => {
           >
             {activeDemo === 'ar' && (
               <motion.div
-                className="absolute inset-0 bg-gradient-to-br from-neon-blue/30 to-cyber-silver/30 rounded-2xl flex items-center justify-center z-10 backdrop-blur-sm"
+                className="absolute inset-0 bg-gradient-to-br from-neon-blue/30 to-cyber-silver/30 rounded-2xl flex items-center justify-center z-10 backdrop-blur-sm overflow-hidden"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.5 }}
               >
-                {/* Holographic Scan Lines */}
-                <div className="absolute inset-0 opacity-30">
-                  {Array.from({ length: 20 }).map((_, i) => (
-                    <motion.div
-                      key={i}
-                      className="absolute w-full h-px bg-gradient-to-r from-transparent via-neon-blue to-transparent"
-                      style={{ top: `${i * 5}%` }}
-                      animate={{
-                        opacity: [0, 1, 0],
-                        scaleX: [0, 1, 0]
-                      }}
-                      transition={{
-                        duration: 2,
-                        delay: i * 0.1,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    />
-                  ))}
-                </div>
+                {/* Phone with AR - Left Side */}
+                <motion.div
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2"
+                  initial={{ x: -100, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.2, duration: 0.8 }}
+                >
+                  <div className="w-16 h-24 bg-gradient-to-b from-neon-blue to-cyber-silver rounded-lg p-1 shadow-lg">
+                    <div className="w-full h-full bg-dark-bg rounded-md flex flex-col items-center justify-center relative overflow-hidden">
+                      {/* AR Dashboard Hologram */}
+                      <motion.div
+                        className="absolute inset-1 bg-gradient-to-br from-neon-blue/30 to-cyber-silver/30 rounded-md"
+                        animate={{ opacity: [0.3, 0.8, 0.3] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      />
+                      <motion.div
+                        className="w-8 h-8 bg-neon-blue/20 rounded-lg flex items-center justify-center relative z-10"
+                        animate={{ scale: [1, 1.1, 1] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                      >
+                        <QrCode className="w-4 h-4 text-neon-blue" />
+                      </motion.div>
+                      <div className="text-xs text-cyber-silver font-mono mt-1">AR VIEW</div>
+                    </div>
+                  </div>
+                </motion.div>
 
-                {/* AR Portal Effect */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  {Array.from({ length: 4 }).map((_, i) => (
-                    <motion.div
-                      key={i}
-                      className="absolute border-2 border-neon-blue/40 rounded-2xl"
-                      style={{
-                        width: `${100 + i * 20}px`,
-                        height: `${100 + i * 20}px`,
-                      }}
-                      animate={{
-                        rotate: [0, 360],
-                        scale: [1, 1.1, 1],
-                        opacity: [0.2, 0.6, 0.2]
-                      }}
-                      transition={{
-                        duration: 4,
-                        delay: i * 0.5,
-                        repeat: Infinity,
-                        ease: "linear"
-                      }}
-                    />
-                  ))}
-                </div>
+                {/* Person Scanning - Right Side */}
+                <motion.div
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2"
+                  initial={{ x: 100, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.4, duration: 0.8 }}
+                >
+                  <div className="relative">
+                    {/* Head */}
+                    <div className="w-6 h-6 bg-cyber-silver rounded-full mx-auto mb-1"></div>
+                    {/* Body */}
+                    <div className="w-8 h-12 bg-gradient-to-b from-neon-blue to-cyber-silver rounded-lg relative">
+                      {/* Arm pointing */}
+                      <motion.div
+                        className="absolute -right-2 top-2 w-3 h-1 bg-cyber-silver rounded-full"
+                        animate={{ rotate: [0, -20, 0] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      />
+                      {/* AR Glasses */}
+                      <div className="absolute -top-7 left-1/2 transform -translate-x-1/2 w-4 h-1 bg-neon-blue rounded-full opacity-80"></div>
+                    </div>
+                  </div>
+                </motion.div>
 
-                <div className="text-center">
+                {/* Holographic Dashboard */}
+                <motion.div
+                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.6, duration: 0.8 }}
+                >
+                  <div className="w-20 h-16 bg-neon-blue/10 backdrop-blur-sm rounded-lg border border-neon-blue/30 p-2">
+                    {/* Holographic Elements */}
+                    <motion.div
+                      className="w-full h-2 bg-gradient-to-r from-neon-blue to-cyber-silver rounded-full mb-1"
+                      animate={{ opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                    />
+                    <motion.div
+                      className="w-3/4 h-2 bg-gradient-to-r from-cyber-silver to-neon-blue rounded-full mb-1"
+                      animate={{ opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 1.5, delay: 0.3, repeat: Infinity }}
+                    />
+                    <motion.div
+                      className="w-1/2 h-2 bg-gradient-to-r from-neon-blue to-cyber-silver rounded-full"
+                      animate={{ opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 1.5, delay: 0.6, repeat: Infinity }}
+                    />
+                  </div>
+                </motion.div>
+
+                {/* Scan Effect */}
+                <motion.div
+                  className="absolute inset-0"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.8 }}
+                >
                   <motion.div
-                    className="w-24 h-24 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-neon-blue to-cyber-silver flex items-center justify-center relative"
-                    animate={{ 
-                      rotateY: [0, 180, 360],
-                      scale: [1, 1.1, 1],
-                      boxShadow: [
-                        "0 0 20px rgba(65, 105, 225, 0.5)",
-                        "0 0 40px rgba(65, 105, 225, 0.8), 0 0 60px rgba(192, 192, 192, 0.4)",
-                        "0 0 20px rgba(65, 105, 225, 0.5)"
-                      ]
-                    }}
-                    transition={{ 
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  >
-                    {/* Holographic Frame */}
-                    <div className="absolute inset-0 border border-cyber-silver/50 rounded-2xl animate-pulse" />
-                    <div className="absolute -inset-1 border border-neon-blue/30 rounded-2xl" />
-                    <QrCode className="w-10 h-10 text-dark-bg" />
-                  </motion.div>
-                  <motion.h3 
-                    className="text-3xl font-bold text-white mb-2 bg-gradient-to-r from-neon-blue to-cyber-silver bg-clip-text text-transparent"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    HOLOGRAPHIC PORTAL ONLINE
-                  </motion.h3>
-                  <motion.p 
-                    className="text-neon-blue mb-4 font-mono text-sm"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    {"> DIMENSIONAL GATEWAY: Ready for neural scan"}
-                    <motion.div
-                      className="flex justify-center mt-2 space-x-1"
-                    >
-                      {Array.from({ length: 3 }).map((_, i) => (
-                        <motion.div
-                          key={i}
-                          className="w-2 h-2 bg-neon-blue rounded-full"
-                          animate={{ scale: [1, 1.5, 1] }}
-                          transition={{
-                            duration: 1,
-                            delay: i * 0.2,
-                            repeat: Infinity
-                          }}
-                        />
-                      ))}
-                    </motion.div>
-                  </motion.p>
-                  <motion.button
-                    className="px-8 py-3 bg-gradient-to-r from-neon-blue to-cyber-silver text-dark-bg rounded-full font-bold text-sm tracking-wider border border-white/20 hover:border-white/40 transition-all duration-300"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                    whileHover={{ 
-                      scale: 1.05,
-                      boxShadow: "0 0 20px rgba(65, 105, 225, 0.5)"
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setActiveDemo(null);
-                    }}
-                  >
-                    ENTER HOLOGRAPHIC REALM
-                  </motion.button>
+                    className="absolute w-full h-px bg-gradient-to-r from-transparent via-neon-blue to-transparent"
+                    animate={{ y: [0, 200] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  />
+                </motion.div>
+
+                {/* AR Label */}
+                <motion.div
+                  className="absolute bottom-4 left-1/2 transform -translate-x-1/2"
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 1, duration: 0.5 }}
+                >
+                  <div className="bg-cyber-silver/20 backdrop-blur-sm rounded-lg px-3 py-1 border border-cyber-silver/30">
+                    <p className="text-xs text-cyber-silver font-mono">AR Dashboard Active</p>
+                  </div>
+                </motion.div>
+
+                {/* Close Button */}
+                <motion.button
+                  className="absolute top-2 right-2 w-6 h-6 bg-cyber-silver/20 rounded-full flex items-center justify-center text-white text-sm hover:bg-cyber-silver/40 transition-colors"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveDemo(null);
+                  }}
+                >
+                  ×
                 </div>
               </motion.div>
             )}
