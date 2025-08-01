@@ -157,7 +157,11 @@ const BenefitsGrid: React.FC = () => {
                     />
                     
                     {/* Card Content */}
-                    <div className="relative bg-card-bg backdrop-blur-sm rounded-2xl p-8 border border-white/10 group-hover:border-white/20 transition-all duration-300 h-full flex flex-col justify-center">
+                    <div className={`relative bg-card-bg backdrop-blur-sm rounded-2xl p-8 border border-white/10 group-hover:border-white/20 transition-all duration-300 h-full flex flex-col justify-center ${
+                      Math.abs((currentRotation / cardAngle) % benefits.length) === index 
+                        ? 'opacity-100 blur-none' 
+                        : 'opacity-40 blur-sm'
+                    }`}>
                       {/* Icon */}
                       <motion.div 
                         className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${benefit.color} p-4 mb-6 mx-auto`}
@@ -171,17 +175,29 @@ const BenefitsGrid: React.FC = () => {
                       </motion.div>
                       
                       {/* Title */}
-                      <h3 className="text-2xl font-bold mb-4 text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-neon-blue group-hover:to-neon-magenta group-hover:bg-clip-text transition-all duration-300 text-center">
+                      <h3 className={`text-2xl font-bold mb-4 text-center transition-all duration-300 ${
+                        Math.abs((currentRotation / cardAngle) % benefits.length) === index
+                          ? 'text-transparent bg-gradient-to-r from-neon-blue to-neon-magenta bg-clip-text'
+                          : 'text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-neon-blue group-hover:to-neon-magenta group-hover:bg-clip-text'
+                      }`}>
                         {benefit.title}
                       </h3>
                       
                       {/* Description */}
-                      <p className="text-cyber-silver group-hover:text-white transition-colors duration-300 leading-relaxed text-center">
+                      <p className={`leading-relaxed text-center transition-colors duration-300 ${
+                        Math.abs((currentRotation / cardAngle) % benefits.length) === index
+                          ? 'text-white'
+                          : 'text-cyber-silver group-hover:text-white'
+                      }`}>
                         {benefit.description}
                       </p>
 
                       {/* Animated corner accent */}
-                      <div className="absolute top-4 right-4 w-2 h-2 bg-neon-blue rounded-full opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-300" />
+                      <div className={`absolute top-4 right-4 w-2 h-2 bg-neon-blue rounded-full animate-pulse transition-opacity duration-300 ${
+                        Math.abs((currentRotation / cardAngle) % benefits.length) === index
+                          ? 'opacity-100'
+                          : 'opacity-0 group-hover:opacity-100'
+                      }`} />
                     </div>
                   </div>
                 </motion.div>
@@ -192,7 +208,8 @@ const BenefitsGrid: React.FC = () => {
           {/* Navigation Dots */}
           <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
             {benefits.map((_, index) => {
-              const isActive = Math.abs((currentRotation / cardAngle) % benefits.length) === index;
+              const normalizedRotation = ((currentRotation / cardAngle) % benefits.length + benefits.length) % benefits.length;
+              const isActive = Math.round(normalizedRotation) === index;
               return (
                 <button
                   key={index}
