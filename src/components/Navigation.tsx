@@ -1,212 +1,120 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Sphere, MeshDistortMaterial } from '@react-three/drei';
-import { Mic, Play, QrCode, Star, TrendingUp } from 'lucide-react';
-import VoiceDemo from './VoiceDemo';
-import ThreeScene from './ThreeScene';
+import { Menu, X, Zap } from 'lucide-react';
 
-const HeroSection: React.FC = () => {
-  const [currentPhrase, setCurrentPhrase] = useState(0);
-  const phrases = [
-    "Command Your Finances",
-    "Conquer Chaos", 
-    "Amplify Growth"
-  ];
+const Navigation: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentPhrase((prev) => (prev + 1) % phrases.length);
-    }, 3000); // Change phrase every 3 seconds
-
-    return () => clearInterval(interval);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        delayChildren: 0.3,
-        staggerChildren: 0.2
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 50, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 100
-      }
-    }
-  };
-
-  const titleVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 12
-      }
-    }
-  };
   return (
-    <section 
-      id="main-content"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16"
-      aria-label="Hero section"
+    <>
+      {/* Skip to main content link */}
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+      
+    <motion.nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled ? 'bg-black/50 backdrop-blur-md' : 'bg-transparent'
+      }`}
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.8 }}
+      role="navigation"
+      aria-label="Main navigation"
     >
-      {/* 3D Background */}
-      <div className="absolute inset-0 z-0">
-        <Canvas camera={{ position: [0, 0, 10] }}>
-          <ThreeScene />
-          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
-        </Canvas>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          <motion.div 
+            className="flex items-center space-x-2"
+            whileHover={{ scale: 1.05 }}
+          >
+            <Zap className="w-8 h-8 text-neon-blue animate-pulse" />
+            <span className="text-2xl font-bold bg-gradient-to-r from-neon-blue to-neon-magenta bg-clip-text text-transparent">
+              ExpenseIQ
+            </span>
+          </motion.div>
+
+          <div className="hidden md:flex items-center space-x-8">
+            {['Features', 'Demo', 'Testimonials', 'Pricing'].map((item) => (
+              <motion.a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                className="text-cyber-silver hover:text-neon-blue transition-colors duration-300"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onFocus={(e) => e.target.setAttribute('aria-current', 'page')}
+                onBlur={(e) => e.target.removeAttribute('aria-current')}
+              >
+                {item}
+              </motion.a>
+            ))}
+            <motion.button
+              className="bg-gradient-to-r from-neon-blue to-neon-magenta px-6 py-2 rounded-full font-semibold hover:shadow-neon transition-all duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              aria-label="Launch ExpenseIQ application"
+            >
+              Launch Now
+            </motion.button>
+          </div>
+
+          <div className="md:hidden">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="text-cyber-silver hover:text-neon-blue transition-colors duration-300"
+              aria-label={isOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isOpen}
+              aria-controls="mobile-menu"
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-dark-bg/20 to-dark-bg z-10" />
-
-      <motion.div
-        className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <div className="h-32 md:h-40 lg:h-48 flex items-center justify-center mb-8">
-          <motion.h1
-            key={currentPhrase}
-            className="text-5xl md:text-7xl lg:text-8xl font-black leading-tight text-center"
-            initial={{ opacity: 0, y: 50, scale: 0.8 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -50, scale: 0.8 }}
-            transition={{ 
-              duration: 0.8,
-              type: "spring",
-              stiffness: 100,
-              damping: 15
-            }}
-            style={{
-             background: 'linear-gradient(135deg, #4169E1, #FF007A, #4169E1, #FF007A)',
-              backgroundSize: '300% 300%',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent'
-            }}
-          >
-            {phrases[currentPhrase]}
-          </motion.h1>
-        </div>
-
-        {/* Subtitle */}
-        <motion.p
-          className="text-xl md:text-2xl text-cyber-silver mb-12 max-w-4xl mx-auto leading-relaxed"
-          variants={itemVariants}
-        >
-          The ultimate AI-powered finance management revolution for visionary entrepreneurs. 
-          Transform chaos into clarity with voice-first commands and predictive intelligence.
-        </motion.p>
-
-        {/* Social Proof */}
+      {isOpen && (
         <motion.div
-          className="flex flex-wrap justify-center items-center gap-6 mb-12"
-          variants={itemVariants}
+          id="mobile-menu"
+          className="md:hidden bg-black/90 backdrop-blur-md"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          role="menu"
         >
-          <div className="flex items-center space-x-2 bg-card-bg backdrop-blur-sm rounded-full px-6 py-3 border border-neon-blue/20">
-            <Star className="w-5 h-5 text-yellow-400" />
-            <span className="text-cyber-silver">Trusted by 3,000+ visionary entrepreneurs</span>
-          </div>
-          <div className="flex items-center space-x-2 bg-card-bg backdrop-blur-sm rounded-full px-6 py-3 border border-neon-magenta/20">
-            <TrendingUp className="w-5 h-5 text-neon-magenta" />
-            <span className="text-cyber-silver">Savings Unlocked: $1.5M+</span>
-          </div>
-        </motion.div>
-
-        {/* CTA Buttons */}
-        <motion.div
-          className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16"
-          variants={itemVariants}
-        >
-          <motion.button
-            className="group relative px-12 py-4 bg-gradient-to-r from-neon-blue to-neon-magenta rounded-full font-bold text-lg overflow-hidden"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label="Launch your financial revolution with ExpenseIQ"
-            onClick={() => {
-              // Particle explosion effect would go here
-              console.log('Launch Your Financial Revolution!');
-            }}
-          >
-            <span className="relative z-10">Launch Your Financial Revolution</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-neon-magenta to-neon-blue opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          </motion.button>
-
-          <motion.button
-            className="flex items-center space-x-2 px-8 py-4 border-2 border-neon-blue rounded-full font-semibold hover:bg-neon-blue/10 transition-colors duration-300"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label="Watch live demo of ExpenseIQ"
-          >
-            <Play className="w-5 h-5" />
-            <span>Watch Live Demo</span>
-          </motion.button>
-        </motion.div>
-
-        {/* Interactive Elements */}
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto"
-          variants={itemVariants}
-        >
-          {/* Voice Demo */}
-          <motion.div
-            className="bg-card-bg backdrop-blur-sm rounded-2xl p-6 border border-neon-blue/20"
-            whileHover={{ scale: 1.02 }}
-          >
-            <VoiceDemo />
-          </motion.div>
-
-          {/* AI Showcase */}
-          <motion.div
-            className="bg-card-bg backdrop-blur-sm rounded-2xl p-6 border border-neon-magenta/20"
-            whileHover={{ scale: 1.02 }}
-          >
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-neon-magenta to-neon-blue flex items-center justify-center animate-pulse-neon">
-                <TrendingUp className="w-8 h-8" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">AI Insights</h3>
-              <p className="text-cyber-silver text-sm">Real-time predictive analytics for smarter financial decisions</p>
-            </div>
-          </motion.div>
-
-          {/* AR Portal */}
-          <motion.div
-            className="bg-card-bg backdrop-blur-sm rounded-2xl p-6 border border-cyber-silver/20"
-            whileHover={{ scale: 1.02 }}
-          >
-            <div className="text-center">
-              <motion.div
-                className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-cyber-silver to-white flex items-center justify-center"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+          <div className="px-4 py-4 space-y-4">
+            {['Features', 'Demo', 'Testimonials', 'Pricing'].map((item) => (
+              <a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                className="block text-cyber-silver hover:text-neon-blue transition-colors duration-300"
+                onClick={() => setIsOpen(false)}
+                role="menuitem"
               >
-                <QrCode className="w-8 h-8 text-dark-bg" />
-              </motion.div>
-              <h3 className="text-lg font-semibold mb-2">AR Experience</h3>
-              <p className="text-cyber-silver text-sm">Scan to experience your dashboard in augmented reality</p>
-            </div>
-          </motion.div>
+                {item}
+              </a>
+            ))}
+            <button 
+              className="w-full bg-gradient-to-r from-neon-blue to-neon-magenta px-6 py-2 rounded-full font-semibold"
+              role="menuitem"
+              aria-label="Launch ExpenseIQ application"
+            >
+              Launch Now
+            </button>
+          </div>
         </motion.div>
-      </motion.div>
-    </section>
+      )}
+    </motion.nav>
+    </>
   );
 };
 
-export default HeroSection;
+export default Navigation;

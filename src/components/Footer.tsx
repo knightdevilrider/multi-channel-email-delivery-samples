@@ -1,214 +1,138 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { Mic, Play, QrCode, Star, TrendingUp } from 'lucide-react';
+import { Zap, Twitter, Linkedin, Instagram, Shield, Sparkles } from 'lucide-react';
 
-const HeroSection = () => {
-  const [currentPhrase, setCurrentPhrase] = useState(0);
-
-  const phrases = [
-    "Command Your Finances",
-    "Conquer Chaos", 
-    "Amplify Growth"
-  ];
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentPhrase((prev) => (prev + 1) % phrases.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 12
-      }
-    }
-  };
-
-  const titleVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 12
-      }
-    }
-  };
-
-  const VoiceDemo = () => {
-    return (
-      <div className="text-center">
-        <motion.div
-          className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
-          style={{ background: 'linear-gradient(135deg, var(--primary-blue), var(--primary-magenta))' }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <Mic className="w-8 h-8" />
-        </motion.div>
-        <h3 className="text-lg font-semibold mb-2">Voice Commands</h3>
-        <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-          "Show me my Q3 expenses" - Experience the future of finance management
-        </p>
-      </div>
-    );
-  };
-
+const Footer: React.FC = () => {
   return (
-    <section 
-      id="main-content"
-      className="unified-section min-h-screen flex items-center justify-center pt-16"
-      aria-label="Hero section"
-    >
-      <motion.div
-        className="container mx-auto px-6 text-center"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {/* Dynamic Title */}
-        <div className="h-32 md:h-40 lg:h-48 flex items-center justify-center mb-8">
-          <motion.h1
-            key={currentPhrase}
-            className="text-5xl md:text-7xl lg:text-8xl font-black leading-tight text-center"
-            initial={{ opacity: 0, y: 50, scale: 0.8 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -50, scale: 0.8 }}
-            transition={{ 
-              duration: 0.8,
-              type: "spring",
-              stiffness: 100,
-              damping: 15
-            }}
+    <footer className="relative overflow-hidden bg-gradient-to-b from-dark-bg to-black">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        {/* Final CTA Section */}
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <h2 className="text-4xl md:text-6xl font-black mb-6 bg-gradient-to-r from-neon-blue via-neon-magenta to-cyan-400 bg-clip-text text-transparent animate-glow">
+          </h2>
+          <h2 className="text-4xl md:text-6xl font-black mb-6 bg-gradient-to-r from-neon-blue to-neon-magenta bg-clip-text text-transparent">
+            Ready to Revolutionize Your Finances?
+          </h2>
+          <p className="text-xl text-cyber-silver mb-8 max-w-3xl mx-auto">
+            Join thousands of visionary entrepreneurs who've already transformed their financial mastery with ExpenseIQ
+          </p>
+          
+          <motion.button
+            className="group relative px-12 py-4 bg-gradient-to-r from-neon-blue to-neon-magenta rounded-full font-bold text-lg overflow-hidden animate-pulse-neon"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <span className="unified-gradient-text unified-glow">
-              {phrases[currentPhrase]}
+            <span className="relative z-10 flex items-center space-x-2">
+              <span>Start Your Financial Revolution</span>
+              <Sparkles className="w-5 h-5" />
             </span>
-          </motion.h1>
+            <div className="absolute inset-0 bg-gradient-to-r from-neon-magenta to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          </motion.button>
+        </motion.div>
+
+        {/* Footer Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+          {/* Brand */}
+          <div className="col-span-1 md:col-span-2">
+            <motion.div 
+              className="flex items-center space-x-3 mb-6"
+              whileHover={{ scale: 1.05 }}
+            >
+              <Zap className="w-10 h-10 text-neon-blue animate-pulse" />
+              <span className="text-3xl font-black bg-gradient-to-r from-neon-blue to-neon-magenta bg-clip-text text-transparent">
+                ExpenseIQ
+              </span>
+            </motion.div>
+            <p className="text-cyber-silver leading-relaxed mb-6 max-w-md">
+              The ultimate AI-powered finance management revolution for visionary entrepreneurs. 
+              Command your finances, conquer chaos, and amplify growth.
+            </p>
+            
+            {/* Social Links */}
+            <div className="flex space-x-4">
+              {[
+                { icon: Twitter, href: '#' },
+                { icon: Linkedin, href: '#' },
+                { icon: Instagram, href: '#' },
+              ].map((social, index) => (
+                <motion.a
+                  key={index}
+                  href={social.href}
+                  className="w-12 h-12 rounded-full bg-card-bg backdrop-blur-sm border border-neon-blue/30 flex items-center justify-center hover:border-neon-blue hover:bg-neon-blue/10 transition-all duration-300"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <social.icon className="w-5 h-5 text-neon-blue" />
+                </motion.a>
+              ))}
+            </div>
+          </div>
+
+          {/* Links */}
+          <div>
+            <h4 className="text-lg font-semibold text-white mb-4">Product</h4>
+            <ul className="space-y-2">
+              {['Features', 'Pricing', 'Demo', 'Integrations'].map((item) => (
+                <li key={item}>
+                  <a href="#" className="text-cyber-silver hover:text-neon-blue transition-colors duration-300">
+                    {item}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-lg font-semibold text-white mb-4">Support</h4>
+            <ul className="space-y-2">
+              {['Help Center', 'API Docs', 'Contact', 'Status'].map((item) => (
+                <li key={item}>
+                  <a href="#" className="text-cyber-silver hover:text-neon-blue transition-colors duration-300">
+                    {item}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
-        {/* Subtitle */}
-        <motion.p
-          className="text-xl md:text-2xl mb-12 max-w-4xl mx-auto leading-relaxed"
-          style={{ color: 'var(--text-secondary)' }}
-          variants={itemVariants}
-        >
-          The ultimate AI-powered finance management revolution for visionary entrepreneurs. 
-          Transform chaos into clarity with voice-first commands and predictive intelligence.
-        </motion.p>
-
-        {/* Social Proof */}
-        <motion.div
-          className="flex flex-wrap justify-center items-center gap-6 mb-12"
-          variants={itemVariants}
-        >
-          <div className="flex items-center space-x-2 unified-card rounded-full px-6 py-3">
-            <Star className="w-5 h-5 text-yellow-400" />
-            <span style={{ color: 'var(--text-secondary)' }}>Trusted by 3,000+ visionary entrepreneurs</span>
-          </div>
-          <div className="flex items-center space-x-2 unified-card rounded-full px-6 py-3">
-            <TrendingUp className="w-5 h-5" style={{ color: 'var(--primary-magenta)' }} />
-            <span style={{ color: 'var(--text-secondary)' }}>Savings Unlocked: $1.5M+</span>
-          </div>
-        </motion.div>
-
-        {/* CTA Buttons */}
-        <motion.div
-          className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16"
-          variants={itemVariants}
-        >
-          <motion.button
-            className="unified-button-primary text-lg px-12 py-4"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label="Launch your financial revolution with ExpenseIQ"
-            onClick={() => {
-              console.log('Launch Your Financial Revolution!');
-            }}
-          >
-            Launch Your Financial Revolution
-          </motion.button>
-
-          <motion.button
-            className="unified-button-primary px-12 py-4 text-lg unified-pulse"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <span className="flex items-center space-x-2">
-              <Play className="w-5 h-5" />
-              <span>Watch Demo</span>
-            </span>
-          </motion.button>
-        </motion.div>
-
-        {/* Interactive Elements */}
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto"
-          variants={itemVariants}
-        >
-          {/* Voice Demo */}
-          <motion.div
-            className="unified-card p-6"
-            whileHover={{ scale: 1.02 }}
-          >
-            <VoiceDemo />
-          </motion.div>
-
-          {/* AI Showcase */}
-          <motion.div
-            className="unified-card p-6"
-            whileHover={{ scale: 1.02 }}
-          >
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center unified-pulse" style={{ background: 'linear-gradient(135deg, var(--primary-magenta), var(--primary-blue))' }}>
-                <TrendingUp className="w-8 h-8" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">AI Insights</h3>
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Real-time predictive analytics for smarter financial decisions</p>
+        {/* Bottom Section */}
+        <div className="border-t border-white/10 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <div className="flex items-center space-x-6 text-cyber-silver text-sm">
+              <span>© 2025 ExpenseIQ. All rights reserved.</span>
+              <a href="#" className="hover:text-neon-blue transition-colors duration-300">Privacy Policy</a>
+              <a href="#" className="hover:text-neon-blue transition-colors duration-300">Terms of Service</a>
             </div>
-          </motion.div>
+            
+            {/* Security Badge */}
+            <motion.div
+              className="flex items-center space-x-2 text-cyber-silver text-sm"
+              whileHover={{ scale: 1.05 }}
+            >
+              <Shield className="w-4 h-4 text-neon-blue" />
+              <span>AES-256 Encrypted</span>
+            </motion.div>
+          </div>
+        </div>
 
-          {/* AR Portal */}
-          <motion.div
-            className="unified-card p-6"
-            whileHover={{ scale: 1.02 }}
-          >
-            <div className="text-center">
-              <motion.div
-                className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, var(--neutral-silver), white)' }}
-                animate={{ rotate: 360 }}
-                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-              >
-                <QrCode className="w-8 h-8" style={{ color: 'var(--dark-bg)' }} />
-              </motion.div>
-              <h3 className="text-lg font-semibold mb-2">AR Experience</h3>
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Scan to experience your dashboard in augmented reality</p>
-            </div>
-          </motion.div>
+        {/* Hidden Easter Egg */}
+        <motion.div
+          className="absolute bottom-4 right-4 opacity-10 hover:opacity-100 transition-opacity duration-300"
+          whileHover={{ scale: 1.1 }}
+        >
+          <div className="text-xs text-neon-blue font-mono">
+            Powered by Bolt ⚡
+          </div>
         </motion.div>
-      </motion.div>
-    </section>
+      </div>
+    </footer>
   );
 };
 
-export default HeroSection;
+export default Footer;
