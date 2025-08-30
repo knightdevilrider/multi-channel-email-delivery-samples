@@ -57,7 +57,7 @@ const VoiceDemo: React.FC = () => {
       <h3 className="text-lg font-semibold mb-2">Voice Command</h3>
       
       {/* Waveform Visualization */}
-      <div className="flex justify-center items-end space-x-1 h-12 mb-4">
+      <div className="flex justify-center items-end space-x-1 h-12 mb-6">
         {waveform.map((height, i) => (
           <motion.div
             key={i}
@@ -71,7 +71,7 @@ const VoiceDemo: React.FC = () => {
 
       {currentCommand && (
         <motion.div
-          className="bg-neon-blue/10 border border-neon-blue/30 rounded-lg p-3 mb-2"
+          className="bg-neon-blue/10 border border-neon-blue/30 rounded-lg p-3 mb-4"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
         >
@@ -79,7 +79,7 @@ const VoiceDemo: React.FC = () => {
         </motion.div>
       )}
 
-      <p className="text-cyber-silver text-sm">
+      <p className="text-cyber-silver text-sm leading-relaxed">
         {isListening ? 'Listening...' : 'Try voice-first expense management'}
       </p>
     </div>
