@@ -126,36 +126,36 @@ const AccessibleCarousel: React.FC<AccessibleCarouselProps> = ({
         <div className="flex items-center space-x-2">
           <button
             onClick={goToPrevious}
-            className="p-2 rounded-full bg-card-bg backdrop-blur-sm border border-neon-blue/30 hover:border-neon-blue focus:outline-none focus:ring-2 focus:ring-neon-blue focus:ring-offset-2 focus:ring-offset-dark-bg transition-all duration-300"
+            className="p-3 rounded-full bg-gradient-to-r from-slate-800/80 to-slate-900/80 backdrop-blur-xl border-2 border-cyan-400/40 hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-400/20 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-dark-bg transition-all duration-300 group"
             aria-label="Previous slide"
           >
-            <ChevronLeft className="w-5 h-5 text-neon-blue" />
+            <ChevronLeft className="w-6 h-6 text-cyan-400 group-hover:scale-110 transition-transform duration-300" style={{ filter: 'drop-shadow(0 0 8px rgba(34, 211, 238, 0.5))' }} />
           </button>
 
           <button
             onClick={togglePlayPause}
-            className="p-2 rounded-full bg-card-bg backdrop-blur-sm border border-neon-blue/30 hover:border-neon-blue focus:outline-none focus:ring-2 focus:ring-neon-blue focus:ring-offset-2 focus:ring-offset-dark-bg transition-all duration-300"
+            className="p-3 rounded-full bg-gradient-to-r from-slate-800/80 to-slate-900/80 backdrop-blur-xl border-2 border-cyan-400/40 hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-400/20 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-dark-bg transition-all duration-300 group"
             aria-label={isPlaying ? 'Pause slideshow' : 'Play slideshow'}
             disabled={reducedMotion}
           >
             {isPlaying ? (
-              <Pause className="w-5 h-5 text-neon-blue" />
+              <Pause className="w-6 h-6 text-cyan-400 group-hover:scale-110 transition-transform duration-300" style={{ filter: 'drop-shadow(0 0 8px rgba(34, 211, 238, 0.5))' }} />
             ) : (
-              <Play className="w-5 h-5 text-neon-blue" />
+              <Play className="w-6 h-6 text-cyan-400 group-hover:scale-110 transition-transform duration-300" style={{ filter: 'drop-shadow(0 0 8px rgba(34, 211, 238, 0.5))' }} />
             )}
           </button>
 
           <button
             onClick={goToNext}
-            className="p-2 rounded-full bg-card-bg backdrop-blur-sm border border-neon-blue/30 hover:border-neon-blue focus:outline-none focus:ring-2 focus:ring-neon-blue focus:ring-offset-2 focus:ring-offset-dark-bg transition-all duration-300"
+            className="p-3 rounded-full bg-gradient-to-r from-slate-800/80 to-slate-900/80 backdrop-blur-xl border-2 border-cyan-400/40 hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-400/20 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-dark-bg transition-all duration-300 group"
             aria-label="Next slide"
           >
-            <ChevronRight className="w-5 h-5 text-neon-blue" />
+            <ChevronRight className="w-6 h-6 text-cyan-400 group-hover:scale-110 transition-transform duration-300" style={{ filter: 'drop-shadow(0 0 8px rgba(34, 211, 238, 0.5))' }} />
           </button>
         </div>
 
         {/* Slide counter */}
-        <div className="text-cyber-silver text-sm">
+        <div className="text-cyan-300 text-sm font-mono bg-slate-900/50 px-3 py-1 rounded-full border border-cyan-400/30 backdrop-blur-sm">
           {currentIndex + 1} / {items.length}
         </div>
       </div>
@@ -188,10 +188,10 @@ const AccessibleCarousel: React.FC<AccessibleCarouselProps> = ({
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`w-3 h-3 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-neon-blue focus:ring-offset-2 focus:ring-offset-dark-bg ${
+            className={`w-4 h-4 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-dark-bg hover:scale-125 ${
               index === currentIndex
-                ? 'bg-neon-blue shadow-neon'
-                : 'bg-cyber-silver/30 hover:bg-cyber-silver/50'
+                ? 'bg-cyan-400 shadow-lg shadow-cyan-400/50 animate-pulse'
+                : 'bg-slate-600/50 hover:bg-cyan-400/50 border border-cyan-400/30'
             }`}
             role="tab"
             aria-selected={index === currentIndex}
