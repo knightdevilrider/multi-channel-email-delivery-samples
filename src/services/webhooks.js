@@ -3,7 +3,7 @@
  * All functions implement proper error handling, retries, and progress reporting
  */
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://api.expenseiq.com';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.expenseiq.com';
 const API_TIMEOUT = 30000; // 30 seconds
 const MAX_RETRIES = 3;
 
@@ -30,7 +30,7 @@ const fetchWithRetry = async (url, options = {}, retries = MAX_RETRIES) => {
       ...options,
       signal: controller.signal,
       headers: {
-        'Authorization': `Bearer ${process.env.REACT_APP_API_KEY}`,
+        'Authorization': `Bearer ${import.meta.env.VITE_API_KEY}`,
         ...options.headers,
       },
     });
@@ -283,7 +283,7 @@ export const categorizeText = async (text, onProgress = null) => {
   const payload = {
     text: text.trim(),
     timestamp: new Date().toISOString(),
-    userId: process.env.REACT_APP_USER_ID || 'demo_user',
+    userId: import.meta.env.VITE_USER_ID || 'demo_user',
   };
 
   try {

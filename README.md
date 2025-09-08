@@ -58,9 +58,9 @@ npm run dev
 Create a `.env.local` file in the root directory:
 
 ```env
-REACT_APP_API_URL=https://api.expenseiq.com
-REACT_APP_API_KEY=your_api_key_here
-REACT_APP_USER_ID=demo_user
+VITE_API_URL=https://api.expenseiq.com
+VITE_API_KEY=your_api_key_here
+VITE_USER_ID=demo_user
 ```
 
 ## 📝 Available Scripts
