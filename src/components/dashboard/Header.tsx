@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import toast from 'react-hot-toast';
 import { 
   Bell, 
   Search, 
@@ -8,13 +9,16 @@ import {
   LogOut, 
   Moon, 
   Sun,
-  ChevronDown
+  ChevronDown,
+  Activity
 } from 'lucide-react';
+import { healthCheck, getWebhookHealth } from '../../services/webhooks';
 
 const Header: React.FC = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
+  const [isCheckingHealth, setIsCheckingHealth] = useState(false);
 
   const notifications = [
     { id: 1, message: 'New receipt processed: $45.99', time: '2 min ago', unread: true },
@@ -24,6 +28,25 @@ const Header: React.FC = () => {
 
   const unreadCount = notifications.filter(n => n.unread).length;
 
+  const handleHealthCheck = async () => {
+    setIsCheckingHealth(true);
+    try {
+      const result = await healthCheck();
+      const health = getWebhookHealth();
+      
+      if (result.success) {
+        toast.success(`Webhook is healthy! Response time: ${result.details.responseTime || 'N/A'}ms`);
+      } else {
+        toast.error(`Webhook is unhealthy: ${result.error}`);
+      }
+      
+      console.log('Webhook health status:', health);
+    } catch (error) {
+      toast.error(`Health check failed: ${error.message}`);
+    } finally {
+      setIsCheckingHealth(false);
+    }
+  };
   return (
     <header className="bg-card-bg backdrop-blur-sm border-b border-white/10 px-6 py-4">
       <div className="flex items-center justify-between">
@@ -41,6 +64,18 @@ const Header: React.FC = () => {
 
         {/* Right Section */}
         <div className="flex items-center space-x-4">
+          {/* Webhook Health Check */}
+          <motion.button
+            onClick={handleHealthCheck}
+            disabled={isCheckingHealth}
+            className="p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors duration-200 disabled:opacity-50"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            title="Check webhook health"
+          >
+            <Activity className={`w-5 h-5 text-green-400 ${isCheckingHealth ? 'animate-pulse' : ''}`} />
+          </motion.button>
+
           {/* Theme Toggle */}
           <motion.button
             onClick={() => setDarkMode(!darkMode)}

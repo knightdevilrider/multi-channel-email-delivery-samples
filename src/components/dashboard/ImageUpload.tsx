@@ -62,15 +62,28 @@ const ImageUpload: React.FC = () => {
     try {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
+        toast.loading(`Uploading ${file.name}...`, { id: `upload-${i}` });
+        
         await uploadImage(file);
         setUploadProgress(((i + 1) / files.length) * 100);
-        toast.success(`${file.name} uploaded successfully`);
+        
+        toast.dismiss(`upload-${i}`);
+        toast.success(`${file.name} processed successfully`);
       }
       
       setFiles([]);
       toast.success('All files uploaded successfully!');
     } catch (error) {
-      toast.error('Upload failed. Please try again.');
+      // Show more specific error message
+      if (error.message.includes('404')) {
+        toast.error('Webhook endpoint not found. Please check n8n configuration.');
+      } else if (error.message.includes('timeout')) {
+        toast.error('Upload timed out. Please try again.');
+      } else {
+        toast.error(`Upload failed: ${error.message}`);
+      }
+      
+      console.error('Image upload error:', error);
     } finally {
       setUploading(false);
       setUploadProgress(0);

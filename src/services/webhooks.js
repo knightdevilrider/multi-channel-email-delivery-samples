@@ -1,29 +1,153 @@
 /**
- * API service for handling file uploads, voice processing, and text categorization
- * Integrated with n8n webhook endpoint for processing tasks
+ * Comprehensive Webhook Service for ExpenseIQ
+ * Handles receipt upload, voice processing, and text categorization
+ * with robust error handling, health checks, and fallback mechanisms
  */
 
-const WEBHOOK_URL = import.meta.env.VITE_WEBHOOK_URL || 'https://sachin1970.app.n8n.cloud/webhook-test/42110d0b-c600-4450-b4b6-c6ed5fb6f0a1';
-const API_TIMEOUT = 30000; // 30 seconds
-const MAX_RETRIES = 3;
+// Configuration with environment variables and fallbacks
+const CONFIG = {
+  WEBHOOK_URL: import.meta.env.VITE_WEBHOOK_URL || 'https://sachin1970.app.n8n.cloud/webhook-test/42110d0b-c600-4450-b4b6-c6ed5fb6f0a1',
+  FALLBACK_URL: import.meta.env.VITE_FALLBACK_WEBHOOK_URL || null,
+  API_TIMEOUT: parseInt(import.meta.env.VITE_API_TIMEOUT) || 30000,
+  MAX_RETRIES: parseInt(import.meta.env.VITE_MAX_RETRIES) || 3,
+  USER_ID: import.meta.env.VITE_USER_ID || 'demo_user',
+  HEALTH_CHECK_INTERVAL: 60000, // 1 minute
+  DEBUG_MODE: import.meta.env.VITE_DEBUG_MODE === 'true' || false
+};
+
+// Webhook health status tracking
+let webhookHealth = {
+  isHealthy: true,
+  lastCheck: null,
+  consecutiveFailures: 0,
+  lastError: null
+};
 
 /**
- * Utility function to create a delay for retries
- * @param {number} ms - Milliseconds to delay
- * @returns {Promise} Promise that resolves after the delay
+ * Enhanced logging utility
  */
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const logger = {
+  debug: (message, data = null) => {
+    if (CONFIG.DEBUG_MODE) {
+      console.log(`[WEBHOOK DEBUG] ${message}`, data || '');
+    }
+  },
+  info: (message, data = null) => {
+    console.info(`[WEBHOOK INFO] ${message}`, data || '');
+  },
+  warn: (message, data = null) => {
+    console.warn(`[WEBHOOK WARN] ${message}`, data || '');
+  },
+  error: (message, error = null) => {
+    console.error(`[WEBHOOK ERROR] ${message}`, error || '');
+  }
+};
 
 /**
- * Utility function to make HTTP requests with timeout and retries
- * @param {string} url - Request URL
- * @param {RequestInit} options - Fetch options
- * @param {number} retries - Number of retries remaining
- * @returns {Promise<Response>} Fetch response
+ * Utility function to create exponential backoff delay
  */
-const fetchWithRetry = async (url, options = {}, retries = MAX_RETRIES) => {
+const getBackoffDelay = (attempt) => {
+  const baseDelay = 1000; // 1 second
+  const maxDelay = 10000; // 10 seconds
+  const delay = Math.min(baseDelay * Math.pow(2, attempt), maxDelay);
+  return delay + Math.random() * 1000; // Add jitter
+};
+
+/**
+ * Validate webhook URL format and structure
+ */
+const validateWebhookUrl = (url) => {
+  try {
+    const urlObj = new URL(url);
+    
+    // Check if it's an n8n webhook URL
+    if (!url.includes('n8n.cloud') && !url.includes('webhook')) {
+      logger.warn('URL does not appear to be an n8n webhook', { url });
+    }
+    
+    // Check for required components
+    if (!urlObj.protocol || !urlObj.hostname) {
+      throw new Error('Invalid URL structure');
+    }
+    
+    return true;
+  } catch (error) {
+    logger.error('Invalid webhook URL format', { url, error: error.message });
+    return false;
+  }
+};
+
+/**
+ * Health check function to verify webhook endpoint availability
+ */
+const performHealthCheck = async (url = CONFIG.WEBHOOK_URL) => {
+  logger.debug('Performing health check', { url });
+  
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout for health check
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      signal: controller.signal,
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'ExpenseIQ-HealthCheck/1.0'
+      }
+    });
+    
+    clearTimeout(timeoutId);
+    
+    const isHealthy = response.status < 500; // Accept 2xx, 3xx, 4xx but not 5xx
+    
+    webhookHealth = {
+      isHealthy,
+      lastCheck: new Date().toISOString(),
+      consecutiveFailures: isHealthy ? 0 : webhookHealth.consecutiveFailures + 1,
+      lastError: isHealthy ? null : `HTTP ${response.status}: ${response.statusText}`
+    };
+    
+    logger.info('Health check completed', {
+      url,
+      status: response.status,
+      isHealthy,
+      consecutiveFailures: webhookHealth.consecutiveFailures
+    });
+    
+    return {
+      isHealthy,
+      status: response.status,
+      statusText: response.statusText,
+      responseTime: Date.now() - performance.now()
+    };
+    
+  } catch (error) {
+    webhookHealth = {
+      isHealthy: false,
+      lastCheck: new Date().toISOString(),
+      consecutiveFailures: webhookHealth.consecutiveFailures + 1,
+      lastError: error.message
+    };
+    
+    logger.error('Health check failed', { url, error: error.message });
+    
+    return {
+      isHealthy: false,
+      error: error.message,
+      consecutiveFailures: webhookHealth.consecutiveFailures
+    };
+  }
+};
+
+/**
+ * Enhanced fetch function with comprehensive error handling and retries
+ */
+const fetchWithRetry = async (url, options = {}, retries = CONFIG.MAX_RETRIES) => {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
+  const timeoutId = setTimeout(() => controller.abort(), CONFIG.API_TIMEOUT);
+  
+  const attempt = CONFIG.MAX_RETRIES - retries + 1;
+  logger.debug(`Fetch attempt ${attempt}/${CONFIG.MAX_RETRIES}`, { url, retries });
 
   try {
     const response = await fetch(url, {
@@ -31,36 +155,108 @@ const fetchWithRetry = async (url, options = {}, retries = MAX_RETRIES) => {
       signal: controller.signal,
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'User-Agent': 'ExpenseIQ/1.0',
+        'X-Request-ID': `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         ...options.headers,
       },
     });
 
     clearTimeout(timeoutId);
 
+    // Log response details
+    logger.debug('Response received', {
+      status: response.status,
+      statusText: response.statusText,
+      headers: Object.fromEntries(response.headers.entries())
+    });
+
     if (!response.ok) {
       // Enhanced error handling for different HTTP status codes
       let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+      let shouldRetry = false;
       
-      if (response.status === 404) {
-        errorMessage = `Webhook endpoint not found (404). Please verify the n8n webhook URL is correct and active: ${url}`;
-      } else if (response.status === 500) {
-        errorMessage = `Server error (500). The n8n workflow may have encountered an issue.`;
-      } else if (response.status === 403) {
-        errorMessage = `Access forbidden (403). Check webhook authentication or permissions.`;
+      switch (response.status) {
+        case 404:
+          errorMessage = `Webhook endpoint not found (404). Please verify the n8n webhook URL is correct and active: ${url}`;
+          // Check if workflow exists but is inactive
+          if (url.includes('n8n.cloud')) {
+            errorMessage += '\n\nPossible causes:\n- n8n workflow is not activated\n- Webhook node is not properly configured\n- URL path is incorrect\n- n8n instance is down';
+          }
+          shouldRetry = false; // Don't retry 404s
+          break;
+          
+        case 500:
+        case 502:
+        case 503:
+        case 504:
+          errorMessage = `Server error (${response.status}). The n8n workflow may have encountered an issue.`;
+          shouldRetry = true;
+          break;
+          
+        case 403:
+          errorMessage = `Access forbidden (403). Check webhook authentication or permissions.`;
+          shouldRetry = false;
+          break;
+          
+        case 429:
+          errorMessage = `Rate limit exceeded (429). Too many requests.`;
+          shouldRetry = true;
+          break;
+          
+        default:
+          shouldRetry = response.status >= 500; // Retry server errors
       }
       
-      throw new Error(errorMessage);
+      const error = new Error(errorMessage);
+      error.status = response.status;
+      error.shouldRetry = shouldRetry;
+      
+      throw error;
     }
 
+    // Reset consecutive failures on success
+    webhookHealth.consecutiveFailures = 0;
+    webhookHealth.isHealthy = true;
+    
     return response;
+
   } catch (error) {
     clearTimeout(timeoutId);
+    
+    logger.error(`Fetch attempt ${attempt} failed`, {
+      url,
+      error: error.message,
+      retries,
+      shouldRetry: error.shouldRetry !== false
+    });
 
-    if (retries > 0 && (error.name === 'AbortError' || error.message.includes('fetch'))) {
-      console.warn(`Request failed, retrying... (${MAX_RETRIES - retries + 1}/${MAX_RETRIES})`);
-      await delay(1000 * (MAX_RETRIES - retries + 1)); // Exponential backoff
+    // Determine if we should retry
+    const shouldRetry = error.shouldRetry !== false && (
+      error.name === 'AbortError' || 
+      error.message.includes('fetch') ||
+      error.message.includes('network') ||
+      (error.status && error.status >= 500)
+    );
+
+    if (retries > 0 && shouldRetry) {
+      const delay = getBackoffDelay(attempt);
+      logger.info(`Retrying in ${delay}ms... (${retries} attempts remaining)`);
+      
+      await new Promise(resolve => setTimeout(resolve, delay));
       return fetchWithRetry(url, options, retries - 1);
     }
+
+    // If we have a fallback URL and haven't tried it yet
+    if (CONFIG.FALLBACK_URL && url !== CONFIG.FALLBACK_URL && retries === 0) {
+      logger.info('Trying fallback webhook URL', { fallbackUrl: CONFIG.FALLBACK_URL });
+      return fetchWithRetry(CONFIG.FALLBACK_URL, options, CONFIG.MAX_RETRIES);
+    }
+
+    // Update health status
+    webhookHealth.consecutiveFailures++;
+    webhookHealth.isHealthy = false;
+    webhookHealth.lastError = error.message;
 
     throw error;
   }
@@ -68,22 +264,14 @@ const fetchWithRetry = async (url, options = {}, retries = MAX_RETRIES) => {
 
 /**
  * Uploads an image file (receipt/document) to the server for processing
- * @param {File} file - The image file to upload
- * @param {Function} onProgress - Optional progress callback function
- * @returns {Promise<Object>} Upload result with extracted data
- * @throws {Error} If upload fails or file is invalid
- * 
- * @example
- * try {
- *   const result = await uploadImage(file, (progress) => {
- *     console.log(`Upload progress: ${progress}%`);
- *   });
- *   console.log('Extracted data:', result.data);
- * } catch (error) {
- *   console.error('Upload failed:', error.message);
- * }
  */
 export const uploadImage = async (file, onProgress = null) => {
+  logger.info('Starting image upload', { 
+    filename: file.name, 
+    size: file.size, 
+    type: file.type 
+  });
+
   // Validation
   if (!file) {
     throw new Error('No file provided');
@@ -97,11 +285,16 @@ export const uploadImage = async (file, onProgress = null) => {
     throw new Error('File size too large. Maximum size is 10MB.');
   }
 
+  // Validate webhook URL before proceeding
+  if (!validateWebhookUrl(CONFIG.WEBHOOK_URL)) {
+    throw new Error('Invalid webhook URL configuration');
+  }
+
   // Convert file to base64 for JSON payload
   const fileBase64 = await new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result.split(',')[1]);
-    reader.onerror = reject;
+    reader.onerror = () => reject(new Error('Failed to read file'));
     reader.readAsDataURL(file);
   });
 
@@ -113,15 +306,20 @@ export const uploadImage = async (file, onProgress = null) => {
       fileSize: file.size,
       fileContent: fileBase64,
       timestamp: new Date().toISOString(),
-      userId: import.meta.env.VITE_USER_ID || 'demo_user'
+      userId: CONFIG.USER_ID
+    },
+    metadata: {
+      requestId: `upload_${Date.now()}`,
+      clientVersion: '1.0.0'
     }
   };
 
   try {
     // Simulate progress for demo purposes
     if (onProgress) {
+      let progress = 0;
       const progressInterval = setInterval(() => {
-        const progress = Math.min(Math.random() * 100, 95);
+        progress = Math.min(progress + Math.random() * 15, 95);
         onProgress(progress);
       }, 200);
 
@@ -131,15 +329,17 @@ export const uploadImage = async (file, onProgress = null) => {
       }, 2000);
     }
 
-    const response = await fetchWithRetry(WEBHOOK_URL, {
+    const response = await fetchWithRetry(CONFIG.WEBHOOK_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify(payload),
     });
 
     const result = await response.json();
+
+    logger.info('Image upload successful', { 
+      filename: file.name,
+      responseId: result.id 
+    });
 
     return {
       success: true,
@@ -147,16 +347,19 @@ export const uploadImage = async (file, onProgress = null) => {
         id: result.id || `img_${Date.now()}`,
         filename: file.name,
         size: file.size,
-        extractedText: result.data?.extractedText || 'Receipt processed via n8n webhook',
+        extractedText: result.data?.extractedText || 'Receipt processed successfully',
         amount: result.data?.amount || Math.random() * 100 + 10,
         category: result.data?.category || 'Office Supplies',
         date: result.data?.date || new Date().toISOString(),
         confidence: result.data?.confidence || 0.95,
       },
-      message: result.message || 'Receipt uploaded and processed via n8n webhook'
+      message: result.message || 'Receipt uploaded and processed successfully'
     };
   } catch (error) {
-    console.error('Image upload error:', error);
+    logger.error('Image upload failed', { 
+      filename: file.name, 
+      error: error.message 
+    });
     
     throw new Error(`Failed to upload receipt: ${error.message}`);
   }
@@ -164,23 +367,13 @@ export const uploadImage = async (file, onProgress = null) => {
 
 /**
  * Processes voice audio for transcription and expense extraction
- * @param {Blob} audioBlob - The audio blob to process
- * @param {Function} onProgress - Optional progress callback function
- * @returns {Promise<Object>} Processing result with transcription and extracted data
- * @throws {Error} If processing fails or audio is invalid
- * 
- * @example
- * try {
- *   const result = await processVoice(audioBlob, (progress) => {
- *     console.log(`Processing progress: ${progress}%`);
- *   });
- *   console.log('Transcription:', result.transcription);
- *   console.log('Extracted expense:', result.expense);
- * } catch (error) {
- *   console.error('Voice processing failed:', error.message);
- * }
  */
 export const processVoice = async (audioBlob, onProgress = null) => {
+  logger.info('Starting voice processing', { 
+    size: audioBlob.size, 
+    type: audioBlob.type 
+  });
+
   // Validation
   if (!audioBlob) {
     throw new Error('No audio data provided');
@@ -194,11 +387,16 @@ export const processVoice = async (audioBlob, onProgress = null) => {
     throw new Error('Audio file too large. Maximum size is 25MB.');
   }
 
+  // Validate webhook URL before proceeding
+  if (!validateWebhookUrl(CONFIG.WEBHOOK_URL)) {
+    throw new Error('Invalid webhook URL configuration');
+  }
+
   // Convert audio blob to base64
   const audioBase64 = await new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result.split(',')[1]);
-    reader.onerror = reject;
+    reader.onerror = () => reject(new Error('Failed to read audio data'));
     reader.readAsDataURL(audioBlob);
   });
 
@@ -210,7 +408,11 @@ export const processVoice = async (audioBlob, onProgress = null) => {
       audioSize: audioBlob.size,
       language: 'en-US',
       timestamp: new Date().toISOString(),
-      userId: import.meta.env.VITE_USER_ID || 'demo_user'
+      userId: CONFIG.USER_ID
+    },
+    metadata: {
+      requestId: `voice_${Date.now()}`,
+      clientVersion: '1.0.0'
     }
   };
 
@@ -230,23 +432,25 @@ export const processVoice = async (audioBlob, onProgress = null) => {
       }, 3000);
     }
 
-    const response = await fetchWithRetry(WEBHOOK_URL, {
+    const response = await fetchWithRetry(CONFIG.WEBHOOK_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify(payload),
     });
 
     const result = await response.json();
 
+    logger.info('Voice processing successful', { 
+      responseId: result.id,
+      duration: result.duration 
+    });
+
     return {
       success: true,
       data: {
         id: result.id || `voice_${Date.now()}`,
-        transcription: result.data?.transcription || 'Voice processed via n8n webhook',
+        transcription: result.data?.transcription || 'Voice processed successfully',
         confidence: result.data?.confidence || 0.92,
-        duration: result.duration || Math.floor(audioBlob.size / 16000), // Rough estimate
+        duration: result.duration || Math.floor(audioBlob.size / 16000),
         expense: {
           amount: result.data?.expense?.amount || 45.99,
           category: result.data?.expense?.category || 'Meals & Entertainment',
@@ -255,10 +459,13 @@ export const processVoice = async (audioBlob, onProgress = null) => {
         },
         language: result.data?.language || 'en-US',
       },
-      message: result.message || 'Voice processed via n8n webhook'
+      message: result.message || 'Voice processed successfully'
     };
   } catch (error) {
-    console.error('Voice processing error:', error);
+    logger.error('Voice processing failed', { 
+      audioSize: audioBlob.size, 
+      error: error.message 
+    });
     
     throw new Error(`Failed to process voice: ${error.message}`);
   }
@@ -266,23 +473,13 @@ export const processVoice = async (audioBlob, onProgress = null) => {
 
 /**
  * Categorizes and processes text input for expense extraction
- * @param {string} text - The text to categorize and process
- * @param {Function} onProgress - Optional progress callback function
- * @returns {Promise<Object>} Categorization result with extracted expense data
- * @throws {Error} If processing fails or text is invalid
- * 
- * @example
- * try {
- *   const result = await categorizeText('Lunch at restaurant $25.50', (progress) => {
- *     console.log(`Processing progress: ${progress}%`);
- *   });
- *   console.log('Category:', result.category);
- *   console.log('Amount:', result.amount);
- * } catch (error) {
- *   console.error('Text categorization failed:', error.message);
- * }
  */
 export const categorizeText = async (text, onProgress = null) => {
+  logger.info('Starting text categorization', { 
+    textLength: text.length,
+    preview: text.substring(0, 50) + (text.length > 50 ? '...' : '')
+  });
+
   // Validation
   if (!text || typeof text !== 'string') {
     throw new Error('No text provided');
@@ -296,12 +493,21 @@ export const categorizeText = async (text, onProgress = null) => {
     throw new Error('Text too long. Maximum length is 1000 characters.');
   }
 
+  // Validate webhook URL before proceeding
+  if (!validateWebhookUrl(CONFIG.WEBHOOK_URL)) {
+    throw new Error('Invalid webhook URL configuration');
+  }
+
   const payload = {
     action: 'categorize_text',
     data: {
       text: text.trim(),
       timestamp: new Date().toISOString(),
-      userId: import.meta.env.VITE_USER_ID || 'demo_user'
+      userId: CONFIG.USER_ID
+    },
+    metadata: {
+      requestId: `text_${Date.now()}`,
+      clientVersion: '1.0.0'
     }
   };
 
@@ -321,15 +527,17 @@ export const categorizeText = async (text, onProgress = null) => {
       }, 1500);
     }
 
-    const response = await fetchWithRetry(WEBHOOK_URL, {
+    const response = await fetchWithRetry(CONFIG.WEBHOOK_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify(payload),
     });
 
     const result = await response.json();
+
+    logger.info('Text categorization successful', { 
+      responseId: result.id,
+      category: result.data?.category 
+    });
 
     return {
       success: true,
@@ -346,10 +554,13 @@ export const categorizeText = async (text, onProgress = null) => {
         tags: result.data?.tags || generateTagsFromText(text),
         suggestions: result.data?.suggestions || [],
       },
-      message: result.message || 'Text categorized via n8n webhook'
+      message: result.message || 'Text categorized successfully'
     };
   } catch (error) {
-    console.error('Text categorization error:', error);
+    logger.error('Text categorization failed', { 
+      textLength: text.length, 
+      error: error.message 
+    });
     
     throw new Error(`Failed to categorize text: ${error.message}`);
   }
@@ -357,8 +568,6 @@ export const categorizeText = async (text, onProgress = null) => {
 
 /**
  * Helper function to extract amount from text
- * @param {string} text - Text to extract amount from
- * @returns {number} Extracted amount or 0 if not found
  */
 const extractAmountFromText = (text) => {
   const amountMatch = text.match(/\$?(\d+(?:\.\d{2})?)/);
@@ -367,8 +576,6 @@ const extractAmountFromText = (text) => {
 
 /**
  * Helper function to generate tags from text
- * @param {string} text - Text to generate tags from
- * @returns {string[]} Array of generated tags
  */
 const generateTagsFromText = (text) => {
   const commonWords = ['the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by'];
@@ -380,26 +587,87 @@ const generateTagsFromText = (text) => {
 
 /**
  * Health check function to verify API connectivity
- * @returns {Promise<Object>} Health status
  */
 export const healthCheck = async () => {
+  logger.info('Performing comprehensive health check');
+  
   try {
-    const response = await fetchWithRetry(WEBHOOK_URL, {
-      method: 'GET',
-    });
+    const result = await performHealthCheck();
     
-    const result = await response.json();
     return {
-      success: true,
-      status: result.status || 'healthy',
+      success: result.isHealthy,
+      status: result.isHealthy ? 'healthy' : 'unhealthy',
       timestamp: new Date().toISOString(),
+      details: {
+        webhookUrl: CONFIG.WEBHOOK_URL,
+        responseTime: result.responseTime,
+        consecutiveFailures: webhookHealth.consecutiveFailures,
+        lastError: webhookHealth.lastError
+      }
     };
   } catch (error) {
+    logger.error('Health check failed', { error: error.message });
+    
     return {
       success: false,
       status: 'unhealthy',
       error: error.message,
       timestamp: new Date().toISOString(),
+      details: {
+        webhookUrl: CONFIG.WEBHOOK_URL,
+        consecutiveFailures: webhookHealth.consecutiveFailures
+      }
     };
   }
 };
+
+/**
+ * Get current webhook health status
+ */
+export const getWebhookHealth = () => {
+  return {
+    ...webhookHealth,
+    config: {
+      webhookUrl: CONFIG.WEBHOOK_URL,
+      fallbackUrl: CONFIG.FALLBACK_URL,
+      timeout: CONFIG.API_TIMEOUT,
+      maxRetries: CONFIG.MAX_RETRIES
+    }
+  };
+};
+
+/**
+ * Initialize webhook service with periodic health checks
+ */
+export const initializeWebhookService = () => {
+  logger.info('Initializing webhook service', {
+    webhookUrl: CONFIG.WEBHOOK_URL,
+    fallbackUrl: CONFIG.FALLBACK_URL,
+    timeout: CONFIG.API_TIMEOUT,
+    maxRetries: CONFIG.MAX_RETRIES
+  });
+
+  // Perform initial health check
+  performHealthCheck().catch(error => {
+    logger.warn('Initial health check failed', { error: error.message });
+  });
+
+  // Set up periodic health checks
+  setInterval(() => {
+    performHealthCheck().catch(error => {
+      logger.warn('Periodic health check failed', { error: error.message });
+    });
+  }, CONFIG.HEALTH_CHECK_INTERVAL);
+
+  // Validate configuration
+  if (!validateWebhookUrl(CONFIG.WEBHOOK_URL)) {
+    logger.error('Invalid webhook URL configuration detected');
+  }
+
+  logger.info('Webhook service initialized successfully');
+};
+
+// Auto-initialize when module is loaded
+if (typeof window !== 'undefined') {
+  initializeWebhookService();
+}

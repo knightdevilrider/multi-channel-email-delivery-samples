@@ -142,11 +142,27 @@ const VoiceRecorder: React.FC = () => {
 
     setProcessing(true);
     try {
+      toast.loading('Processing voice recording...', { id: 'voice-processing' });
+      
       const result = await processVoice(audioBlob);
-      toast.success('Voice processed successfully!');
+      
+      toast.dismiss('voice-processing');
+      toast.success(`Voice transcribed: "${result.data.transcription.substring(0, 50)}..."`);
+      
       console.log('Processing result:', result);
     } catch (error) {
-      toast.error('Failed to process voice recording');
+      toast.dismiss('voice-processing');
+      
+      // Show more specific error message
+      if (error.message.includes('404')) {
+        toast.error('Webhook endpoint not found. Please check n8n configuration.');
+      } else if (error.message.includes('timeout')) {
+        toast.error('Voice processing timed out. Please try again.');
+      } else {
+        toast.error(`Failed to process voice: ${error.message}`);
+      }
+      
+      console.error('Voice processing error:', error);
     } finally {
       setProcessing(false);
     }

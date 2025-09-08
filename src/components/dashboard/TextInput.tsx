@@ -45,12 +45,31 @@ const TextInput: React.FC = () => {
 
     setProcessing(true);
     try {
+      // Show initial processing message
+      toast.loading('Processing text...', { id: 'text-processing' });
+      
       const result = await categorizeText(text);
-      toast.success('Text processed and categorized!');
+      
+      // Dismiss loading toast and show success
+      toast.dismiss('text-processing');
+      toast.success(`Text categorized as: ${result.data.category}`);
+      
       setText('');
       console.log('Categorization result:', result);
     } catch (error) {
-      toast.error('Failed to process text');
+      // Dismiss loading toast and show error
+      toast.dismiss('text-processing');
+      
+      // Show more specific error message
+      if (error.message.includes('404')) {
+        toast.error('Webhook endpoint not found. Please check n8n configuration.');
+      } else if (error.message.includes('timeout')) {
+        toast.error('Request timed out. Please try again.');
+      } else {
+        toast.error(`Failed to process text: ${error.message}`);
+      }
+      
+      console.error('Text categorization error:', error);
     } finally {
       setProcessing(false);
     }

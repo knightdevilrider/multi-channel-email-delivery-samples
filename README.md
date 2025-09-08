@@ -60,11 +60,13 @@ Create a `.env.local` file in the root directory with your n8n webhook details:
 ```env
 # n8n Webhook URL - Replace with your actual webhook URL
 VITE_WEBHOOK_URL=https://your-n8n-instance.app.n8n.cloud/webhook-test/your-webhook-id
+VITE_FALLBACK_WEBHOOK_URL=https://backup-webhook-url.com/webhook
 VITE_USER_ID=demo_user
 VITE_API_TIMEOUT=30000
+VITE_MAX_RETRIES=3
+VITE_DEBUG_MODE=true
 ```
 
-**Important**: Verify your n8n webhook URL is correct and the workflow is active before running the application.
 ## 📝 Available Scripts
 
 ```bash
