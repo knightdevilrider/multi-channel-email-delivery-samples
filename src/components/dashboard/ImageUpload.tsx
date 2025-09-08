@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, X, Check, AlertCircle, Image as ImageIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { uploadImage } from '../../services/webhooks';
+import { sendImage } from '../../services/telegram';
 
 const ImageUpload: React.FC = () => {
   const [dragActive, setDragActive] = useState(false);
@@ -62,28 +62,33 @@ const ImageUpload: React.FC = () => {
     try {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        toast.loading(`Uploading ${file.name}...`, { id: `upload-${i}` });
+        toast.loading(`Sending ${file.name} to Telegram...`, { id: `upload-${i}` });
         
-        await uploadImage(file);
+        // Create caption with expense context
+        const caption = `📸 <b>Receipt Upload</b>\n\n📄 ${file.name}\n📅 ${new Date().toLocaleString()}\n👤 User: ${import.meta.env.VITE_USER_ID || 'demo_user'}`;
+        
+        await sendImage(file, caption);
         setUploadProgress(((i + 1) / files.length) * 100);
         
         toast.dismiss(`upload-${i}`);
-        toast.success(`${file.name} processed successfully`);
+        toast.success(`${file.name} sent to Telegram successfully`);
       }
       
       setFiles([]);
-      toast.success('All files uploaded successfully!');
+      toast.success('All images sent to Telegram successfully!');
     } catch (error) {
       // Show more specific error message
-      if (error.message.includes('404')) {
-        toast.error('Webhook endpoint not found. Please check n8n configuration.');
+      if (error.message.includes('401')) {
+        toast.error('Invalid bot token. Please check your Telegram configuration.');
+      } else if (error.message.includes('403')) {
+        toast.error('Bot blocked or chat not found. Please check your chat ID.');
       } else if (error.message.includes('timeout')) {
-        toast.error('Upload timed out. Please try again.');
+        toast.error('Send timed out. Please try again.');
       } else {
-        toast.error(`Upload failed: ${error.message}`);
+        toast.error(`Send failed: ${error.message}`);
       }
       
-      console.error('Image upload error:', error);
+      console.error('Telegram send error:', error);
     } finally {
       setUploading(false);
       setUploadProgress(0);

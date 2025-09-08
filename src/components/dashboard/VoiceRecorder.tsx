@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, MicOff, Play, Pause, Square, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { processVoice } from '../../services/webhooks';
+import { sendVoice } from '../../services/telegram';
 
 const VoiceRecorder: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -142,27 +142,32 @@ const VoiceRecorder: React.FC = () => {
 
     setProcessing(true);
     try {
-      toast.loading('Processing voice recording...', { id: 'voice-processing' });
+      toast.loading('Sending voice to Telegram...', { id: 'voice-processing' });
       
-      const result = await processVoice(audioBlob);
+      // Create caption with voice context
+      const caption = `🎤 <b>Voice Message</b>\n\n⏱️ Duration: ${formatTime(duration)}\n📅 ${new Date().toLocaleString()}\n👤 User: ${import.meta.env.VITE_USER_ID || 'demo_user'}`;
+      
+      const result = await sendVoice(audioBlob, caption);
       
       toast.dismiss('voice-processing');
-      toast.success(`Voice transcribed: "${result.data.transcription.substring(0, 50)}..."`);
+      toast.success('Voice message sent to Telegram successfully!');
       
       console.log('Processing result:', result);
     } catch (error) {
       toast.dismiss('voice-processing');
       
       // Show more specific error message
-      if (error.message.includes('404')) {
-        toast.error('Webhook endpoint not found. Please check n8n configuration.');
+      if (error.message.includes('401')) {
+        toast.error('Invalid bot token. Please check your Telegram configuration.');
+      } else if (error.message.includes('403')) {
+        toast.error('Bot blocked or chat not found. Please check your chat ID.');
       } else if (error.message.includes('timeout')) {
-        toast.error('Voice processing timed out. Please try again.');
+        toast.error('Voice send timed out. Please try again.');
       } else {
-        toast.error(`Failed to process voice: ${error.message}`);
+        toast.error(`Failed to send voice: ${error.message}`);
       }
       
-      console.error('Voice processing error:', error);
+      console.error('Telegram send error:', error);
     } finally {
       setProcessing(false);
     }

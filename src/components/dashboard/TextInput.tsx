@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileText, Sparkles, Send, Lightbulb } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { categorizeText } from '../../services/webhooks';
+import { sendTextMessage } from '../../services/telegram';
 
 const TextInput: React.FC = () => {
   const [text, setText] = useState('');
@@ -46,30 +46,35 @@ const TextInput: React.FC = () => {
     setProcessing(true);
     try {
       // Show initial processing message
-      toast.loading('Processing text...', { id: 'text-processing' });
+      toast.loading('Sending to Telegram...', { id: 'text-processing' });
       
-      const result = await categorizeText(text);
+      // Format the message with expense context
+      const formattedMessage = `💰 <b>Expense Entry</b>\n\n${text}\n\n📅 ${new Date().toLocaleString()}\n👤 User: ${import.meta.env.VITE_USER_ID || 'demo_user'}`;
+      
+      const result = await sendTextMessage(formattedMessage);
       
       // Dismiss loading toast and show success
       toast.dismiss('text-processing');
-      toast.success(`Text categorized as: ${result.data.category}`);
+      toast.success('Message sent to Telegram successfully!');
       
       setText('');
-      console.log('Categorization result:', result);
+      console.log('Telegram result:', result);
     } catch (error) {
       // Dismiss loading toast and show error
       toast.dismiss('text-processing');
       
       // Show more specific error message
-      if (error.message.includes('404')) {
-        toast.error('Webhook endpoint not found. Please check n8n configuration.');
+      if (error.message.includes('401')) {
+        toast.error('Invalid bot token. Please check your Telegram configuration.');
+      } else if (error.message.includes('403')) {
+        toast.error('Bot blocked or chat not found. Please check your chat ID.');
       } else if (error.message.includes('timeout')) {
         toast.error('Request timed out. Please try again.');
       } else {
-        toast.error(`Failed to process text: ${error.message}`);
+        toast.error(`Failed to send message: ${error.message}`);
       }
       
-      console.error('Text categorization error:', error);
+      console.error('Telegram send error:', error);
     } finally {
       setProcessing(false);
     }

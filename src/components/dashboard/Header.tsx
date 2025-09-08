@@ -12,7 +12,7 @@ import {
   ChevronDown,
   Activity
 } from 'lucide-react';
-import { healthCheck, getWebhookHealth } from '../../services/webhooks';
+import { healthCheck, getTelegramHealth } from '../../services/telegram';
 
 const Header: React.FC = () => {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -32,15 +32,15 @@ const Header: React.FC = () => {
     setIsCheckingHealth(true);
     try {
       const result = await healthCheck();
-      const health = getWebhookHealth();
+      const health = getTelegramHealth();
       
       if (result.success) {
-        toast.success(`Webhook is healthy! Response time: ${result.details.responseTime || 'N/A'}ms`);
+        toast.success(`Telegram Bot is healthy! Bot: ${result.details.botInfo?.first_name || 'Unknown'}`);
       } else {
-        toast.error(`Webhook is unhealthy: ${result.error}`);
+        toast.error(`Telegram Bot is unhealthy: ${result.error}`);
       }
       
-      console.log('Webhook health status:', health);
+      console.log('Telegram health status:', health);
     } catch (error) {
       toast.error(`Health check failed: ${error.message}`);
     } finally {
