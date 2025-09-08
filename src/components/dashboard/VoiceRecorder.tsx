@@ -14,15 +14,37 @@ const VoiceRecorder: React.FC = () => {
   const [waveform, setWaveform] = useState<number[]>([]);
   const [processing, setProcessing] = useState(false);
   const [recordingQuality, setRecordingQuality] = useState<'low' | 'medium' | 'high'>('medium');
+  const [recordingState, setRecordingState] = useState<'idle' | 'recording' | 'paused' | 'stopped' | 'ready'>('idle');
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const animationRef = useRef<number | null>(null);
+  const chunksRef = useRef<BlobPart[]>([]);
 
+  // Check microphone permissions on component mount
+  useEffect(() => {
+    const checkPermissions = async () => {
+      try {
+        if (navigator.permissions) {
+          const permission = await navigator.permissions.query({ name: 'microphone' as PermissionName });
+          setHasPermission(permission.state === 'granted');
+          
+          permission.onchange = () => {
+            setHasPermission(permission.state === 'granted');
+          };
+        }
+      } catch (error) {
+        logger.warn('Could not check microphone permissions:', error);
+      }
+    };
+    
+    checkPermissions();
+  }, []);
   // Generate waveform animation
   useEffect(() => {
-    if (isRecording && !isPaused) {
+    if (recordingState === 'recording') {
       const generateWaveform = () => {
         setWaveform(Array.from({ length: 20 }, () => Math.random() * 60 + 10));
         animationRef.current = requestAnimationFrame(generateWaveform);
@@ -32,7 +54,9 @@ const VoiceRecorder: React.FC = () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
-      setWaveform([]);
+      if (recordingState === 'idle') {
+        setWaveform([]);
+      }
     }
 
     return () => {
@@ -40,11 +64,11 @@ const VoiceRecorder: React.FC = () => {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [isRecording, isPaused]);
+  }, [recordingState]);
 
   // Duration timer
   useEffect(() => {
-    if (isRecording && !isPaused) {
+    if (recordingState === 'recording') {
       intervalRef.current = setInterval(() => {
         setDuration(prev => prev + 1);
       }, 1000);
@@ -59,10 +83,16 @@ const VoiceRecorder: React.FC = () => {
         clearInterval(intervalRef.current);
       }
     };
-  }, [isRecording, isPaused]);
+  }, [recordingState]);
 
   const startRecording = async () => {
     try {
+      // Request permissions explicitly
+      if (hasPermission === false) {
+        toast.error('Microphone permission denied. Please allow microphone access in your browser settings.');
+        return;
+      }
+
       // Enhanced audio constraints for better quality
       const constraints = {
         audio: {
@@ -75,6 +105,7 @@ const VoiceRecorder: React.FC = () => {
       };
       
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      setHasPermission(true);
       
       // Check for supported MIME types and choose the best one
       let mimeType = 'audio/webm;codecs=opus'; // Default for Telegram compatibility
@@ -97,16 +128,19 @@ const VoiceRecorder: React.FC = () => {
       });
       
       mediaRecorderRef.current = mediaRecorder;
+      chunksRef.current = [];
 
-      const chunks: BlobPart[] = [];
       mediaRecorder.ondataavailable = (event) => {
-        chunks.push(event.data);
+        if (event.data.size > 0) {
+          chunksRef.current.push(event.data);
+        }
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: mimeType });
+        const blob = new Blob(chunksRef.current, { type: mimeType });
         setAudioBlob(blob);
         setAudioUrl(URL.createObjectURL(blob));
+        setRecordingState('ready');
         stream.getTracks().forEach(track => track.stop());
         
         // Log recording details for debugging
@@ -121,18 +155,19 @@ const VoiceRecorder: React.FC = () => {
       mediaRecorder.onerror = (event) => {
         logger.error('MediaRecorder error:', event);
         toast.error('Recording error occurred');
-        setIsRecording(false);
+        setRecordingState('idle');
         stream.getTracks().forEach(track => track.stop());
       };
 
-      mediaRecorder.start();
-      setIsRecording(true);
+      mediaRecorder.start(1000); // Collect data every second
+      setRecordingState('recording');
       setDuration(0);
       toast.success('Recording started');
     } catch (error) {
       logger.error('Failed to start recording:', error);
       
       if (error.name === 'NotAllowedError') {
+        setHasPermission(false);
         toast.error('Microphone access denied. Please allow microphone permissions.');
       } else if (error.name === 'NotFoundError') {
         toast.error('No microphone found. Please connect a microphone.');
@@ -141,28 +176,34 @@ const VoiceRecorder: React.FC = () => {
       } else {
         toast.error(`Failed to access microphone: ${error.message}`);
       }
+      setRecordingState('idle');
     }
   };
 
   const pauseRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      if (isPaused) {
+    if (mediaRecorderRef.current && recordingState === 'recording') {
+      mediaRecorderRef.current.pause();
+      setRecordingState('paused');
+      toast.success('Recording paused');
+    } else if (mediaRecorderRef.current && recordingState === 'paused') {
+      mediaRecorderRef.current.resume();
+      setRecordingState('recording');
+      toast.success('Recording resumed');
+    }
+  };
+
+  const resumeRecording = () => {
+    if (mediaRecorderRef.current && recordingState === 'paused') {
         mediaRecorderRef.current.resume();
-        setIsPaused(false);
+        setRecordingState('recording');
         toast.success('Recording resumed');
-      } else {
-        mediaRecorderRef.current.pause();
-        setIsPaused(true);
-        toast.success('Recording paused');
-      }
     }
   };
 
   const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
+    if (mediaRecorderRef.current && (recordingState === 'recording' || recordingState === 'paused')) {
       mediaRecorderRef.current.stop();
-      setIsRecording(false);
-      setIsPaused(false);
+      setRecordingState('stopped');
       toast.success('Recording stopped');
     }
   };
@@ -180,10 +221,18 @@ const VoiceRecorder: React.FC = () => {
   };
 
   const deleteRecording = () => {
+    // Clean up audio URL to prevent memory leaks
+    if (audioUrl) {
+      URL.revokeObjectURL(audioUrl);
+    }
+    
     setAudioBlob(null);
     setAudioUrl('');
     setDuration(0);
     setIsPlaying(false);
+    setRecordingState('idle');
+    chunksRef.current = [];
+    
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
@@ -322,17 +371,19 @@ const VoiceRecorder: React.FC = () => {
           className="relative inline-block mb-4"
           whileHover={{ scale: 1.05 }}
         >
+          {/* Main Record/Stop Button */}
           <motion.button
-            onClick={isRecording ? stopRecording : startRecording}
+            onClick={recordingState === 'idle' || recordingState === 'ready' ? startRecording : stopRecording}
             className={`w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300 ${
-              isRecording
+              recordingState === 'recording' || recordingState === 'paused'
                 ? 'bg-red-500 hover:bg-red-600 animate-pulse'
                 : 'bg-gradient-to-r from-neon-magenta to-neon-blue hover:shadow-lg hover:shadow-neon-magenta/25'
             }`}
             whileTap={{ scale: 0.95 }}
             disabled={processing}
+            aria-label={recordingState === 'idle' || recordingState === 'ready' ? 'Start recording' : 'Stop recording'}
           >
-            {isRecording ? (
+            {recordingState === 'recording' || recordingState === 'paused' ? (
               <Square className="w-8 h-8 text-white" />
             ) : (
               <Mic className="w-8 h-8 text-white" />
@@ -340,7 +391,7 @@ const VoiceRecorder: React.FC = () => {
           </motion.button>
 
           {/* Recording indicator */}
-          {isRecording && (
+          {recordingState === 'recording' && (
             <motion.div
               className="absolute -inset-2 border-2 border-red-500 rounded-full"
               animate={{ scale: [1, 1.1, 1] }}
@@ -351,17 +402,18 @@ const VoiceRecorder: React.FC = () => {
 
         {/* Pause button (only show when recording) */}
         <AnimatePresence>
-          {isRecording && (
+          {(recordingState === 'recording' || recordingState === 'paused') && (
             <motion.button
-              onClick={pauseRecording}
+              onClick={recordingState === 'recording' ? pauseRecording : resumeRecording}
               className="ml-4 p-3 rounded-full bg-yellow-500/20 hover:bg-yellow-500/30 transition-colors duration-200"
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0 }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
+              aria-label={recordingState === 'recording' ? 'Pause recording' : 'Resume recording'}
             >
-              {isPaused ? (
+              {recordingState === 'paused' ? (
                 <Play className="w-5 h-5 text-yellow-400" />
               ) : (
                 <Pause className="w-5 h-5 text-yellow-400" />
@@ -377,10 +429,16 @@ const VoiceRecorder: React.FC = () => {
 
         {/* Status */}
         <p className="text-cyber-silver text-sm mt-2">
-          {isRecording 
-            ? (isPaused ? 'Recording paused' : 'Recording...') 
-            : audioBlob 
-            ? `Recording ready (${(audioBlob.size / 1024).toFixed(1)} KB)` 
+          {recordingState === 'recording' 
+            ? 'Recording...' 
+            : recordingState === 'paused'
+            ? 'Recording paused - Click play to resume'
+            : recordingState === 'ready' && audioBlob
+            ? `Recording ready (${(audioBlob.size / 1024).toFixed(1)} KB)`
+            : recordingState === 'stopped'
+            ? 'Processing recording...'
+            : hasPermission === false
+            ? 'Microphone permission required'
             : 'Click to start recording'
           }
         </p>
@@ -388,11 +446,11 @@ const VoiceRecorder: React.FC = () => {
 
       {/* Waveform Visualization */}
       <div className="flex justify-center items-end space-x-1 h-16 mb-6">
-        {(isRecording ? waveform : Array(20).fill(5)).map((height, i) => (
+        {(recordingState === 'recording' ? waveform : Array(20).fill(5)).map((height, i) => (
           <motion.div
             key={i}
             className={`w-1 rounded-full ${
-              isRecording ? 'bg-neon-magenta' : 'bg-white/20'
+              recordingState === 'recording' ? 'bg-neon-magenta' : 'bg-white/20'
             }`}
             style={{ height: `${height}%` }}
             animate={{ height: `${height}%` }}
@@ -403,7 +461,7 @@ const VoiceRecorder: React.FC = () => {
 
       {/* Audio Player */}
       <AnimatePresence>
-        {audioUrl && (
+        {audioUrl && recordingState === 'ready' && (
           <motion.div
             className="mb-6"
             initial={{ opacity: 0, height: 0 }}
@@ -414,8 +472,26 @@ const VoiceRecorder: React.FC = () => {
               ref={audioRef}
               src={audioUrl}
               onEnded={() => setIsPlaying(false)}
+              onLoadedMetadata={() => {
+                // Update duration from actual audio file
+                if (audioRef.current) {
+                  const actualDuration = Math.floor(audioRef.current.duration);
+                  if (actualDuration && actualDuration !== duration) {
+                    setDuration(actualDuration);
+                  }
+                }
+              }}
               className="hidden"
             />
+            
+            <div className="flex items-center justify-center space-x-4 mb-4">
+              <div className="text-center">
+                <p className="text-white font-medium mb-2">Recording Preview</p>
+                <p className="text-cyber-silver text-sm">
+                  Duration: {formatTime(duration)} | Size: {audioBlob ? (audioBlob.size / 1024).toFixed(1) : '0'} KB
+                </p>
+              </div>
+            </div>
             
             <div className="flex items-center justify-center space-x-4">
               <motion.button
@@ -423,6 +499,7 @@ const VoiceRecorder: React.FC = () => {
                 className="p-3 rounded-full bg-neon-blue/20 hover:bg-neon-blue/30 transition-colors duration-200"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
+                aria-label={isPlaying ? 'Pause playback' : 'Play recording'}
               >
                 {isPlaying ? (
                   <Pause className="w-5 h-5 text-neon-blue" />
@@ -436,6 +513,7 @@ const VoiceRecorder: React.FC = () => {
                 className="p-3 rounded-full bg-red-500/20 hover:bg-red-500/30 transition-colors duration-200"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
+                aria-label="Delete recording"
               >
                 <Trash2 className="w-5 h-5 text-red-400" />
               </motion.button>
@@ -447,10 +525,11 @@ const VoiceRecorder: React.FC = () => {
       {/* Process Button */}
       <motion.button
         onClick={processRecording}
-        disabled={!audioBlob || processing}
+        disabled={recordingState !== 'ready' || !audioBlob || processing}
         className="w-full px-4 py-3 bg-gradient-to-r from-neon-magenta to-neon-blue rounded-lg font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-neon-magenta/25 transition-all duration-300 flex items-center justify-center space-x-2"
-        whileHover={{ scale: audioBlob && !processing ? 1.02 : 1 }}
-        whileTap={{ scale: audioBlob && !processing ? 0.98 : 1 }}
+        whileHover={{ scale: recordingState === 'ready' && audioBlob && !processing ? 1.02 : 1 }}
+        whileTap={{ scale: recordingState === 'ready' && audioBlob && !processing ? 0.98 : 1 }}
+        aria-label="Send recording to Telegram"
       >
         {processing ? (
           <>
@@ -480,7 +559,7 @@ const VoiceRecorder: React.FC = () => {
           <li>• Use 'Medium' quality for best balance of size and quality</li>
           <li>• Ensure stable internet connection before sending</li>
         </ul>
-      </div>
+            <span className="text-sm">Sending voice message to Telegram...</span>
     </div>
   );
 };
