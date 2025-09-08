@@ -1,0 +1,34 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import HeroSection from '../components/landing/HeroSection';
+import BenefitsGrid from '../components/landing/BenefitsGrid';
+import JourneyTimeline from '../components/landing/JourneyTimeline';
+import TestimonialsSection from '../components/landing/TestimonialsSection';
+import SocialProofTicker from '../components/landing/SocialProofTicker';
+import FAQSection from '../components/landing/FAQSection';
+import Footer from '../components/landing/Footer';
+import Navigation from '../components/landing/Navigation';
+
+const LandingPage: React.FC = () => {
+  return (
+    <>
+      <Navigation />
+      
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
+        <HeroSection />
+        <BenefitsGrid />
+        <JourneyTimeline />
+        <TestimonialsSection />
+        <SocialProofTicker />
+        <FAQSection />
+        <Footer />
+      </motion.div>
+    </>
+  );
+};
+
+export default LandingPage;
