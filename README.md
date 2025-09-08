@@ -55,17 +55,27 @@ npm run dev
 
 ## 🔧 Environment Variables
 
-Create a `.env.local` file in the root directory with your n8n webhook details:
+Create a `.env.local` file in the root directory with your Telegram Bot details:
 
 ```env
-# n8n Webhook URL - Replace with your actual webhook URL
-VITE_WEBHOOK_URL=https://your-n8n-instance.app.n8n.cloud/webhook-test/your-webhook-id
-VITE_FALLBACK_WEBHOOK_URL=https://backup-webhook-url.com/webhook
+# Telegram Bot Configuration
+VITE_TELEGRAM_BOT_TOKEN=123456789:ABCdefGHIjklMNOpqrsTUVwxyz
+VITE_TELEGRAM_CHAT_ID=123456789
 VITE_USER_ID=demo_user
 VITE_API_TIMEOUT=30000
 VITE_MAX_RETRIES=3
 VITE_DEBUG_MODE=true
 ```
+
+## 🤖 Telegram Bot Setup
+
+### Quick Setup
+1. **Create a bot**: Message `@BotFather` on Telegram and use `/newbot`
+2. **Get your chat ID**: Message `@userinfobot` to get your user ID
+3. **Configure**: Add your bot token and chat ID to `.env.local`
+4. **Test**: Use the health check button in the dashboard
+
+For detailed setup instructions, see [TELEGRAM_SETUP_GUIDE.md](TELEGRAM_SETUP_GUIDE.md)
 
 ## 📝 Available Scripts
 
@@ -136,34 +146,34 @@ src/
 - **Transitions**: Smooth 300ms duration
 - **Loading**: Skeleton screens and spinners
 
-## 🔌 API Integration
+## 🔌 Telegram Integration
 
-The application integrates with three main API endpoints:
+The application sends all content directly to Telegram:
 
-### Image Upload
+### Image Sending
 ```javascript
-import { uploadImage } from './services/webhooks';
+import { sendImage } from './services/telegram';
 
-const result = await uploadImage(file, (progress) => {
-  console.log(`Upload progress: ${progress}%`);
+const result = await sendImage(file, 'Receipt from coffee shop', (progress) => {
+  console.log(`Send progress: ${progress}%`);
 });
 ```
 
-### Voice Processing
+### Voice Messages
 ```javascript
-import { processVoice } from './services/webhooks';
+import { sendVoice } from './services/telegram';
 
-const result = await processVoice(audioBlob, (progress) => {
-  console.log(`Processing: ${progress}%`);
+const result = await sendVoice(audioBlob, 'Voice expense entry', (progress) => {
+  console.log(`Sending: ${progress}%`);
 });
 ```
 
-### Text Categorization
+### Text Messages
 ```javascript
-import { categorizeText } from './services/webhooks';
+import { sendTextMessage } from './services/telegram';
 
-const result = await categorizeText(text, (progress) => {
-  console.log(`Analyzing: ${progress}%`);
+const result = await sendTextMessage('Lunch with client - $45.99', {
+  parseMode: 'HTML'
 });
 ```
 
