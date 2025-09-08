@@ -1,11 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import HeroSection from '../components/landing/HeroSection';
-import BenefitsGrid from '../components/landing/BenefitsGrid';
-import JourneyTimeline from '../components/landing/JourneyTimeline';
-import TestimonialsSection from '../components/landing/TestimonialsSection';
-import SocialProofTicker from '../components/landing/SocialProofTicker';
-import FAQSection from '../components/landing/FAQSection';
+import BenefitsGrid from '../components/BenefitsGrid';
+import JourneyTimeline from '../components/JourneyTimeline';
+import TestimonialsSection from '../components/TestimonialsSection';
+import SocialProofTicker from '../components/SocialProofTicker';
+import FAQSection from '../components/FAQSection';
 import Footer from '../components/landing/Footer';
 import Navigation from '../components/landing/Navigation';
 
