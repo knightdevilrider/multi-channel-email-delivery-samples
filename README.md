@@ -55,13 +55,16 @@ npm run dev
 
 ## 🔧 Environment Variables
 
-Create a `.env.local` file in the root directory:
+Create a `.env.local` file in the root directory with your n8n webhook details:
 
 ```env
-VITE_WEBHOOK_URL=https://sachin1970.app.n8n.cloud/webhook-test/42110d0b-c600-4450-b4b6-c6ed5fb6f0a1
+# n8n Webhook URL - Replace with your actual webhook URL
+VITE_WEBHOOK_URL=https://your-n8n-instance.app.n8n.cloud/webhook-test/your-webhook-id
 VITE_USER_ID=demo_user
+VITE_API_TIMEOUT=30000
 ```
 
+**Important**: Verify your n8n webhook URL is correct and the workflow is active before running the application.
 ## 📝 Available Scripts
 
 ```bash

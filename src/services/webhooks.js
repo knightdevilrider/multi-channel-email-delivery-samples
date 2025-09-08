@@ -3,7 +3,7 @@
  * Integrated with n8n webhook endpoint for processing tasks
  */
 
-const WEBHOOK_URL = 'https://sachin1970.app.n8n.cloud/webhook-test/42110d0b-c600-4450-b4b6-c6ed5fb6f0a1';
+const WEBHOOK_URL = import.meta.env.VITE_WEBHOOK_URL || 'https://sachin1970.app.n8n.cloud/webhook-test/42110d0b-c600-4450-b4b6-c6ed5fb6f0a1';
 const API_TIMEOUT = 30000; // 30 seconds
 const MAX_RETRIES = 3;
 
@@ -38,7 +38,18 @@ const fetchWithRetry = async (url, options = {}, retries = MAX_RETRIES) => {
     clearTimeout(timeoutId);
 
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      // Enhanced error handling for different HTTP status codes
+      let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+      
+      if (response.status === 404) {
+        errorMessage = `Webhook endpoint not found (404). Please verify the n8n webhook URL is correct and active: ${url}`;
+      } else if (response.status === 500) {
+        errorMessage = `Server error (500). The n8n workflow may have encountered an issue.`;
+      } else if (response.status === 403) {
+        errorMessage = `Access forbidden (403). Check webhook authentication or permissions.`;
+      }
+      
+      throw new Error(errorMessage);
     }
 
     return response;
