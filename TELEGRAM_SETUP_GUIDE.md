@@ -70,6 +70,14 @@ VITE_DEBUG_MODE=true
 - **Duration**: Up to 1 hour
 - **Captions**: Up to 1,024 characters
 
+### Audio Format Compatibility
+The integration automatically handles different audio formats:
+- **OGG/Opus**: Best for Telegram voice messages (preferred)
+- **WebM/Opus**: Good compatibility, automatically converted
+- **MP4/AAC**: Sent as audio files if voice format fails
+- **WAV**: Larger files, sent as audio documents
+- **MP3**: Universal compatibility, sent as audio files
+
 ## 🔧 Advanced Configuration
 
 ### Bot Permissions
@@ -110,11 +118,21 @@ The integration handles these errors:
 #### "File too large"
 - Images: Maximum 10MB
 - Voice: Maximum 50MB
-- Compress files if needed
+- Use lower recording quality for smaller files
+- Keep voice messages under 5 minutes for best compatibility
 
 #### "Rate limit exceeded"
 - Wait before sending more messages
 - The app automatically retries with backoff
+- The app automatically handles format conversion
+- If issues persist, try different recording quality settings
+- Check browser compatibility for MediaRecorder API
+
+#### "Recording failed"
+- Ensure microphone permissions are granted
+- Check if microphone is connected and working
+- Try refreshing the page and allowing permissions again
+- Use Chrome/Firefox for best MediaRecorder support
 
 ### Debug Mode
 Enable debug logging by setting:

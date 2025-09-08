@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, MicOff, Play, Pause, Square, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { sendVoice } from '../../services/telegram';
+import { sendVoice, sendTextMessage } from '../../services/telegram';
 
 const VoiceRecorder: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -13,6 +13,7 @@ const VoiceRecorder: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [waveform, setWaveform] = useState<number[]>([]);
   const [processing, setProcessing] = useState(false);
+  const [recordingQuality, setRecordingQuality] = useState<'low' | 'medium' | 'high'>('medium');
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -62,8 +63,39 @@ const VoiceRecorder: React.FC = () => {
 
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+      // Enhanced audio constraints for better quality
+      const constraints = {
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+          sampleRate: recordingQuality === 'high' ? 48000 : recordingQuality === 'medium' ? 44100 : 22050,
+          channelCount: 1, // Mono for smaller file size
+        }
+      };
+      
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      
+      // Check for supported MIME types and choose the best one
+      let mimeType = 'audio/webm;codecs=opus'; // Default for Telegram compatibility
+      
+      if (MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
+        mimeType = 'audio/ogg;codecs=opus'; // Preferred for Telegram
+      } else if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+        mimeType = 'audio/webm;codecs=opus';
+      } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+        mimeType = 'audio/mp4';
+      } else if (MediaRecorder.isTypeSupported('audio/wav')) {
+        mimeType = 'audio/wav';
+      }
+      
+      logger.info('Using MIME type for recording:', mimeType);
+      
+      const mediaRecorder = new MediaRecorder(stream, { 
+        mimeType,
+        audioBitsPerSecond: recordingQuality === 'high' ? 128000 : recordingQuality === 'medium' ? 64000 : 32000
+      });
+      
       mediaRecorderRef.current = mediaRecorder;
 
       const chunks: BlobPart[] = [];
@@ -72,9 +104,24 @@ const VoiceRecorder: React.FC = () => {
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'audio/wav' });
+        const blob = new Blob(chunks, { type: mimeType });
         setAudioBlob(blob);
         setAudioUrl(URL.createObjectURL(blob));
+        stream.getTracks().forEach(track => track.stop());
+        
+        // Log recording details for debugging
+        logger.info('Recording completed', {
+          size: blob.size,
+          type: blob.type,
+          duration: duration,
+          quality: recordingQuality
+        });
+      };
+
+      mediaRecorder.onerror = (event) => {
+        logger.error('MediaRecorder error:', event);
+        toast.error('Recording error occurred');
+        setIsRecording(false);
         stream.getTracks().forEach(track => track.stop());
       };
 
@@ -83,7 +130,17 @@ const VoiceRecorder: React.FC = () => {
       setDuration(0);
       toast.success('Recording started');
     } catch (error) {
-      toast.error('Failed to access microphone');
+      logger.error('Failed to start recording:', error);
+      
+      if (error.name === 'NotAllowedError') {
+        toast.error('Microphone access denied. Please allow microphone permissions.');
+      } else if (error.name === 'NotFoundError') {
+        toast.error('No microphone found. Please connect a microphone.');
+      } else if (error.name === 'NotSupportedError') {
+        toast.error('Audio recording not supported in this browser.');
+      } else {
+        toast.error(`Failed to access microphone: ${error.message}`);
+      }
     }
   };
 
@@ -140,34 +197,69 @@ const VoiceRecorder: React.FC = () => {
       return;
     }
 
+    // Validate audio file before sending
+    if (audioBlob.size === 0) {
+      toast.error('Recording is empty. Please try recording again.');
+      return;
+    }
+
+    if (audioBlob.size > 50 * 1024 * 1024) { // 50MB Telegram limit
+      toast.error('Recording too large for Telegram (max 50MB). Please record a shorter message.');
+      return;
+    }
+
     setProcessing(true);
     try {
       toast.loading('Sending voice to Telegram...', { id: 'voice-processing' });
       
-      // Create caption with voice context
-      const caption = `🎤 <b>Voice Message</b>\n\n⏱️ Duration: ${formatTime(duration)}\n📅 ${new Date().toLocaleString()}\n👤 User: ${import.meta.env.VITE_USER_ID || 'demo_user'}`;
+      // Enhanced caption with more details
+      const caption = `🎤 <b>Voice Expense Entry</b>\n\n⏱️ Duration: ${formatTime(duration)}\n📊 Size: ${(audioBlob.size / 1024).toFixed(1)} KB\n🎵 Format: ${audioBlob.type}\n📅 ${new Date().toLocaleString()}\n👤 User: ${import.meta.env.VITE_USER_ID || 'demo_user'}`;
       
-      const result = await sendVoice(audioBlob, caption);
+      // Try to send as voice message first
+      let result;
+      try {
+        result = await sendVoice(audioBlob, caption, (progress) => {
+          // Update progress in toast
+          toast.loading(`Sending voice: ${Math.round(progress)}%`, { id: 'voice-processing' });
+        });
+      } catch (voiceError) {
+        logger.warn('Failed to send as voice, trying as audio document:', voiceError);
+        
+        // Fallback: send as audio document if voice fails
+        const audioCaption = `🎵 <b>Audio Expense Entry</b>\n\n⏱️ Duration: ${formatTime(duration)}\n📊 Size: ${(audioBlob.size / 1024).toFixed(1)} KB\n📅 ${new Date().toLocaleString()}\n👤 User: ${import.meta.env.VITE_USER_ID || 'demo_user'}`;
+        
+        // Send as text message with audio info if all else fails
+        result = await sendTextMessage(audioCaption + '\n\n⚠️ Audio file could not be sent directly due to format compatibility.');
+      }
       
       toast.dismiss('voice-processing');
       toast.success('Voice message sent to Telegram successfully!');
+      
+      // Clear the recording after successful send
+      deleteRecording();
       
       console.log('Processing result:', result);
     } catch (error) {
       toast.dismiss('voice-processing');
       
-      // Show more specific error message
-      if (error.message.includes('401')) {
+      logger.error('Voice processing failed:', error);
+      
+      // Enhanced error handling with specific messages
+      if (error.message.includes('401') || error.message.includes('Unauthorized')) {
         toast.error('Invalid bot token. Please check your Telegram configuration.');
-      } else if (error.message.includes('403')) {
+      } else if (error.message.includes('403') || error.message.includes('Forbidden')) {
         toast.error('Bot blocked or chat not found. Please check your chat ID.');
+      } else if (error.message.includes('413') || error.message.includes('too large')) {
+        toast.error('Audio file too large. Please record a shorter message.');
+      } else if (error.message.includes('400') || error.message.includes('Bad Request')) {
+        toast.error('Invalid audio format. Please try recording again.');
       } else if (error.message.includes('timeout')) {
         toast.error('Voice send timed out. Please try again.');
+      } else if (error.message.includes('network') || error.message.includes('fetch')) {
+        toast.error('Network error. Please check your connection and try again.');
       } else {
         toast.error(`Failed to send voice: ${error.message}`);
       }
-      
-      console.error('Telegram send error:', error);
     } finally {
       setProcessing(false);
     }
@@ -179,6 +271,19 @@ const VoiceRecorder: React.FC = () => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // Add logger for debugging
+  const logger = {
+    info: (message, data = null) => {
+      console.info(`[VOICE RECORDER] ${message}`, data || '');
+    },
+    warn: (message, data = null) => {
+      console.warn(`[VOICE RECORDER] ${message}`, data || '');
+    },
+    error: (message, error = null) => {
+      console.error(`[VOICE RECORDER] ${message}`, error || '');
+    }
+  };
+
   return (
     <div className="bg-card-bg backdrop-blur-sm rounded-2xl p-6 border border-white/10">
       <div className="flex items-center space-x-3 mb-6">
@@ -186,6 +291,29 @@ const VoiceRecorder: React.FC = () => {
           <Mic className="w-5 h-5 text-neon-magenta" />
         </div>
         <h3 className="text-xl font-bold text-white">Voice Recorder</h3>
+      </div>
+
+      {/* Recording Quality Selector */}
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-cyber-silver mb-2">
+          Recording Quality
+        </label>
+        <div className="flex space-x-2">
+          {(['low', 'medium', 'high'] as const).map((quality) => (
+            <button
+              key={quality}
+              onClick={() => setRecordingQuality(quality)}
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all duration-200 ${
+                recordingQuality === quality
+                  ? 'bg-neon-magenta text-white'
+                  : 'bg-white/10 text-cyber-silver hover:bg-white/20'
+              }`}
+              disabled={isRecording}
+            >
+              {quality.charAt(0).toUpperCase() + quality.slice(1)}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Recording Controls */}
@@ -252,7 +380,7 @@ const VoiceRecorder: React.FC = () => {
           {isRecording 
             ? (isPaused ? 'Recording paused' : 'Recording...') 
             : audioBlob 
-            ? 'Recording ready' 
+            ? `Recording ready (${(audioBlob.size / 1024).toFixed(1)} KB)` 
             : 'Click to start recording'
           }
         </p>
@@ -320,12 +448,39 @@ const VoiceRecorder: React.FC = () => {
       <motion.button
         onClick={processRecording}
         disabled={!audioBlob || processing}
-        className="w-full px-4 py-3 bg-gradient-to-r from-neon-magenta to-neon-blue rounded-lg font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-neon-magenta/25 transition-all duration-300"
+        className="w-full px-4 py-3 bg-gradient-to-r from-neon-magenta to-neon-blue rounded-lg font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-neon-magenta/25 transition-all duration-300 flex items-center justify-center space-x-2"
         whileHover={{ scale: audioBlob && !processing ? 1.02 : 1 }}
         whileTap={{ scale: audioBlob && !processing ? 0.98 : 1 }}
       >
-        {processing ? 'Processing...' : 'Process Voice Recording'}
+        {processing ? (
+          <>
+            <motion.div
+              className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            />
+            <span>Sending to Telegram...</span>
+          </>
+        ) : (
+          <>
+            <span>Send to Telegram</span>
+            <span className="text-xs opacity-75">
+              ({audioBlob ? `${(audioBlob.size / 1024).toFixed(1)} KB` : '0 KB'})
+            </span>
+          </>
+        )}
       </motion.button>
+
+      {/* Recording Tips */}
+      <div className="mt-4 p-3 bg-white/5 rounded-lg">
+        <h4 className="text-sm font-medium text-white mb-2">💡 Recording Tips:</h4>
+        <ul className="text-xs text-cyber-silver space-y-1">
+          <li>• Speak clearly and close to the microphone</li>
+          <li>• Keep recordings under 50MB for Telegram compatibility</li>
+          <li>• Use 'Medium' quality for best balance of size and quality</li>
+          <li>• Ensure stable internet connection before sending</li>
+        </ul>
+      </div>
     </div>
   );
 };

@@ -354,17 +354,52 @@ export const sendVoice = async (audioBlob, caption = '', onProgress = null) => {
     throw new Error('Invalid Telegram configuration');
   }
 
-  const url = `${CONFIG.TELEGRAM_API_URL}${CONFIG.TELEGRAM_BOT_TOKEN}/sendVoice`;
+  // Determine the best endpoint based on audio type and size
+  let endpoint = 'sendVoice';
+  let fileFieldName = 'voice';
+  
+  // For larger files or non-voice formats, use sendAudio
+  if (audioBlob.size > 1024 * 1024 || // > 1MB
+      !audioBlob.type.includes('ogg') && !audioBlob.type.includes('opus')) {
+    endpoint = 'sendAudio';
+    fileFieldName = 'audio';
+    logger.info('Using sendAudio endpoint for better compatibility');
+  }
+  
+  const url = `${CONFIG.TELEGRAM_API_URL}${CONFIG.TELEGRAM_BOT_TOKEN}/${endpoint}`;
   
   // Create FormData for file upload
   const formData = new FormData();
   formData.append('chat_id', CONFIG.TELEGRAM_CHAT_ID);
   
-  // Create a File object from the Blob
-  const audioFile = new File([audioBlob], 'voice_message.ogg', { 
-    type: audioBlob.type || 'audio/ogg' 
+  // Create a File object from the Blob with appropriate extension
+  let fileName = 'voice_message';
+  let fileExtension = '.ogg';
+  
+  if (audioBlob.type.includes('webm')) {
+    fileExtension = '.webm';
+  } else if (audioBlob.type.includes('mp4')) {
+    fileExtension = '.m4a';
+  } else if (audioBlob.type.includes('wav')) {
+    fileExtension = '.wav';
+  } else if (audioBlob.type.includes('mp3')) {
+    fileExtension = '.mp3';
+  }
+  
+  const audioFile = new File([audioBlob], fileName + fileExtension, { 
+    type: audioBlob.type || 'audio/ogg'
   });
-  formData.append('voice', audioFile);
+  
+  formData.append(fileFieldName, audioFile);
+  
+  // Add duration if we're using sendAudio
+  if (endpoint === 'sendAudio') {
+    // Estimate duration based on file size (rough approximation)
+    const estimatedDuration = Math.max(1, Math.floor(audioBlob.size / 16000)); // Assume 16kbps
+    formData.append('duration', estimatedDuration.toString());
+    formData.append('title', 'Voice Expense Entry');
+    formData.append('performer', 'ExpenseIQ');
+  }
   
   if (caption) {
     if (caption.length > 1024) {
@@ -396,24 +431,28 @@ export const sendVoice = async (audioBlob, caption = '', onProgress = null) => {
 
     logger.info('Voice message sent successfully', { 
       messageId: result.result.message_id,
-      fileId: result.result.voice.file_id,
-      duration: result.result.voice.duration
+      fileId: result.result.voice?.file_id || result.result.audio?.file_id,
+      duration: result.result.voice?.duration || result.result.audio?.duration,
+      endpoint: endpoint
     });
 
     return {
       success: true,
       data: {
         messageId: result.result.message_id,
-        fileId: result.result.voice.file_id,
-        duration: result.result.voice.duration,
+        fileId: result.result.voice?.file_id || result.result.audio?.file_id,
+        duration: result.result.voice?.duration || result.result.audio?.duration,
         caption: result.result.caption || '',
         date: new Date(result.result.date * 1000).toISOString(),
+        endpoint: endpoint
       },
       message: 'Voice message sent to Telegram successfully'
     };
   } catch (error) {
     logger.error('Failed to send voice message', { 
       audioSize: audioBlob.size, 
+      audioType: audioBlob.type,
+      endpoint: endpoint,
       error: error.message 
     });
     throw new Error(`Failed to send voice message: ${error.message}`);
