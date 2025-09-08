@@ -58,8 +58,7 @@ npm run dev
 Create a `.env.local` file in the root directory:
 
 ```env
-VITE_API_URL=https://api.expenseiq.com
-VITE_API_KEY=your_api_key_here
+VITE_WEBHOOK_URL=https://sachin1970.app.n8n.cloud/webhook-test/42110d0b-c600-4450-b4b6-c6ed5fb6f0a1
 VITE_USER_ID=demo_user
 ```
 

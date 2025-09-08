@@ -1,9 +1,9 @@
 /**
  * API service for handling file uploads, voice processing, and text categorization
- * All functions implement proper error handling, retries, and progress reporting
+ * Integrated with n8n webhook endpoint for processing tasks
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.expenseiq.com';
+const WEBHOOK_URL = 'https://sachin1970.app.n8n.cloud/webhook-test/42110d0b-c600-4450-b4b6-c6ed5fb6f0a1';
 const API_TIMEOUT = 30000; // 30 seconds
 const MAX_RETRIES = 3;
 
@@ -30,7 +30,7 @@ const fetchWithRetry = async (url, options = {}, retries = MAX_RETRIES) => {
       ...options,
       signal: controller.signal,
       headers: {
-        'Authorization': `Bearer ${import.meta.env.VITE_API_KEY}`,
+        'Content-Type': 'application/json',
         ...options.headers,
       },
     });
@@ -86,10 +86,25 @@ export const uploadImage = async (file, onProgress = null) => {
     throw new Error('File size too large. Maximum size is 10MB.');
   }
 
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('type', 'receipt');
-  formData.append('timestamp', new Date().toISOString());
+  // Convert file to base64 for JSON payload
+  const fileBase64 = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+
+  const payload = {
+    action: 'upload_receipt',
+    data: {
+      filename: file.name,
+      fileType: file.type,
+      fileSize: file.size,
+      fileContent: fileBase64,
+      timestamp: new Date().toISOString(),
+      userId: import.meta.env.VITE_USER_ID || 'demo_user'
+    }
+  };
 
   try {
     // Simulate progress for demo purposes
@@ -105,9 +120,12 @@ export const uploadImage = async (file, onProgress = null) => {
       }, 2000);
     }
 
-    const response = await fetchWithRetry(`${API_BASE_URL}/upload/image`, {
+    const response = await fetchWithRetry(WEBHOOK_URL, {
       method: 'POST',
-      body: formData,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
     });
 
     const result = await response.json();
@@ -118,32 +136,18 @@ export const uploadImage = async (file, onProgress = null) => {
         id: result.id || `img_${Date.now()}`,
         filename: file.name,
         size: file.size,
-        extractedText: result.extractedText || 'Sample receipt text extracted',
-        amount: result.amount || Math.random() * 100 + 10,
-        category: result.category || 'Office Supplies',
-        date: result.date || new Date().toISOString(),
-        confidence: result.confidence || 0.95,
+        extractedText: result.data?.extractedText || 'Receipt processed via n8n webhook',
+        amount: result.data?.amount || Math.random() * 100 + 10,
+        category: result.data?.category || 'Office Supplies',
+        date: result.data?.date || new Date().toISOString(),
+        confidence: result.data?.confidence || 0.95,
       },
-      message: 'Image uploaded and processed successfully'
+      message: result.message || 'Receipt uploaded and processed via n8n webhook'
     };
   } catch (error) {
     console.error('Image upload error:', error);
     
-    // Return mock success for demo purposes
-    return {
-      success: true,
-      data: {
-        id: `img_${Date.now()}`,
-        filename: file.name,
-        size: file.size,
-        extractedText: 'Demo: Receipt processed successfully',
-        amount: Math.random() * 100 + 10,
-        category: 'Office Supplies',
-        date: new Date().toISOString(),
-        confidence: 0.95,
-      },
-      message: 'Image uploaded and processed successfully (Demo Mode)'
-    };
+    throw new Error(`Failed to upload receipt: ${error.message}`);
   }
 };
 
@@ -179,10 +183,25 @@ export const processVoice = async (audioBlob, onProgress = null) => {
     throw new Error('Audio file too large. Maximum size is 25MB.');
   }
 
-  const formData = new FormData();
-  formData.append('audio', audioBlob, 'recording.wav');
-  formData.append('language', 'en-US');
-  formData.append('timestamp', new Date().toISOString());
+  // Convert audio blob to base64
+  const audioBase64 = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(audioBlob);
+  });
+
+  const payload = {
+    action: 'process_voice',
+    data: {
+      audioContent: audioBase64,
+      audioType: audioBlob.type || 'audio/wav',
+      audioSize: audioBlob.size,
+      language: 'en-US',
+      timestamp: new Date().toISOString(),
+      userId: import.meta.env.VITE_USER_ID || 'demo_user'
+    }
+  };
 
   try {
     // Simulate progress for demo purposes
@@ -200,9 +219,12 @@ export const processVoice = async (audioBlob, onProgress = null) => {
       }, 3000);
     }
 
-    const response = await fetchWithRetry(`${API_BASE_URL}/process/voice`, {
+    const response = await fetchWithRetry(WEBHOOK_URL, {
       method: 'POST',
-      body: formData,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
     });
 
     const result = await response.json();
@@ -211,40 +233,23 @@ export const processVoice = async (audioBlob, onProgress = null) => {
       success: true,
       data: {
         id: result.id || `voice_${Date.now()}`,
-        transcription: result.transcription || 'Coffee meeting with client downtown, forty-five dollars and ninety-nine cents',
-        confidence: result.confidence || 0.92,
+        transcription: result.data?.transcription || 'Voice processed via n8n webhook',
+        confidence: result.data?.confidence || 0.92,
         duration: result.duration || Math.floor(audioBlob.size / 16000), // Rough estimate
         expense: {
-          amount: result.expense?.amount || 45.99,
-          category: result.expense?.category || 'Meals & Entertainment',
-          description: result.expense?.description || 'Coffee meeting with client',
-          date: result.expense?.date || new Date().toISOString(),
+          amount: result.data?.expense?.amount || 45.99,
+          category: result.data?.expense?.category || 'Meals & Entertainment',
+          description: result.data?.expense?.description || 'Voice expense entry',
+          date: result.data?.expense?.date || new Date().toISOString(),
         },
-        language: result.language || 'en-US',
+        language: result.data?.language || 'en-US',
       },
-      message: 'Voice processed and transcribed successfully'
+      message: result.message || 'Voice processed via n8n webhook'
     };
   } catch (error) {
     console.error('Voice processing error:', error);
     
-    // Return mock success for demo purposes
-    return {
-      success: true,
-      data: {
-        id: `voice_${Date.now()}`,
-        transcription: 'Demo: Coffee meeting with client downtown, forty-five dollars and ninety-nine cents',
-        confidence: 0.92,
-        duration: 5,
-        expense: {
-          amount: 45.99,
-          category: 'Meals & Entertainment',
-          description: 'Coffee meeting with client',
-          date: new Date().toISOString(),
-        },
-        language: 'en-US',
-      },
-      message: 'Voice processed and transcribed successfully (Demo Mode)'
-    };
+    throw new Error(`Failed to process voice: ${error.message}`);
   }
 };
 
@@ -281,9 +286,12 @@ export const categorizeText = async (text, onProgress = null) => {
   }
 
   const payload = {
-    text: text.trim(),
-    timestamp: new Date().toISOString(),
-    userId: import.meta.env.VITE_USER_ID || 'demo_user',
+    action: 'categorize_text',
+    data: {
+      text: text.trim(),
+      timestamp: new Date().toISOString(),
+      userId: import.meta.env.VITE_USER_ID || 'demo_user'
+    }
   };
 
   try {
@@ -302,7 +310,7 @@ export const categorizeText = async (text, onProgress = null) => {
       }, 1500);
     }
 
-    const response = await fetchWithRetry(`${API_BASE_URL}/process/text`, {
+    const response = await fetchWithRetry(WEBHOOK_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -317,39 +325,22 @@ export const categorizeText = async (text, onProgress = null) => {
       data: {
         id: result.id || `text_${Date.now()}`,
         originalText: text,
-        processedText: result.processedText || text,
-        category: result.category || 'General',
-        subcategory: result.subcategory || 'Miscellaneous',
-        amount: result.amount || extractAmountFromText(text),
-        currency: result.currency || 'USD',
-        date: result.date || new Date().toISOString(),
-        confidence: result.confidence || 0.88,
-        tags: result.tags || generateTagsFromText(text),
-        suggestions: result.suggestions || [],
+        processedText: result.data?.processedText || text,
+        category: result.data?.category || 'General',
+        subcategory: result.data?.subcategory || 'Miscellaneous',
+        amount: result.data?.amount || extractAmountFromText(text),
+        currency: result.data?.currency || 'USD',
+        date: result.data?.date || new Date().toISOString(),
+        confidence: result.data?.confidence || 0.88,
+        tags: result.data?.tags || generateTagsFromText(text),
+        suggestions: result.data?.suggestions || [],
       },
-      message: 'Text categorized and processed successfully'
+      message: result.message || 'Text categorized via n8n webhook'
     };
   } catch (error) {
     console.error('Text categorization error:', error);
     
-    // Return mock success for demo purposes
-    return {
-      success: true,
-      data: {
-        id: `text_${Date.now()}`,
-        originalText: text,
-        processedText: text,
-        category: 'General',
-        subcategory: 'Miscellaneous',
-        amount: extractAmountFromText(text),
-        currency: 'USD',
-        date: new Date().toISOString(),
-        confidence: 0.88,
-        tags: generateTagsFromText(text),
-        suggestions: [],
-      },
-      message: 'Text categorized and processed successfully (Demo Mode)'
-    };
+    throw new Error(`Failed to categorize text: ${error.message}`);
   }
 };
 
@@ -382,7 +373,7 @@ const generateTagsFromText = (text) => {
  */
 export const healthCheck = async () => {
   try {
-    const response = await fetchWithRetry(`${API_BASE_URL}/health`, {
+    const response = await fetchWithRetry(WEBHOOK_URL, {
       method: 'GET',
     });
     
