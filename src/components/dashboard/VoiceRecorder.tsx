@@ -559,7 +559,7 @@ const VoiceRecorder: React.FC = () => {
           <li>• Use 'Medium' quality for best balance of size and quality</li>
           <li>• Ensure stable internet connection before sending</li>
         </ul>
-            <span className="text-sm">Sending voice message to Telegram...</span>
+      </div>
     </div>
   );
 };
