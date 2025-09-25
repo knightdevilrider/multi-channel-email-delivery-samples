@@ -1036,7 +1036,6 @@ const BenefitsGrid: React.FC = () => {
                   </motion.div>
                 );
               })}
-            </motion.div>
           </div>
 
           {/* Mobile Carousel */}
