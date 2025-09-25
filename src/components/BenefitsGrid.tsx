@@ -787,10 +787,19 @@ const benefits = [
 ];
 
 const BenefitsGrid: React.FC = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1
   });
+  
+  // Auto-advance carousel on mobile
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % 4);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
   
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
@@ -912,87 +921,185 @@ const BenefitsGrid: React.FC = () => {
 
         <motion.div
           ref={ref}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"
+          className="relative"
           variants={containerVariants}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
         >
-          {benefits.map((benefit, index) => (
-            <motion.div
-              key={index}
-              className="group relative"
-              variants={cardVariants}
-              whileHover={{ 
-                scale: 1.05,
-                rotateY: 5,
-                z: 50
-              }}
-              transition={{ duration: 0.3 }}
-            >
-              {/* Holographic glow effect */}
-              <div 
-                className={`absolute inset-0 bg-gradient-to-r ${benefit.gradient} opacity-0 group-hover:opacity-30 rounded-3xl blur-2xl transition-all duration-500`}
-              />
-              
-              {/* Main card */}
-              <div className="relative bg-gradient-to-br from-slate-900/80 via-slate-800/60 to-slate-900/80 backdrop-blur-2xl rounded-3xl p-8 border-2 border-cyan-400/20 group-hover:border-cyan-400/60 transition-all duration-500 h-full shadow-2xl">
-                {/* Holographic corners */}
-                <div className="absolute top-2 left-2 w-6 h-6 border-l-2 border-t-2 border-cyan-400/60 rounded-tl-3xl animate-pulse" />
-                <div className="absolute top-2 right-2 w-6 h-6 border-r-2 border-t-2 border-cyan-400/60 rounded-tr-3xl animate-pulse" />
-                <div className="absolute bottom-2 left-2 w-6 h-6 border-l-2 border-b-2 border-cyan-400/60 rounded-bl-3xl animate-pulse" />
-                <div className="absolute bottom-2 right-2 w-6 h-6 border-r-2 border-b-2 border-cyan-400/60 rounded-br-3xl animate-pulse" />
-                
-                {/* Large animated icon */}
-                <motion.div 
-                  className="w-32 h-32 mx-auto mb-8 cursor-pointer relative"
-                  whileHover={{ 
-                    scale: 1.1,
-                    rotateY: 15,
-                    rotateX: 5
-                  }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <benefit.AnimatedIcon />
-                </motion.div>
-                
-                {/* Title with slow animation */}
-                <motion.h3 
-                  className="text-3xl font-black mb-6 text-center bg-gradient-to-r from-white via-cyan-200 to-white bg-clip-text text-transparent group-hover:from-cyan-400 group-hover:via-purple-400 group-hover:to-pink-400 transition-all duration-700"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 1.5, delay: index * 0.3 + 0.5 }}
-                >
-                  {benefit.title}
-                </motion.h3>
-                
-                {/* Description with slower reveal */}
-                <motion.p 
-                  className="text-cyan-100 group-hover:text-white transition-colors duration-500 leading-relaxed text-lg text-center"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 2, delay: index * 0.4 + 0.8 }}
-                >
-                  {benefit.description}
-                </motion.p>
+          {/* Desktop Radial Hub Layout */}
+          <div className="hidden md:block">
+            <div className="relative w-full h-[800px] flex items-center justify-center">
+              {/* Central Unified Hub */}
+              <motion.div
+                className="absolute z-20 w-48 h-48 bg-gradient-to-br from-purple-500/20 via-blue-500/20 to-cyan-400/20 backdrop-blur-xl rounded-full border-2 border-cyan-400/40 flex items-center justify-center group cursor-pointer"
+                whileHover={{ scale: 1.1 }}
+                animate={{ 
+                  boxShadow: [
+                    '0 0 30px rgba(34, 211, 238, 0.3)',
+                    '0 0 60px rgba(34, 211, 238, 0.6)',
+                    '0 0 30px rgba(34, 211, 238, 0.3)'
+                  ]
+                }}
+                transition={{ 
+                  boxShadow: { duration: 2, repeat: Infinity },
+                  scale: { duration: 0.3 }
+                }}
+              >
+                <div className="text-center">
+                  <motion.div
+                    className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-purple-500 via-blue-500 to-cyan-400 rounded-full flex items-center justify-center"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                  >
+                    <benefits[2].AnimatedIcon />
+                  </motion.div>
+                  <h3 className="text-2xl font-black text-white mb-2">Unified Hub</h3>
+                  <p className="text-cyan-300 text-sm">AI Command Center</p>
+                </div>
+              </motion.div>
 
-                {/* Scanning line effect */}
-                <motion.div
-                  className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-0 group-hover:opacity-100"
-                  animate={{
-                    x: ['-100%', '100%']
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    repeatDelay: 3
-                  }}
-                />
+              {/* Radial Feature Cards */}
+              {benefits.slice(0, 4).map((benefit, index) => {
+                const angle = (index * 90) * (Math.PI / 180); // 90-degree intervals
+                const radius = 280;
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
                 
-                {/* Status indicator */}
-                <div className="absolute top-6 right-6 w-3 h-3 bg-cyan-400 rounded-full opacity-60 group-hover:opacity-100 animate-pulse transition-opacity duration-300" />
-              </div>
+                return (
+                  <motion.div
+                    key={index}
+                    className="absolute group"
+                    style={{
+                      left: `calc(50% + ${x}px - 160px)`,
+                      top: `calc(50% + ${y}px - 120px)`,
+                    }}
+                    variants={cardVariants}
+                    whileHover={{ 
+                      scale: 1.05,
+                      z: 50
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {/* Connection Line to Center */}
+                    <motion.div
+                      className="absolute w-0.5 bg-gradient-to-r from-cyan-400/60 to-transparent rounded-full"
+                      style={{
+                        height: radius - 96,
+                        left: '50%',
+                        top: '50%',
+                        transformOrigin: 'top',
+                        transform: `rotate(${180 + index * 90}deg) translateX(-50%)`,
+                      }}
+                      animate={{ 
+                        opacity: [0.4, 0.8, 0.4],
+                        boxShadow: [
+                          '0 0 5px rgba(34, 211, 238, 0.3)',
+                          '0 0 15px rgba(34, 211, 238, 0.8)',
+                          '0 0 5px rgba(34, 211, 238, 0.3)'
+                        ]
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        delay: index * 0.5
+                      }}
+                    />
+                    
+                    {/* Feature Card */}
+                    <div className="w-80 h-60 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6 group-hover:bg-white/15 group-hover:border-cyan-400/50 transition-all duration-500">
+                      {/* Holographic corners */}
+                      <div className="absolute top-2 left-2 w-4 h-4 border-l-2 border-t-2 border-cyan-400/60 rounded-tl-2xl animate-pulse" />
+                      <div className="absolute top-2 right-2 w-4 h-4 border-r-2 border-t-2 border-cyan-400/60 rounded-tr-2xl animate-pulse" />
+                      <div className="absolute bottom-2 left-2 w-4 h-4 border-l-2 border-b-2 border-cyan-400/60 rounded-bl-2xl animate-pulse" />
+                      <div className="absolute bottom-2 right-2 w-4 h-4 border-r-2 border-b-2 border-cyan-400/60 rounded-br-2xl animate-pulse" />
+                      
+                      <motion.div 
+                        className="w-20 h-20 mx-auto mb-4 cursor-pointer relative"
+                        whileHover={{ 
+                          scale: 1.1,
+                          rotateY: 15,
+                          rotateX: 5
+                        }}
+                        transition={{ duration: 0.4 }}
+                      >
+                        <benefit.AnimatedIcon />
+                      </motion.div>
+                      
+                      <h3 className="text-xl font-bold text-white mb-3 text-center group-hover:text-cyan-400 transition-colors duration-500">
+                        {benefit.title}
+                      </h3>
+                      
+                      <p className="text-cyan-100 group-hover:text-white transition-colors duration-500 leading-relaxed text-sm text-center">
+                        {benefit.description}
+                      </p>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </motion.div>
-          ))}
+          </div>
+
+          {/* Mobile Carousel */}
+          <div className="md:hidden">
+            <div className="relative overflow-hidden">
+              <motion.div
+                className="flex transition-transform duration-500 ease-out"
+                style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+              >
+                {benefits.slice(0, 4).map((benefit, index) => (
+                  <div key={index} className="w-full flex-shrink-0 px-4">
+                    <motion.div
+                      className="group relative bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6 mx-auto max-w-sm"
+                      variants={cardVariants}
+                      whileHover={{ scale: 1.02 }}
+                    >
+                      {/* Holographic corners */}
+                      <div className="absolute top-2 left-2 w-4 h-4 border-l-2 border-t-2 border-cyan-400/60 rounded-tl-2xl animate-pulse" />
+                      <div className="absolute top-2 right-2 w-4 h-4 border-r-2 border-t-2 border-cyan-400/60 rounded-tr-2xl animate-pulse" />
+                      <div className="absolute bottom-2 left-2 w-4 h-4 border-l-2 border-b-2 border-cyan-400/60 rounded-bl-2xl animate-pulse" />
+                      <div className="absolute bottom-2 right-2 w-4 h-4 border-r-2 border-b-2 border-cyan-400/60 rounded-br-2xl animate-pulse" />
+                      
+                      <motion.div 
+                        className="w-24 h-24 mx-auto mb-6 cursor-pointer relative"
+                        whileHover={{ 
+                          scale: 1.1,
+                          rotateY: 15,
+                          rotateX: 5
+                        }}
+                        transition={{ duration: 0.4 }}
+                      >
+                        <benefit.AnimatedIcon />
+                      </motion.div>
+                      
+                      <h3 className="text-2xl font-bold text-white mb-4 text-center group-hover:text-cyan-400 transition-colors duration-500">
+                        {benefit.title}
+                      </h3>
+                      
+                      <p className="text-cyan-100 group-hover:text-white transition-colors duration-500 leading-relaxed text-center">
+                        {benefit.description}
+                      </p>
+                    </motion.div>
+                  </div>
+                ))}
+              </motion.div>
+              
+              {/* Navigation Dots */}
+              <div className="flex justify-center space-x-2 mt-8">
+                {benefits.slice(0, 4).map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentIndex(index)}
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                      index === currentIndex
+                        ? 'bg-cyan-400 shadow-lg shadow-cyan-400/50'
+                        : 'bg-white/30 hover:bg-white/50'
+                    }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>
