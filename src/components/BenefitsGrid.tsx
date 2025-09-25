@@ -951,7 +951,7 @@ const BenefitsGrid: React.FC = () => {
                     animate={{ rotate: 360 }}
                     transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
                   >
-                    <benefits[2].AnimatedIcon />
+                    {React.createElement(benefits[2].AnimatedIcon)}
                   </motion.div>
                   <h3 className="text-2xl font-black text-white mb-2">Unified Hub</h3>
                   <p className="text-cyan-300 text-sm">AI Command Center</p>
