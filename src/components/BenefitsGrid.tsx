@@ -175,7 +175,10 @@ const VoiceControlIcon: React.FC = () => {
         }}
         transition={{ duration: 3, repeat: Infinity }}
       >
-        {/* Mic body with holographic effect */}
+        {
+      }
+  )
+}/* Mic body with holographic effect */}
         <div className="w-12 h-16 bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600 rounded-full relative shadow-2xl border-2 border-pink-400/40">
           {/* Holographic surface */}
           <motion.div
@@ -1036,7 +1039,6 @@ const BenefitsGrid: React.FC = () => {
                   </motion.div>
                 );
               })}
-            </div>
           </div>
 
           {/* Mobile Carousel */}
