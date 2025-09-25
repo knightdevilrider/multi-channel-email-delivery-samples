@@ -1100,6 +1100,7 @@ const BenefitsGrid: React.FC = () => {
               </div>
             </div>
           </div>
+        </motion.div>
       </div>
     </section>
   );
