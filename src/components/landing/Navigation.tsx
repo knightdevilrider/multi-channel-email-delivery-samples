@@ -4,10 +4,21 @@ import { Menu, X, Zap } from 'lucide-react';
 
 const Navigation: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <motion.nav
-      className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled ? 'bg-dark-bg/95 backdrop-blur-md border-b border-white/20' : 'bg-transparent'
+      }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
@@ -30,18 +41,18 @@ const Navigation: React.FC = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-gray-700 hover:text-blue-600 transition-colors">
+            <a href="#features" className="text-cyber-silver hover:text-neon-blue transition-colors">
               Features
             </a>
-            <a href="#how-it-works" className="text-gray-700 hover:text-blue-600 transition-colors">
+            <a href="#how-it-works" className="text-cyber-silver hover:text-neon-blue transition-colors">
               How It Works
             </a>
-            <a href="#testimonials" className="text-gray-700 hover:text-blue-600 transition-colors">
+            <a href="#testimonials" className="text-cyber-silver hover:text-neon-blue transition-colors">
               Testimonials
             </a>
             <motion.a
               href="/app"
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-medium"
+              className="bg-gradient-to-r from-neon-blue to-neon-magenta text-white px-6 py-2 rounded-lg font-medium"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -53,10 +64,10 @@ const Navigation: React.FC = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-700 hover:text-blue-600 transition-colors"
+              className="text-cyber-silver hover:text-neon-blue transition-colors"
               aria-label="Toggle menu"
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? <X className="w-6 h-6 text-white" /> : <Menu className="w-6 h-6 text-white" />}
             </button>
           </div>
         </div>
@@ -69,32 +80,33 @@ const Navigation: React.FC = () => {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
+            className="md:hidden bg-dark-bg/95 backdrop-blur-md border-t border-white/20"
           >
-            <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-200">
+            <div className="px-2 pt-2 pb-3 space-y-1">
               <a
                 href="#features"
-                className="block px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors"
+                className="block px-3 py-2 text-cyber-silver hover:text-neon-blue transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 Features
               </a>
               <a
                 href="#how-it-works"
-                className="block px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors"
+                className="block px-3 py-2 text-cyber-silver hover:text-neon-blue transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 How It Works
               </a>
               <a
                 href="#testimonials"
-                className="block px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors"
+                className="block px-3 py-2 text-cyber-silver hover:text-neon-blue transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 Testimonials
               </a>
               <a
                 href="/app"
-                className="block px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium text-center"
+                className="block px-3 py-2 bg-gradient-to-r from-neon-blue to-neon-magenta text-white rounded-lg font-medium text-center"
                 onClick={() => setIsOpen(false)}
               >
                 Launch Now
